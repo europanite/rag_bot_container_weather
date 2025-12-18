@@ -25,8 +25,24 @@ FEED_PATH="${FEED_PATH:-${OUT_DIR}/weather_feed.json}"
 LATEST_PATH="${LATEST_PATH:-${OUT_DIR}/latest.json}"
 mkdir -p "${POST_DIR}" "$(dirname "${FEED_PATH}")" "$(dirname "${LATEST_PATH}")"
 
+# Support both single-path vars (FEED_PATH/LATEST_PATH) and multi-path vars (FEED_PATHS/LATEST_PATHS).
+FEED_PATHS="${FEED_PATHS:-}"
+if [[ -z "${FEED_PATHS//[[:space:]]/}" ]]; then FEED_PATHS="${FEED_PATH}"; fi
+LATEST_PATHS="${LATEST_PATHS:-}"
+if [[ -z "${LATEST_PATHS//[[:space:]]/}" ]]; then LATEST_PATHS="${LATEST_PATH}"; fi
+
 IFS=',' read -r -a FEEDS <<< "${FEED_PATHS}"
 IFS=',' read -r -a LATESTS <<< "${LATEST_PATHS}"
+
+# Ensure output dirs exist even when FEED_PATHS/LATEST_PATHS contains multiple paths.
+for f in "${FEEDS[@]}"; do
+  f="$(echo "${f}" | xargs)"
+  [[ -n "${f}" ]] && mkdir -p "$(dirname "${f}")"
+done
+for l in "${LATESTS[@]}"; do
+  l="$(echo "${l}" | xargs)"
+  [[ -n "${l}" ]] && mkdir -p "$(dirname "${l}")"
+done
 
 API_BASE="${API_BASE:-http://localhost:${BACKEND_PORT:-8000}}"
 
@@ -87,38 +103,75 @@ echo "Warming up /rag/query ..."
 WARM_URL="${API_BASE}/rag/query"
 curl -fsS -H "Content-Type: application/json" -d '{"query":"hello","top_k":1}' "${WARM_URL}" >/dev/null || true
 
-# Query (include lat/lon in query params)
-QUERY_URL="${API_BASE}/rag/query?lat=${LAT}&lon=${LON}"
-BODY="$(cat <<EOF
-{
-  "query": "Write today's short weather tweet. Include temperature and conditions. Keep it friendly and local."
-}
-EOF
-)"
+# Read weather snapshot (best-effort)
+SNAP_JSON="$(python scripts/fetch_weather.py --format json --lat "${LAT}" --lon "${LON}" --tz "${TZ_NAME}" 2>/dev/null || true)"
+if [[ -z "${SNAP_JSON}" ]]; then
+  # fallback: allow backend to still generate something
+  SNAP_JSON="{}"
+fi
 
-# Retry loop (models may warm up)
+QUERY_URL="${API_BASE}/rag/query"
+JSON_PAYLOAD="$(python - <<'PY'
+import json, os, sys
+raw = sys.stdin.read().strip() or "{}"
+try:
+    snap = json.loads(raw)
+except Exception:
+    snap = {}
+# Keep query consistent and clearly "weather"
+place = os.environ.get("WEATHER_PLACE","").strip()
+q = "Write a short Japanese weather diary/tweet for today based on this weather JSON. Mention the place if provided."
+if place:
+    q += f" Place: {place}."
+payload = {"query": q, "top_k": 3, "context": json.dumps(snap, ensure_ascii=False)}
+print(json.dumps(payload, ensure_ascii=False))
+PY
+<<<"${SNAP_JSON}")"
+
 ok_json=0
 RES=""
-for i in {1..5}; do
-  RES="$(curl -sS -H "Content-Type: application/json" -d "${BODY}" "${QUERY_URL}" || true)"
 
-  # Validate: must be JSON and include non-empty 'answer'
-  ok_json="$(python - <<'PY'
-import json, sys
-raw = sys.stdin.read().strip()
-try:
-    obj = json.loads(raw)
-except Exception:
-    print(0); sys.exit(0)
-ans = (obj.get("answer") or "").strip()
-print(1 if ans else 0)
+# --- wait: ensure /rag/query returns non-empty answer at least once ---
+WARM_PAYLOAD='{"query":"hello","top_k":1}'
+for i in {1..300}; do
+  RES_WARM="$(curl -fsS --retry 5 --retry-all-errors --retry-delay 2 \
+  "${API_BASE}/rag/query" -H "Content-Type: application/json" -d "${WARM_PAYLOAD}")"
+  python - <<'PY' <<<"${RES_WARM}" && break || true
+import json,sys
+obj=json.loads(sys.stdin.read())
+ans=(obj.get("answer") or "").strip()
+if (ans.startswith('"') and ans.endswith('"')) or (ans.startswith("'") and ans.endswith("'")):
+  ans=ans[1:-1].strip()
+assert ans  # require non-empty tweet
 PY
-<<<"${RES}")"
-
-  if [ "${ok_json}" -eq 1 ]; then
-    break
-  fi
   sleep 2
+done
+# --- end wait ---
+
+# Call backend (retry a bit in case ollama/model warmup is slow)
+for i in {1..20}; do
+  set +e
+  RES="$(curl -fsS --retry 5 --retry-all-errors --retry-delay 2 \
+    --connect-timeout 5 --max-time 180 \
+    "${QUERY_URL}" -H "Content-Type: application/json" -d "${JSON_PAYLOAD}" 2>curl_err.txt)"
+  rc=$?
+  set -e
+
+  if [ $rc -ne 0 ]; then
+    echo "curl failed (attempt ${i}/20, rc=${rc})" >&2
+    cat curl_err.txt >&2
+    sleep 3
+    continue
+  fi
+
+  python - <<'PY' <<<"${RES}" && { ok_json=1; break; } || true
+import json,sys
+obj=json.loads(sys.stdin.read())
+assert isinstance(obj, dict)
+assert "answer" in obj
+PY
+  echo "query not ready (attempt ${i}/20). raw_len=${#RES}" >&2
+  sleep 3
 done
 
 if [ "${ok_json}" -ne 1 ]; then
