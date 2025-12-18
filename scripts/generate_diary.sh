@@ -53,6 +53,29 @@ PY
   fi
 fi
 
+# --- wait for backend + rag to be truly ready ---
+echo "Waiting for backend /rag/status ..."
+for i in {1..300}; do
+  if curl -fsS "${API_BASE}/rag/status" >/dev/null; then
+    echo "OK: /rag/status"
+    break
+  fi
+  sleep 2
+done
+
+echo "Warming up /rag/query ..."
+WARM_PAYLOAD='{"question":"ping","use_live_weather":false}'
+for i in {1..300}; do
+  RES_WARM="$(curl -sS "${API_BASE}/rag/query" -H "Content-Type: application/json" -d "${WARM_PAYLOAD}" || true)"
+  python - <<'PY' <<<"${RES_WARM}" && break || true
+import json,sys
+obj=json.loads(sys.stdin.read())
+assert "answer" in obj
+PY
+  sleep 2
+done
+# --- end wait ---
+
 # Call backend (retry a bit in case ollama/model warmup is slow)
 RES=""
 for i in {1..8}; do
