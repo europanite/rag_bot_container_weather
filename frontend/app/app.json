@@ -1,7 +1,10 @@
 {
   "expo": {
-    "name": "app",
-    "slug": "app",
+    "name": "rag_bot_container_weather",
+    "slug": "rag_bot_container_weather",
+    "experiments": {
+      "baseUrl": "/rag_bot_container_weather"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,9 +27,6 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "experiments": {
-      "baseUrl": "/rag_bot_container_weather"
     }
   }
 }
