@@ -61,5 +61,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add _posts public
+          git add frontend/app/public/weather_feed.json
           git commit -m "chore: daily weather tweet"
           git push
