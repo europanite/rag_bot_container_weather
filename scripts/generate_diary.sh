@@ -5,10 +5,11 @@ set -euo pipefail
 TZ_NAME="${WEATHER_TZ:-Asia/Tokyo}"
 TODAY="${TODAY:-$(TZ="${TZ_NAME}" date +%F)}"
 
-mkdir -p _posts public
+mkdir -p _posts public frontend/app/public
 
 POST="_posts/${TODAY}-weather.md"
 FEED_PATH="${FEED_PATH:-public/weather_feed.json}"
+FEED_PATHS="${FEED_PATHS:-${FEED_PATH},frontend/app/public/weather_feed.json}"
 LATEST_PATH="${LATEST_PATH:-public/latest.json}"
 
 API_BASE="${API_BASE:-http://localhost:${BACKEND_PORT:-8000}}"
@@ -48,8 +49,17 @@ PY
 <<<"${RES}")"
 
 # Update JSON feed for the frontend
+# Update JSON feed for the frontend (write to one or more feed paths)
+FEED_ARGS=()
+IFS=',' read -r -a _FEEDS <<< "${FEED_PATHS}"
+for f in "${_FEEDS[@]}"; do
+  f="$(echo "$f" | xargs)"
+  [ -z "$f" ] && continue
+  FEED_ARGS+=(--feed "$f")
+done
+
 python scripts/update_weather_feed.py \
-  --feed "${FEED_PATH}" \
+  "${FEED_ARGS[@]}" \
   --latest "${LATEST_PATH}" \
   --date "${TODAY}" \
   --text "${TWEET}" \
