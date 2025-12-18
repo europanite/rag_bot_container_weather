@@ -1,21 +1,30 @@
 #!/usr/bin/env bash
-trap 'echo "---- docker compose ps ----"; docker compose ps;
-      echo "---- backend logs ----"; docker compose logs --no-color --tail=200 backend || true;
-      echo "---- ollama logs ----"; docker compose logs --no-color --tail=200 ollama || true;' ERR
-set -eEuo pipefail
+set -Eeuo pipefail
+shopt -s inherit_errexit 2>/dev/null || true
+
+dump_debug() {
+  {
+    echo "---- docker compose ps ----"
+    docker compose ps || true
+    echo "---- backend logs ----"
+    docker compose logs --no-color --tail=200 backend || true
+    echo "---- ollama logs ----"
+    docker compose logs --no-color --tail=200 ollama || true
+  } >&2
+}
+trap dump_debug ERR
 
 # Use JST by default (the workflow runs at 00:00 UTC = 09:00 JST)
 TZ_NAME="${WEATHER_TZ:-Asia/Tokyo}"
 TODAY="${TODAY:-$(TZ="${TZ_NAME}" date +%F)}"
 
-mkdir -p _posts public
+OUT_DIR="${OUT_DIR:-frontend/app/public}"
+POST_DIR="${POST_DIR:-${OUT_DIR}/posts}"
+POST="${POST_DIR}/${TODAY}-weather.md"
+FEED_PATH="${FEED_PATH:-${OUT_DIR}/weather_feed.json}"
+LATEST_PATH="${LATEST_PATH:-${OUT_DIR}/latest.json}"
+mkdir -p "${POST_DIR}" "$(dirname "${FEED_PATH}")" "$(dirname "${LATEST_PATH}")"
 
-POST="_posts/${TODAY}-weather.md"
-# Backward compat:
-# - if FEED_PATHS is set (comma-separated), use it
-# - else fall back to FEED_PATH
-FEED_PATHS="${FEED_PATHS:-${FEED_PATH:-public/weather_feed.json}}"
-LATEST_PATHS="${LATEST_PATHS:-${LATEST_PATH:-public/latest.json}}"
 IFS=',' read -r -a FEEDS <<< "${FEED_PATHS}"
 IFS=',' read -r -a LATESTS <<< "${LATEST_PATHS}"
 
