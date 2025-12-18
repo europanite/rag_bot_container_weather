@@ -74,6 +74,8 @@ jobs:
           WEATHER_LON: "139.6722"
           WEATHER_TZ: "Asia/Tokyo"
           OUT_DIR: frontend/app/public
+          FEED_PATH: frontend/app/public/weather_feed.json
+          LATEST_PATH: frontend/app/public/latest.json
         run: |
           chmod +x scripts/generate_diary.sh
           scripts/generate_diary.sh
