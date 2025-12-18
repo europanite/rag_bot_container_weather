@@ -64,10 +64,14 @@ jobs:
             fi
             sleep 2
           done
-          [ "$ok" -ge 3 ] || { echo "backend not stable"; exit 1; }
-          echo "Backend did not become ready in time"
-          docker compose logs --no-color backend || true
-          exit 1
+
+          if [ "$ok" -ge 3 ]; then
+            echo "backend is stable"
+          else
+            echo "Backend did not become ready in time"
+            docker compose logs --no-color backend || true
+            exit 1
+          fi
 
       - name: Fix permissions for feed dirs
         run: |
