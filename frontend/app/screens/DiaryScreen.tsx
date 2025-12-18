@@ -26,7 +26,17 @@ function safeJsonParse<T>(raw: string): T | null {
 }
 
 export default function DiaryScreen() {
-  const FEED_URL = process.env.EXPO_PUBLIC_FEED_URL;
+const FEED_URL = process.env.EXPO_PUBLIC_FEED_URL || "./weather_feed.json";
+
+const RESOLVED_FEED_URL = useMemo(() => {
+  try {
+    if (FEED_URL.startsWith("http://") || FEED_URL.startsWith("https://")) return FEED_URL;
+    if (typeof window !== "undefined") return new URL(FEED_URL, window.location.href).toString();
+  } catch {
+    // ignore
+  }
+  return FEED_URL;
+}, [FEED_URL]);
 
   const [feed, setFeed] = useState<Feed | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -41,13 +51,6 @@ export default function DiaryScreen() {
   const latest = sortedItems[0] ?? null;
 
   const load = useCallback(async () => {
-    if (!FEED_URL) {
-      setError("EXPO_PUBLIC_FEED_URL is not set. Add it to .env and restart Expo.");
-      setFeed(null);
-      setLoading(false);
-      return;
-    }
-
     try {
       setError(null);
       const res = await fetch(FEED_URL, { headers: { "Cache-Control": "no-cache" } });
