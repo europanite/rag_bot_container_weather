@@ -125,6 +125,16 @@ def _get_ollama_chat_model() -> str:
 def _get_ollama_base_url() -> str:
     return os.getenv("OLLAMA_BASE_URL", "http://ollama:11434").rstrip("/")
 
+def _get_ollama_chat_timeout() -> int:
+    """
+    Seconds for requests timeout to Ollama /api/chat.
+    """
+    raw = os.getenv("OLLAMA_CHAT_TIMEOUT", "300")
+    try:
+        v = int(raw)
+        return v if v > 0 else 300
+    except Exception:
+        return 300
 
 def _call_ollama_chat(*, question: str, system_prompt: str, user_prompt: str) -> str:
     """Call Ollama's /api/chat endpoint."""
@@ -140,14 +150,18 @@ def _call_ollama_chat(*, question: str, system_prompt: str, user_prompt: str) ->
         "stream": False,
     }
 
-    resp = _session.post(f"{base_url}/api/chat", json=payload, timeout=60)
-    resp.raise_for_status()
-    data = resp.json()
+    try:
+        timeout_s = _get_ollama_chat_timeout()
+        resp = _session.post(f"{base_url}/api/chat", json=payload, timeout=timeout_s)
+        resp.raise_for_status()
+        data = resp.json()
 
-    message = data.get("message") or {}
-    content = message.get("content")
-    if not isinstance(content, str):
-        raise RuntimeError("Ollama chat response missing 'message.content'")
+        message = data.get("message") or {}
+        content = message.get("content")
+        if not isinstance(content, str):
+            raise RuntimeError("Ollama chat response missing 'message.content'")
+    except Exception as e:
+        logger.exception("Ollama chat failed: %s", e)
 
     return content
 

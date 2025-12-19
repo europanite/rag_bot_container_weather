@@ -23,8 +23,15 @@ set -euo pipefail
 #     FEED_PATH=frontend/app/public/feed.json
 #     LATEST_PATH=frontend/app/public/latest.json
 
+DEBUG="${DEBUG:-0}"
+CURL_MAX_TIME="${CURL_MAX_TIME:-240}" 
+CURL_RETRIES="${CURL_RETRIES:-2}"  
+
 API_BASE="${BACKEND_URL:-http://localhost:8000}"
 DEBUG="${DEBUG:-0}"
+
+QUESTION="${QUESTION:-Write a short weather update (tweet-style) based on today\'s weather in my area.}"
+export QUESTION
 
 # Location (required)
 LAT="${WEATHER_LAT:-}"
@@ -97,12 +104,27 @@ curl_json() {
     auth_header=(-H "Authorization: Bearer ${RAG_TOKEN}")
   fi
 
-  local body
-  body="$(curl -sS --retry 3 --retry-delay 2 --max-time 90 -X "${method}" \
-    -H "Content-Type: application/json" \
-    "${auth_header[@]}" \
-    -d "${payload}" \
-    "${url}" || true)"
+  local body="" code=0 attempt=0
+  for ((attempt=1; attempt<=CURL_RETRIES+1; attempt++)); do
+    set +e
+    body="$(curl -sS --max-time "${CURL_MAX_TIME}" \
+      -X "${method}" \
+      -H "Content-Type: application/json" \
+      ${data:+-d "${data}"} \
+      "${url}")"
+    code=$?
+    set -e
+
+    if [[ "${DEBUG}" == "1" ]]; then
+      echo "DEBUG curl_json: attempt=${attempt} code=${code} bytes=${#body} url=${url}" >&2
+      [[ "${#body}" -gt 0 ]] && echo "DEBUG curl_json body head: ${body:0:200}" >&2
+    fi
+
+    if [[ "${code}" -eq 0 && -n "${body}" ]]; then
+      break
+    fi
+    sleep 2
+  done
 
   if [[ -z "${body}" ]]; then
     echo "ERROR: backend response body is empty (${url})" >&2
@@ -112,14 +134,33 @@ curl_json() {
   python - <<'PY' "${body}"
 import json, sys
 raw = sys.argv[1]
+def parse_possibly_concatenated_json(s: str):
+    s = s.strip()
+    if not s:
+        raise ValueError("empty body")
+    start_candidates = [i for i in (s.find("{"), s.find("[")) if i != -1]
+    if start_candidates:
+        s = s[min(start_candidates):]
+    dec = json.JSONDecoder()
+    objs = []
+    while s:
+        obj, end = dec.raw_decode(s)
+        objs.append(obj)
+        s = s[end:].lstrip()
+    return objs
+
 try:
-    json.loads(raw)
+    objs = parse_possibly_concatenated_json(raw)
+    last = objs[-1]
+    if isinstance(last, dict) and "detail" in last and "answer" not in last:
+        raise RuntimeError(f"backend error: {last['detail']}")
 except Exception as e:
-    print("ERROR: backend response is not JSON:", e, file=sys.stderr)
+    print(f"ERROR: backend response is not usable JSON: {e}", file=sys.stderr)
     print("---- raw response ----", file=sys.stderr)
     print(raw, file=sys.stderr)
     raise SystemExit(1)
-print(raw)
+
+print(json.dumps(last, ensure_ascii=False))
 PY
 }
 

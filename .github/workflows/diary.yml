@@ -73,6 +73,7 @@ jobs:
           WEATHER_LAT: "35.2810"
           WEATHER_LON: "139.6722"
           WEATHER_TZ: "Asia/Tokyo"
+          WEATHER_PLACE: "Yokosuka"
           OUT_DIR: frontend/app/public
           FEED_PATH: frontend/app/public/weather_feed.json
           LATEST_PATH: frontend/app/public/latest.json
