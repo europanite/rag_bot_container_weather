@@ -71,7 +71,6 @@ export default function SettingsBar() {
                 ) : (
                   <Btn title="Sign out" onPress={signOut} />
                 )}
-                <Btn title="Home" onPress={() => nav.navigate("Home")} />
                 <Btn title="Diary" onPress={() => nav.navigate("Diary")} />
               </View>
             </View>

@@ -24,13 +24,13 @@ set -euo pipefail
 #     LATEST_PATH=frontend/app/public/latest.json
 
 DEBUG="${DEBUG:-0}"
-CURL_MAX_TIME="${CURL_MAX_TIME:-240}" 
-CURL_RETRIES="${CURL_RETRIES:-2}"  
+CURL_MAX_TIME="${CURL_MAX_TIME:-240}" # seconds
+CURL_RETRIES="${CURL_RETRIES:-2}"     # attempts
 
 API_BASE="${BACKEND_URL:-http://localhost:8000}"
 DEBUG="${DEBUG:-0}"
 
-QUESTION="${QUESTION:-Write a short weather update (tweet-style) based on today\'s weather in my area.}"
+QUESTION="${QUESTION:-Write a short weather update (tweet-style) based on today's weather in my area.}"
 export QUESTION
 
 # Location (required)
@@ -48,256 +48,245 @@ HASHTAGS="${RAG_HASHTAGS:-}"
 FEED_PATH="${FEED_PATH:-frontend/app/public/feed.json}"
 LATEST_PATH="${LATEST_PATH:-frontend/app/public/latest.json}"
 
-# Support both single-path vars (FEED_PATH/LATEST_PATH) and multi-path vars (FEED_PATHS/LATEST_PATHS).
-FEED_PATHS="${FEED_PATHS:-}"
-if [[ -z "${FEED_PATHS//[[:space:]]/}" ]]; then FEED_PATHS="${FEED_PATH}"; fi
-LATEST_PATHS="${LATEST_PATHS:-}"
-if [[ -z "${LATEST_PATHS//[[:space:]]/}" ]]; then LATEST_PATHS="${LATEST_PATH}"; fi
+# Support multi-output: colon-separated paths
+FEED_PATHS="${FEED_PATHS:-${FEED_PATH}}"
+LATEST_PATHS="${LATEST_PATHS:-${LATEST_PATH}}"
 
+# Auth (optional)
 RAG_TOKEN="${RAG_TOKEN:-}"
-
-if [[ -z "${LAT}" || -z "${LON}" ]]; then
-  echo "ERROR: WEATHER_LAT and WEATHER_LON must be set." >&2
-  echo "Example: export WEATHER_LAT=35.2810 WEATHER_LON=139.6720" >&2
-  exit 1
-fi
-
-echo "API_BASE: ${API_BASE}"
-echo "WEATHER: lat=${LAT} lon=${LON} tz=${TZ_NAME} place='${WEATHER_PLACE}'"
-echo "TOP_K=${TOP_K} MAX_CHARS=${MAX_CHARS}"
-echo "FEED_PATHS=${FEED_PATHS}"
-echo "LATEST_PATHS=${LATEST_PATHS}"
-
-# Export values that are referenced from Python heredocs via os.environ / os.getenv.
-# (Without export, Python sees nothing -> KeyError / empty context)
-export TOP_K
-export MAX_CHARS
-export WEATHER_PLACE
 
 # -----------------------------------------------------------------------------
 # Helpers
 # -----------------------------------------------------------------------------
-wait_for_backend() {
-  local tries="${1:-60}"
-  local sleep_s="${2:-2}"
+log() {
+  echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"
+}
 
-  for ((i=1; i<=tries; i++)); do
-    if curl -fsS "${API_BASE}/rag/status" >/dev/null 2>&1; then
-      echo "OK: ${API_BASE}/rag/status"
-      return 0
-    fi
-    echo "Waiting for backend /rag/status ... (${i}/${tries})"
-    sleep "${sleep_s}"
-  done
-
-  echo "ERROR: backend not ready: ${API_BASE}" >&2
-  return 1
+dbg() {
+  if [[ "${DEBUG}" == "1" ]]; then
+    echo "[DEBUG] $*" >&2
+  fi
 }
 
 curl_json() {
-  local method="${1}"; shift
-  local url="${1}"; shift
-  local payload="${1}"; shift
-
-  local auth_header=()
-  if [[ -n "${RAG_TOKEN}" ]]; then
-    auth_header=(-H "Authorization: Bearer ${RAG_TOKEN}")
-  fi
-
-  local body="" code=0 attempt=0
-  for ((attempt=1; attempt<=CURL_RETRIES+1; attempt++)); do
-    set +e
-    body="$(curl -sS --max-time "${CURL_MAX_TIME}" \
-      -X "${method}" \
-      -H "Content-Type: application/json" \
-      "${auth_header[@]}" \
-      ${payload:+-d "${payload}"} \
-      "${url}")"
-    code=$?
-    set -e
-
-    if [[ "${DEBUG}" == "1" ]]; then
-      echo "DEBUG curl_json: attempt=${attempt} code=${code} bytes=${#body} url=${url}" >&2
-      [[ "${#body}" -gt 0 ]] && echo "DEBUG curl_json body head: ${body:0:200}" >&2
+  local url="$1"
+  local out
+  local attempt=1
+  while true; do
+    if [[ -n "${RAG_TOKEN}" ]]; then
+      out="$(curl -fsS --max-time "${CURL_MAX_TIME}" -H "Authorization: Bearer ${RAG_TOKEN}" "${url}" || true)"
+    else
+      out="$(curl -fsS --max-time "${CURL_MAX_TIME}" "${url}" || true)"
     fi
 
-    if [[ "${code}" -eq 0 && -n "${body}" ]]; then
-      break
+    if [[ -n "${out}" ]]; then
+      printf "%s" "${out}"
+      return 0
     fi
+
+    if [[ "${attempt}" -ge "${CURL_RETRIES}" ]]; then
+      echo "ERROR: curl failed after ${CURL_RETRIES} attempts: ${url}" >&2
+      return 1
+    fi
+
+    attempt=$((attempt + 1))
     sleep 2
   done
+}
 
-  if [[ -z "${body}" ]]; then
-    echo "ERROR: backend response body is empty (${url})" >&2
-    return 1
-  fi
+post_json() {
+  local url="$1"
+  local payload="$2"
+  local out
+  local attempt=1
+  while true; do
+    if [[ -n "${RAG_TOKEN}" ]]; then
+      out="$(curl -fsS --max-time "${CURL_MAX_TIME}" \
+        -H "Authorization: Bearer ${RAG_TOKEN}" \
+        -H "Content-Type: application/json" \
+        -d "${payload}" "${url}" || true)"
+    else
+      out="$(curl -fsS --max-time "${CURL_MAX_TIME}" \
+        -H "Content-Type: application/json" \
+        -d "${payload}" "${url}" || true)"
+    fi
 
-  python - <<'PY' "${body}"
-import json, sys
-raw = sys.argv[1]
-def parse_possibly_concatenated_json(s: str):
-    s = s.strip()
-    if not s:
-        raise ValueError("empty body")
-    start_candidates = [i for i in (s.find("{"), s.find("[")) if i != -1]
-    if start_candidates:
-        s = s[min(start_candidates):]
-    dec = json.JSONDecoder()
-    objs = []
-    while s:
-        obj, end = dec.raw_decode(s)
-        objs.append(obj)
-        s = s[end:].lstrip()
-    return objs
+    if [[ -n "${out}" ]]; then
+      printf "%s" "${out}"
+      return 0
+    fi
 
-try:
-    objs = parse_possibly_concatenated_json(raw)
-    last = objs[-1]
-    # If backend returns an error-only JSON (e.g., {"detail": ...}), we still return it;
-    # the caller can decide whether to retry or fail.
-except Exception as e:
-    print(f"ERROR: backend response is not usable JSON: {e}", file=sys.stderr)
-    print("---- raw response ----", file=sys.stderr)
-    print(raw, file=sys.stderr)
-    raise SystemExit(1)
+    if [[ "${attempt}" -ge "${CURL_RETRIES}" ]]; then
+      echo "ERROR: POST failed after ${CURL_RETRIES} attempts: ${url}" >&2
+      return 1
+    fi
 
-print(json.dumps(last, ensure_ascii=False))
-PY
+    attempt=$((attempt + 1))
+    sleep 2
+  done
 }
 
 split_paths() {
-  # Split colon-separated paths into lines
-  python - <<'PY' "${1}"
-import sys
-s = sys.argv[1]
-for p in [x.strip() for x in s.split(":") if x.strip()]:
-    print(p)
-PY
+  local s="$1"
+  local IFS=":"
+  read -r -a arr <<<"${s}"
+  for p in "${arr[@]}"; do
+    # trim whitespace
+    p="${p#"${p%%[![:space:]]*}"}"
+    p="${p%"${p##*[![:space:]]}"}"
+    [[ -n "${p}" ]] && echo "${p}"
+  done
 }
 
 # -----------------------------------------------------------------------------
-# 1) Fetch weather snapshot (Open-Meteo)
+# 1) Fetch weather snapshot
 # -----------------------------------------------------------------------------
-echo "Fetching weather snapshot (Open-Meteo)..."
-SNAP_JSON="$(python scripts/fetch_weather.py \
-  --format json \
-  --lat "${LAT}" \
-  --lon "${LON}" \
-  --tz "${TZ_NAME}" \
-  --place "${WEATHER_PLACE}")"
+if [[ -z "${LAT}" || -z "${LON}" ]]; then
+  echo "ERROR: WEATHER_LAT and WEATHER_LON are required." >&2
+  exit 1
+fi
 
-# Make sure the live weather JSON is available to Python payload builder.
+log "Fetching weather snapshot (Open-Meteo)..."
+SNAP_JSON="$(python - <<'PY'
+import json, os, sys, subprocess
+
+lat = os.getenv("WEATHER_LAT")
+lon = os.getenv("WEATHER_LON")
+tz = os.getenv("WEATHER_TZ", "Asia/Tokyo")
+place = os.getenv("WEATHER_PLACE","")
+
+cmd = [
+  sys.executable,
+  "scripts/fetch_weather_openmeteo.py",
+  "--lat", lat,
+  "--lon", lon,
+  "--tz", tz,
+  "--place", place,
+]
+p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+if p.returncode != 0:
+  print(p.stderr, file=sys.stderr)
+  raise SystemExit(p.returncode)
+
+print(p.stdout.strip())
+PY
+)"
 export SNAP_JSON
-
-if [[ "${DEBUG}" == "1" ]]; then
-  echo "DEBUG: SNAP_JSON bytes=$(printf "%s" "${SNAP_JSON}" | wc -c | tr -d ' ')"
-fi
+dbg "SNAP_JSON bytes: ${#SNAP_JSON}"
 
 # -----------------------------------------------------------------------------
-# 2) Ensure backend ready + index
+# 2) Ensure backend has chunks (reindex if empty)
 # -----------------------------------------------------------------------------
-wait_for_backend
+log "Checking backend RAG status..."
+status="$(curl_json "${API_BASE}/rag/status")"
+dbg "status: ${status}"
 
-status_json="$(curl -fsS "${API_BASE}/rag/status")"
-chunks_in_store="$(python - <<'PY' "${status_json}"
+chunks_in_store="$(python - <<'PY'
 import json,sys
-print(json.loads(sys.argv[1]).get("chunks_in_store", 0))
+try:
+  d=json.loads(sys.argv[1])
+  print(int(d.get("chunks_in_store") or 0))
+except Exception:
+  print(0)
 PY
-)"
-if [[ "${chunks_in_store}" == "0" ]]; then
-  echo "No chunks in store -> POST /rag/reindex"
-  curl -fsS -X POST "${API_BASE}/rag/reindex" >/dev/null
+"${status}")"
 
-  # Optional: re-check status for visibility
-  if [[ "${DEBUG}" == "1" ]]; then
-    status2="$(curl -fsS "${API_BASE}/rag/status" || true)"
-    echo "DEBUG: status(after reindex)=${status2}"
-  fi
+if [[ "${chunks_in_store}" -le 0 ]]; then
+  log "No chunks in store -> POST /rag/reindex"
+  _="$(post_json "${API_BASE}/rag/reindex" '{"force": true}')"
 fi
 
-# Warm up once (helps avoid cold-start timeouts)
-curl -fsS -X POST -H "Content-Type: application/json" \
-  -d '{"question":"ping","top_k":1,"extra_context":"{}","use_live_weather":false}' \
-  "${API_BASE}/rag/query" >/dev/null 2>&1 || true
-
-# -----------------------------------------------------------------------------
-# 3) Query backend for today's tweet
-# -----------------------------------------------------------------------------
-QUESTION=$'Write exactly ONE short tweet-style post about TODAY\x27s weather.\n'\
-$'Use ONLY information from the provided live weather JSON.\n'\
-$'Keep it within about '"${MAX_CHARS}"' characters.\n'\
-$'Output ONLY the tweet text (no quotes, no markdown).\n'
-
-# THIS is the direct fix for your KeyError: export the bash var so Python can read it.
-export QUESTION
-
-JSON_PAYLOAD="$(python - <<'PY'
-import json, os, sys
-
-question = os.getenv("QUESTION")
-if not question:
-    print("ERROR: QUESTION is missing in environment. Did you forget 'export QUESTION'?", file=sys.stderr)
-    raise SystemExit(1)
-
-payload = {
-  "question": question,
-  "top_k": int(os.getenv("TOP_K", "3")),
-  "extra_context": os.getenv("SNAP_JSON", ""),
-  "use_live_weather": False,
-}
-print(json.dumps(payload, ensure_ascii=False))
+# Wait briefly for backend to have chunks (best effort)
+log "Waiting for chunks_in_store > 0 ..."
+ok=0
+for i in {1..60}; do
+  status="$(curl_json "${API_BASE}/rag/status")" || true
+  chunks_in_store="$(python - <<'PY'
+import json,sys
+try:
+  d=json.loads(sys.argv[1])
+  print(int(d.get("chunks_in_store") or 0))
+except Exception:
+  print(0)
 PY
-)"
-
-if [[ "${DEBUG}" == "1" ]]; then
-  echo "DEBUG: JSON_PAYLOAD=${JSON_PAYLOAD}"
-fi
-
-# Query with retries (Ollama cold start / transient backend errors happen)
-tweet=""
-resp=""
-detail=""
-for ((qa_attempt=1; qa_attempt<=CURL_RETRIES+2; qa_attempt++)); do
-  set +e
-  resp="$(curl_json POST "${API_BASE}/rag/query" "${JSON_PAYLOAD}")"
-  rc=$?
-  set -e
-  if [[ $rc -ne 0 ]]; then
-    echo "WARN: /rag/query call failed (attempt ${qa_attempt}/${CURL_RETRIES+2}). Retrying..." >&2
-    sleep 2
-    continue
-  fi
-
-  tweet="$(python - <<'PY' "${resp}" 2>/dev/null || true
-import json,sys,re
-obj=json.loads(sys.argv[1])
-ans=(obj.get("answer") or "").strip()
-# Normalize whitespace/newlines
-ans=re.sub(r"\s+", " ", ans).strip()
-print(ans)
-PY
-)"
-  if [[ -n "${tweet}" ]]; then
+"${status}")"
+  if [[ "${chunks_in_store}" -gt 0 ]]; then
+    ok=1
     break
   fi
-
-  detail="$(python - <<'PY' "${resp}" 2>/dev/null || true
-import json,sys
-obj=json.loads(sys.argv[1])
-d=obj.get("detail")
-if isinstance(d, (list, dict)):
-    import json as _json
-    print(_json.dumps(d, ensure_ascii=False))
-elif d is not None:
-    print(str(d))
-PY
-)"
-  echo "WARN: backend did not return an answer (attempt ${qa_attempt}/${CURL_RETRIES+2}). detail=${detail}" >&2
-  sleep 2
+  sleep 1
 done
 
+if [[ "${ok}" -ne 1 ]]; then
+  echo "WARN: chunks_in_store still 0 after waiting; continuing anyway." >&2
+fi
+
+# -----------------------------------------------------------------------------
+# 3) Query backend for tweet text (LLM)
+# -----------------------------------------------------------------------------
+log "Warming up /rag/query ..."
+payload="$(python - <<'PY'
+import json, os
+snap = os.getenv("SNAP_JSON","{}")
+q = os.getenv("QUESTION","")
+top_k = int(os.getenv("RAG_TOP_K","3"))
+max_chars = int(os.getenv("TWEET_MAX_CHARS","240"))
+out = {
+  "query": q,
+  "top_k": top_k,
+  "max_chars": max_chars,
+  "context": {
+    "weather_snapshot": json.loads(snap) if snap.strip().startswith("{") else {"raw": snap},
+    "place": os.getenv("WEATHER_PLACE",""),
+    "timezone": os.getenv("WEATHER_TZ","Asia/Tokyo"),
+  },
+}
+print(json.dumps(out))
+PY
+)"
+
+resp="$(post_json "${API_BASE}/rag/query" "${payload}")"
+dbg "resp: ${resp}"
+
+tweet="$(python - <<'PY'
+import json,sys
+try:
+  d=json.loads(sys.argv[1])
+except Exception:
+  raise SystemExit(2)
+t=d.get("answer") or d.get("text") or d.get("tweet") or ""
+print(str(t).strip())
+PY
+"${resp}")"
+
 if [[ -z "${tweet}" ]]; then
-  echo "ERROR: tweet is empty after parsing (after retries)." >&2
+  echo "ERROR: tweet is empty after parsing." >&2
+  echo "---- raw response ----" >&2
+  echo "${resp}" >&2
+  exit 1
+fi
+
+# Enforce max chars (best effort)
+if [[ "${#tweet}" -gt "${MAX_CHARS}" ]]; then
+  tweet="${tweet:0:${MAX_CHARS}}"
+fi
+
+# If backend returns errors, surface details
+is_error="$(python - <<'PY'
+import json,sys
+d=json.loads(sys.argv[1])
+print("1" if d.get("error") else "0")
+PY
+"${resp}" 2>/dev/null || echo "0")"
+
+if [[ "${is_error}" == "1" ]]; then
+  detail="$(python - <<'PY'
+import json,sys
+d=json.loads(sys.argv[1])
+print(d.get("error") or d.get("detail") or "")
+PY
+"${resp}" 2>/dev/null || true)"
+  echo "ERROR: backend error returned." >&2
   if [[ -n "${detail}" ]]; then
     echo "Last backend detail: ${detail}" >&2
   fi
@@ -318,8 +307,11 @@ export tweet
 # -----------------------------------------------------------------------------
 today="$(date -u +%Y-%m-%d)"
 now_iso="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+# Timestamp for artifact filenames (use local tz so the filenames match the place)
+RUN_TS="$(TZ="${TZ_NAME}" date +%Y%m%d_%H%M%S)"
 export today
 export now_iso
+export RUN_TS
 
 ENTRY_JSON="$(python - <<'PY'
 import json, os, sys
@@ -356,10 +348,15 @@ write_feed_and_latest() {
 
   mkdir -p "$(dirname "${feed_path}")" "$(dirname "${latest_path}")"
 
-  # Write latest
-  printf "%s" "${ENTRY_JSON}" > "${latest_path}"
+  local ts="${RUN_TS:-$(date -u +%Y%m%d_%H%M%S)}"
 
-  # Update feed (object with items)
+  # Write latest (stable) + archive
+  printf "%s" "${ENTRY_JSON}" > "${latest_path}"
+  local latest_ts_path
+  latest_ts_path="${latest_path%.json}_${ts}.json"
+  printf "%s" "${ENTRY_JSON}" > "${latest_ts_path}"
+
+  # Update feed (object with items) (stable)
   python - <<'PY' "${feed_path}" "${ENTRY_JSON}"
 import json, sys
 from pathlib import Path
@@ -427,12 +424,23 @@ feed_path.write_text(json.dumps(feed_obj, ensure_ascii=False, indent=2) + "\n", 
 print(f"Wrote: {feed_path} ({len(items)} entries)")
 PY
 
-  # Also write weather snapshot next to latest (for debugging / transparency)
-  local snap_path
+  # Archive the resulting feed (same content, timestamped filename)
+  local feed_ts_path
+  feed_ts_path="${feed_path%.json}_${ts}.json"
+  cp -f "${feed_path}" "${feed_ts_path}"
+
+  # Also write weather snapshot next to latest (stable + archive)
+  local snap_path snap_ts_path
   snap_path="$(dirname "${latest_path}")/weather_snapshot.json"
+  snap_ts_path="$(dirname "${latest_path}")/weather_snapshot_${ts}.json"
   printf "%s\n" "${SNAP_JSON}" > "${snap_path}"
+  printf "%s\n" "${SNAP_JSON}" > "${snap_ts_path}"
   echo "Wrote: ${latest_path}"
+  echo "Wrote: ${latest_ts_path}"
+  echo "Wrote: ${feed_path}"
+  echo "Wrote: ${feed_ts_path}"
   echo "Wrote: ${snap_path}"
+  echo "Wrote: ${snap_ts_path}"
 }
 
 # Pair paths by index. If counts mismatch, fall back to pairing each feed with the first latest.
