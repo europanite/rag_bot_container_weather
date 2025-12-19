@@ -219,7 +219,7 @@ export default function DiaryScreen() {
     } finally {
       setLoading(false);
     }
-  }, [RESOLVED_FEED_URL]);\n
+  }, [RESOLVED_FEED_URL]);
   useEffect(() => {
     void load();
   }, [load]);
