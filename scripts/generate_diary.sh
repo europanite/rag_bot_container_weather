@@ -45,7 +45,6 @@ MAX_CHARS="${TWEET_MAX_CHARS:-240}"
 HASHTAGS="${RAG_HASHTAGS:-}"
 
 echo ${TZ_NAME}
-echo ${TZ}
 
 now_local="$(TZ=${TZ_NAME} date +%Y%m%d_%H%M%S_%Z)"
 # Timestamp for artifact filenames (use local tz so the filenames match the place)
