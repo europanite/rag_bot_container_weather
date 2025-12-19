@@ -162,6 +162,7 @@ def _call_ollama_chat(*, question: str, system_prompt: str, user_prompt: str) ->
             raise RuntimeError("Ollama chat response missing 'message.content'")
     except Exception as e:
         logger.exception("Ollama chat failed: %s", e)
+        raise RuntimeError(f"Ollama chat failed: {e}") from e
 
     return content
 

@@ -110,7 +110,8 @@ curl_json() {
     body="$(curl -sS --max-time "${CURL_MAX_TIME}" \
       -X "${method}" \
       -H "Content-Type: application/json" \
-      ${data:+-d "${data}"} \
+      "${auth_header[@]}" \
+      ${payload:+-d "${payload}"} \
       "${url}")"
     code=$?
     set -e
@@ -152,8 +153,8 @@ def parse_possibly_concatenated_json(s: str):
 try:
     objs = parse_possibly_concatenated_json(raw)
     last = objs[-1]
-    if isinstance(last, dict) and "detail" in last and "answer" not in last:
-        raise RuntimeError(f"backend error: {last['detail']}")
+    # If backend returns an error-only JSON (e.g., {"detail": ...}), we still return it;
+    # the caller can decide whether to retry or fail.
 except Exception as e:
     print(f"ERROR: backend response is not usable JSON: {e}", file=sys.stderr)
     print("---- raw response ----", file=sys.stderr)
@@ -252,18 +253,54 @@ if [[ "${DEBUG}" == "1" ]]; then
   echo "DEBUG: JSON_PAYLOAD=${JSON_PAYLOAD}"
 fi
 
-resp="$(curl_json POST "${API_BASE}/rag/query" "${JSON_PAYLOAD}")"
-tweet="$(python - <<'PY' "${resp}"
+# Query with retries (Ollama cold start / transient backend errors happen)
+tweet=""
+resp=""
+detail=""
+for ((qa_attempt=1; qa_attempt<=CURL_RETRIES+2; qa_attempt++)); do
+  set +e
+  resp="$(curl_json POST "${API_BASE}/rag/query" "${JSON_PAYLOAD}")"
+  rc=$?
+  set -e
+  if [[ $rc -ne 0 ]]; then
+    echo "WARN: /rag/query call failed (attempt ${qa_attempt}/${CURL_RETRIES+2}). Retrying..." >&2
+    sleep 2
+    continue
+  fi
+
+  tweet="$(python - <<'PY' "${resp}" 2>/dev/null || true
 import json,sys,re
 obj=json.loads(sys.argv[1])
 ans=(obj.get("answer") or "").strip()
-ans=re.sub(r"\s+"," ",ans).strip()
+# Normalize whitespace/newlines
+ans=re.sub(r"\s+", " ", ans).strip()
 print(ans)
 PY
 )"
+  if [[ -n "${tweet}" ]]; then
+    break
+  fi
+
+  detail="$(python - <<'PY' "${resp}" 2>/dev/null || true
+import json,sys
+obj=json.loads(sys.argv[1])
+d=obj.get("detail")
+if isinstance(d, (list, dict)):
+    import json as _json
+    print(_json.dumps(d, ensure_ascii=False))
+elif d is not None:
+    print(str(d))
+PY
+)"
+  echo "WARN: backend did not return an answer (attempt ${qa_attempt}/${CURL_RETRIES+2}). detail=${detail}" >&2
+  sleep 2
+done
 
 if [[ -z "${tweet}" ]]; then
-  echo "ERROR: tweet is empty after parsing." >&2
+  echo "ERROR: tweet is empty after parsing (after retries)." >&2
+  if [[ -n "${detail}" ]]; then
+    echo "Last backend detail: ${detail}" >&2
+  fi
   echo "---- raw response ----" >&2
   echo "${resp}" >&2
   exit 1
