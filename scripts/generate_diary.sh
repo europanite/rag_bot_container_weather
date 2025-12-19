@@ -44,8 +44,12 @@ TOP_K="${RAG_TOP_K:-3}"
 MAX_CHARS="${TWEET_MAX_CHARS:-240}"
 HASHTAGS="${RAG_HASHTAGS:-}"
 
-TZ="${TZ_NAME}"
-now_local="$(date +%Y%m%d%H%M%S%Z)"
+TZ=${TZ_NAME}
+
+echo ${TZ_NAME}
+echo ${TZ}
+
+now_local="$(date +%Y%m%d_%H%M%S_%Z)"
 # Timestamp for artifact filenames (use local tz so the filenames match the place)
 export now_local
 
