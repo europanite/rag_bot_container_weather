@@ -359,7 +359,7 @@ write_feed_and_latest() {
   # Write latest
   printf "%s" "${ENTRY_JSON}" > "${latest_path}"
 
-  # Update feed (list)
+  # Update feed (object with items)
   python - <<'PY' "${feed_path}" "${ENTRY_JSON}"
 import json, sys
 from pathlib import Path
@@ -368,23 +368,63 @@ feed_path = Path(sys.argv[1])
 entry_txt = sys.argv[2]
 entry = json.loads(entry_txt)
 
+def to_item(e):
+    if not isinstance(e, dict):
+        return None
+    date = e.get("date") or ""
+    text = e.get("text") or ""
+    if not date or not text:
+        return None
+    _id = e.get("id") or e.get("generated_at") or date
+    place = e.get("place")
+    if place is None:
+        place = ""
+    return {
+        "id": str(_id),
+        "date": str(date),
+        "text": str(text),
+        "place": str(place),
+        # keep extra fields for future UI/debugging
+        "generated_at": e.get("generated_at"),
+        "weather": e.get("weather"),
+    }
+
+entry_item = to_item(entry)
+if not entry_item:
+    raise SystemExit("ERROR: entry JSON missing required fields (date/text)")
+
+feed_obj = {"items": []}
 if feed_path.exists() and feed_path.stat().st_size > 0:
     try:
-        feed = json.loads(feed_path.read_text(encoding="utf-8"))
-        if not isinstance(feed, list):
-            feed = []
+        loaded = json.loads(feed_path.read_text(encoding="utf-8"))
+        if isinstance(loaded, dict) and isinstance(loaded.get("items"), list):
+            feed_obj = loaded
+        elif isinstance(loaded, list):
+            # legacy format: a list of entries
+            items = [to_item(x) for x in loaded]
+            feed_obj = {
+                "items": [i for i in items if i],
+                "updated_at": (loaded[-1].get("generated_at") if loaded else None),
+                "place": (loaded[-1].get("place") if loaded else ""),
+            }
+        else:
+            feed_obj = {"items": []}
     except Exception:
-        feed = []
-else:
-    feed = []
+        feed_obj = {"items": []}
 
-# replace today's entry
-feed = [e for e in feed if e.get("date") != entry.get("date")]
-feed.append(entry)
-feed.sort(key=lambda x: x.get("date",""))
+items = feed_obj.get("items") if isinstance(feed_obj.get("items"), list) else []
+# replace today
+items = [i for i in items if isinstance(i, dict) and i.get("date") != entry_item.get("date")]
+items.append(entry_item)
+items.sort(key=lambda x: x.get("date", ""))
+feed_obj["items"] = items
+feed_obj["updated_at"] = entry.get("generated_at")
+# set feed-level place once (optional)
+if not feed_obj.get("place"):
+    feed_obj["place"] = entry.get("place", "")
 
-feed_path.write_text(json.dumps(feed, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-print(f"Wrote: {feed_path} ({len(feed)} entries)")
+feed_path.write_text(json.dumps(feed_obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+print(f"Wrote: {feed_path} ({len(items)} entries)")
 PY
 
   # Also write weather snapshot next to latest (for debugging / transparency)
