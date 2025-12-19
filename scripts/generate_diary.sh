@@ -44,8 +44,12 @@ TOP_K="${RAG_TOP_K:-3}"
 MAX_CHARS="${TWEET_MAX_CHARS:-240}"
 HASHTAGS="${RAG_HASHTAGS:-}"
 
+now_local="$(date -u +%Y%m%dT%H%M%S)"
+# Timestamp for artifact filenames (use local tz so the filenames match the place)
+export now_local
+
 # Output paths
-FEED_PATH="${FEED_PATH:-frontend/app/public/feed.json}"
+FEED_PATH="${FEED_PATH:-frontend/app/public/feed}+${now_local}+.json}"
 LATEST_PATH="${LATEST_PATH:-frontend/app/public/latest.json}"
 
 # Support both single-path vars (FEED_PATH/LATEST_PATH) and multi-path vars (FEED_PATHS/LATEST_PATHS).
@@ -429,7 +433,7 @@ PY
 
   # Also write weather snapshot next to latest (for debugging / transparency)
   local snap_path
-  snap_path="$(dirname "${latest_path}")/weather_snapshot.json"
+  snap_path="$(dirname "${latest_path}")/weather_snapshot+${now_local}+.json"
   printf "%s\n" "${SNAP_JSON}" > "${snap_path}"
   echo "Wrote: ${latest_path}"
   echo "Wrote: ${snap_path}"
