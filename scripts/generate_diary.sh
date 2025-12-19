@@ -44,12 +44,13 @@ TOP_K="${RAG_TOP_K:-3}"
 MAX_CHARS="${TWEET_MAX_CHARS:-240}"
 HASHTAGS="${RAG_HASHTAGS:-}"
 
-now_local="$(date -u +%Y%m%dT%H%M%S)"
+TZ=JST-9
+now_local="$(date -u +%Y%m%d_%H%M%S%Z)"
 # Timestamp for artifact filenames (use local tz so the filenames match the place)
 export now_local
 
 # Output paths
-FEED_PATH="${FEED_PATH}_${now_local}.json}"
+FEED_PATH="${FEED_PATH}/weather_feed_${now_local}.json}"
 LATEST_PATH="${LATEST_PATH:-frontend/app/public/latest.json}"
 
 # Support both single-path vars (FEED_PATH/LATEST_PATH) and multi-path vars (FEED_PATHS/LATEST_PATHS).
