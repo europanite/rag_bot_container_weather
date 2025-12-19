@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Generate a daily weather tweet using the backend RAG API, and write outputs to
+# Generate a tweet using the backend RAG API, and write outputs to
 # one or more JSON files (useful for GitHub Pages).
 #
 # Required env (or defaults below):

@@ -101,5 +101,5 @@ jobs:
           git add _posts public || true
           git add frontend/app/public/*.json || true
 
-          git commit -m "chore: daily weather tweet"
+          git commit -m "chore: tweet"
           git push
