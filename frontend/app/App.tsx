@@ -7,7 +7,6 @@ import { StatusBar } from "expo-status-bar";
 
 import { AuthProvider } from "./context/Auth";
 import SettingsBar from "./components/SettingsBar";
-import HomeScreen from "./screens/HomeScreen";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import DiaryScreen from "./screens/DiaryScreen";
@@ -24,7 +23,6 @@ export default function App() {
           <View style={{ flex: 1 }}>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
               <Stack.Screen name="Diary" component={DiaryScreen} />
-              <Stack.Screen name="Home" component={HomeScreen} />
               <Stack.Screen name="SignIn" component={SignInScreen} />
               <Stack.Screen name="SignUp" component={SignUpScreen} />
             </Stack.Navigator>
