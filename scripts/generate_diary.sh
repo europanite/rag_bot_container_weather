@@ -50,7 +50,7 @@ now_local="$(date -u +%Y%m%d_%H%M%S_%Z)"
 export now_local
 
 # Output paths
-FEED_PATH="${FEED_PATH}/weather_feed_${now_local}.json}"
+FEED_PATH="${FEED_PATH}/weather_feed_${now_local}.json"
 LATEST_PATH="${LATEST_PATH:-frontend/app/public/latest.json}"
 
 # Support both single-path vars (FEED_PATH/LATEST_PATH) and multi-path vars (FEED_PATHS/LATEST_PATHS).
