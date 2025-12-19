@@ -101,7 +101,7 @@ fi
 
 echo "Warming up /rag/query ..."
 WARM_URL="${API_BASE}/rag/query"
-curl -fsS -H "Content-Type: application/json" -d '{"query":"hello","top_k":1}' "${WARM_URL}" >/dev/null || true
+curl -fsS -H "Content-Type: application/json" -d '{"question":"hello","top_k":1}' "${WARM_URL}" >/dev/null || true
 
 # Read weather snapshot (best-effort)
 SNAP_JSON="$(python scripts/fetch_weather.py --format json --lat "${LAT}" --lon "${LON}" --tz "${TZ_NAME}" 2>/dev/null || true)"
