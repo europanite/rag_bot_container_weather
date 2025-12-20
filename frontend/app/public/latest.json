@@ -1,25 +1,25 @@
 {
   "date": "2025-12-20",
-  "generated_at": "2025-12-20T23:25:58Z",
-  "text": "Good morning Yokosuka! It's a lovely 17.4°C with 79% humidity and a gentle 17.9km/h breeze today! Perfect weather to explore the city or attend one of the upcoming events! Don't miss the Yoksuka Countdown on Dec 31st to Jan 1st at Vellini Park! #Yokosuka #Miura #Yokohama #Zushi",
+  "generated_at": "2025-12-20T23:47:26Z",
+  "text": "Good morning Yokosuka! Today's weather is looking lovely with a high of 18°C and a gentle 18.8km/h breeze. Perfect day to explore the city! Don't miss the #YokosukaCountdown event at Vellini Park from Dec 31st to Jan 1st, featuring stage events, food trucks, and fireworks!",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-20T23:19:25Z",
+    "generated_at": "2025-12-20T23:40:28Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-21T08:15",
-      "temp_c": 17.4,
-      "apparent_temp_c": 16.0,
+      "time": "2025-12-21T08:30",
+      "temp_c": 17.5,
+      "apparent_temp_c": 16.1,
       "humidity_pct": 79,
       "precip_mm": 0.0,
       "weather_code": 1,
-      "cloud_cover_pct": 45,
-      "wind_kmh": 17.9,
-      "wind_dir_deg": 202
+      "cloud_cover_pct": 46,
+      "wind_kmh": 18.8,
+      "wind_dir_deg": 200
     },
     "today": {
       "date": "2025-12-21",
