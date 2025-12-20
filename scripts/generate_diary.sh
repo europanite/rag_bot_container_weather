@@ -12,7 +12,6 @@ set -euo pipefail
 #   TZ_NAME (default: Asia/Tokyo)
 #   WEATHER_PLACE (default: empty)
 #   RAG_TOP_K (default: 3)
-#   TWEET_MAX_CHARS
 #   RAG_HASHTAGS (default: empty)
 #   RAG_TOKEN (optional bearer token)
 #   DEBUG (default: 0)  # set 1 to print extra debug info
@@ -38,7 +37,7 @@ WEATHER_PLACE="${WEATHER_PLACE:-}"
 
 # Tweet config
 TOP_K="${RAG_TOP_K:-3}"
-MAX_CHARS="${TWEET_MAX_CHARS:-240}"
+MAX_CHARS="${MAX_CHARS:-512}"
 HASHTAGS="${RAG_HASHTAGS:-}"
 
 echo ${TZ_NAME}
