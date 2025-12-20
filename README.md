@@ -69,18 +69,7 @@ docker compose \
   --rm frontend_test
 ```
 
-## Visit the services:
-
-- Backend API: http://localhost:8000/docs
-!["backend"](./assets/images/backend.png)
-
-- Frontend UI (WEB): http://localhost:8081
-- Frontend UI (mobile): exp://${YOUR_HOST}:8081: access it with the QR provided by Expo.
-!["expo"](./assets/images/expo.png)
-
----
-
 ---
 
 # License
-- No License for Now.
+- No License Granted for Now.
