@@ -51,27 +51,13 @@ export default function SettingsBar() {
                 <Text
                   style={{
                     color: "#e5e7eb",
-                    fontSize: 20,
+                    fontSize: 12,
                     textDecorationLine: "underline",
                   }}
                   onPress={() => Linking.openURL(REPO_URL)}
                 >
                   RAG Chat Bot
                 </Text>
-              </View>
-              <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-                <Text style={{ fontWeight: "700", color: "#ffffffff" }}>
-                  {user ? `${user.email}` : "Not signed in"}
-                </Text>
-                {!user ? (
-                  <>
-                    <Btn title="Sign Up" onPress={() => nav.navigate("SignUp")} />
-                    <Btn title="Sign In" onPress={() => nav.navigate("SignIn")} />
-                  </>
-                ) : (
-                  <Btn title="Sign out" onPress={signOut} />
-                )}
-                <Btn title="Diary" onPress={() => nav.navigate("Diary")} />
               </View>
             </View>
           </View>

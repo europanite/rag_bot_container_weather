@@ -9,7 +9,7 @@ import { AuthProvider } from "./context/Auth";
 import SettingsBar from "./components/SettingsBar";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
-import DiaryScreen from "./screens/DiaryScreen";
+import HomeScreen from "./screens/HomeScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,9 +22,7 @@ export default function App() {
           <SettingsBar />
           <View style={{ flex: 1 }}>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="Diary" component={DiaryScreen} />
-              <Stack.Screen name="SignIn" component={SignInScreen} />
-              <Stack.Screen name="SignUp" component={SignUpScreen} />
+              <Stack.Screen name="Home" component={HomeScreen} />
             </Stack.Navigator>
           </View>
         </NavigationContainer>
