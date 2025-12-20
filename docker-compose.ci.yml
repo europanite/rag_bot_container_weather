@@ -1,7 +1,4 @@
 services:
-  ollama:
-    volumes:
-      - ./.ci_cache/ollama:/root/.ollama
   backend:
     volumes:
       - ./.ci_cache/chroma:/chroma
