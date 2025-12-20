@@ -120,8 +120,8 @@ def _location_from_request_overrides(req: Request) -> Location | None:
 
 
 def _location_from_env() -> Location | None:
-    lat = _parse_float(os.getenv("WEATHER_LAT"))
-    lon = _parse_float(os.getenv("WEATHER_LON"))
+    lat = _parse_float(os.getenv("LAT"))
+    lon = _parse_float(os.getenv("LON"))
     if lat is None or lon is None:
         return None
     return Location(
@@ -188,7 +188,7 @@ def get_location(req: Request, session: requests.Session, timeout_s: float = 5.0
     if not _is_public_ip(ip):
         raise WeatherError(
             f"Client IP '{ip}' is not a public IP (likely local/private). "
-            "Provide lat/lon via env (WEATHER_LAT/WEATHER_LON) or request params (?lat=&lon=)."
+            "Provide lat/lon via env (LAT/LON) or request params (?lat=&lon=)."
         )
 
     loc = _lookup_location_by_ip(ip, session=session, timeout_s=timeout_s)

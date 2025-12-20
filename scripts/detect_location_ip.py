@@ -121,8 +121,8 @@ def detect_location(*, timeout: int = 10) -> DetectedLocation:
 
 def _to_env(loc: DetectedLocation) -> str:
     lines = [
-        f"WEATHER_LAT={loc.lat}",
-        f"WEATHER_LON={loc.lon}",
+        f"LAT={loc.lat}",
+        f"LON={loc.lon}",
     ]
     if loc.timezone:
         lines.append(f"TZ_NAME={loc.timezone}")

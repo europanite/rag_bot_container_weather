@@ -5,14 +5,14 @@ set -euo pipefail
 # one or more JSON files (useful for GitHub Pages).
 #
 # Required env (or defaults below):
-#   WEATHER_LAT, WEATHER_LON
+#   LAT, LON
 #
 # Optional env:
 #   BACKEND_URL (default: http://localhost:8000)
 #   TZ_NAME (default: Asia/Tokyo)
 #   WEATHER_PLACE (default: empty)
 #   RAG_TOP_K (default: 3)
-#   TWEET_MAX_CHARS (default: 240)
+#   TWEET_MAX_CHARS
 #   RAG_HASHTAGS (default: empty)
 #   RAG_TOKEN (optional bearer token)
 #   DEBUG (default: 0)  # set 1 to print extra debug info
@@ -21,7 +21,7 @@ set -euo pipefail
 #   FEED_PATH / LATEST_PATH (single) OR FEED_PATHS / LATEST_PATHS (colon-separated)
 
 DEBUG="${DEBUG:-0}"
-CURL_MAX_TIME="${CURL_MAX_TIME:-240}" 
+CURL_MAX_TIME="${CURL_MAX_TIME:-512}" 
 CURL_RETRIES="${CURL_RETRIES:-2}"  
 
 API_BASE="${BACKEND_URL:-http://localhost:8000}"
@@ -31,8 +31,8 @@ QUESTION="${QUESTION:-Write a short weather update (tweet-style) based on today\
 export QUESTION
 
 # Location (required)
-LAT="${WEATHER_LAT:-}"
-LON="${WEATHER_LON:-}"
+LAT="${LAT:-}"
+LON="${LON:-}"
 TZ_NAME="${TZ_NAME:-Asia/Tokyo}"
 WEATHER_PLACE="${WEATHER_PLACE:-}"
 
@@ -60,8 +60,8 @@ if [[ -z "${LATEST_PATHS//[[:space:]]/}" ]]; then LATEST_PATHS="${LATEST_PATH}";
 RAG_TOKEN="${RAG_TOKEN:-}"
 
 if [[ -z "${LAT}" || -z "${LON}" ]]; then
-  echo "ERROR: WEATHER_LAT and WEATHER_LON must be set." >&2
-  echo "Example: export WEATHER_LAT=35.2810 WEATHER_LON=139.6720" >&2
+  echo "ERROR: LAT and LON must be set." >&2
+  echo "Example: export LAT=35.2810 LON=139.6720" >&2
   exit 1
 fi
 

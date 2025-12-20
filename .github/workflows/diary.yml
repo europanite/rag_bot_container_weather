@@ -24,15 +24,6 @@ jobs:
         with:
           python-version: "3.12"
 
-      # - name: Restore caches
-      #   id: cache_chroma
-      #   uses: actions/cache/restore@v4
-      #   with:
-      #     path: .ci_cache/chroma
-      #     key: ${{ runner.os }}-chroma-v1
-      #     restore-keys: |
-      #       ${{ runner.os }}-chroma-d
-
       - name: Start stack (db + ollama + backend)
         env:
           RAG_AUTO_INDEX: "false"
@@ -72,10 +63,11 @@ jobs:
 
       - name: Generate weather tweet post
         env:
-          WEATHER_LAT: "35.2810"
-          WEATHER_LON: "139.6722"
+          LAT: "35.2810"
+          LON: "139.6722"
           TZ_NAME: "Asia/Tokyo"
           RAG_TOP_K: 6
+          CURL_MAX_TIME: 1024
           WEATHER_PLACE: "Yokosuka"
           FEED_PATH: frontend/app/public
           LATEST_PATH: frontend/app/public/latest.json
@@ -98,15 +90,6 @@ jobs:
           docker system prune -af --volumes || true
           df -h || true
           # du -sh .ci_cache/chroma || true
-
-      # - name: Save chroma cache (best-effort)
-      #   if: always() && steps.cache_chroma.outputs.cache-hit != 'true'
-      #   continue-on-error: true
-      #   uses: actions/cache/save@v4
-      #   with:
-      #     path: .ci_cache/chroma
-      #     key: ${{ runner.os }}-chroma-v1
-
 
       - name: Commit & push if changed
         id: commit
