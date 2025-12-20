@@ -1,24 +1,24 @@
 {
   "date": "2025-12-20",
-  "generated_at": "2025-12-20T21:23:58Z",
-  "text": "Good morning Yokosuka! Sunny with a high of 18°C today! Join us for the countdown event at Vellini Park from 18:00 on Dec 31st to 1st Jan, featuring live events, food stalls, and a firework display! #Yokosuka #MiuraPeninsula #Kanagawa",
+  "generated_at": "2025-12-20T21:45:58Z",
+  "text": "Good morning Yokosuka! It's a lovely 17.1°C with 87% humidity and partly cloudy skies today! Don't miss the Yokosuka Countdown event on Dec 31st & Jan 1st at Vellini Park, featuring stage events, food stalls, and a fireworks display! #Yokosuka #Miura",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-20T21:17:47Z",
+    "generated_at": "2025-12-20T21:39:27Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-21T06:15",
-      "temp_c": 17.0,
+      "time": "2025-12-21T06:30",
+      "temp_c": 17.1,
       "apparent_temp_c": 16.4,
-      "humidity_pct": 88,
+      "humidity_pct": 87,
       "precip_mm": 0.0,
       "weather_code": 2,
-      "cloud_cover_pct": 57,
-      "wind_kmh": 15.5,
+      "cloud_cover_pct": 58,
+      "wind_kmh": 16.0,
       "wind_dir_deg": 216
     },
     "today": {
