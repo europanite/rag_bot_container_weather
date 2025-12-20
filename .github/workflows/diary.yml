@@ -97,8 +97,10 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Stage outputs deterministically
-          git add _posts public || true
+          git add public || true
           git add frontend/app/public/*.json || true
+          git add frontend/app/public/feed/*.json || true
+          git add frontend/app/public/snapshot/*.json || true
 
           git commit -m "chore: tweet"
           git push
