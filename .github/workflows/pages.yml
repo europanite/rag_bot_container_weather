@@ -1,28 +1,48 @@
-
 name: GitHub Pages
+
 on:
-  schedule:
-    - cron: '0/30 * * * *'
-  push:
-    branches: [ "main" ]
-    paths:
-      - "frontend/**"
-      - ".github/workflows/pages.yml"
+  workflow_call:
+    inputs:
+      ref:
+        description: "Branch/ref to build & deploy"
+        required: false
+        type: string
+        default: "main"
   workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch/ref to build & deploy"
+        required: false
+        default: "main"
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: "pages"
   cancel-in-progress: true
+
 jobs:
   build:
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout (ref)
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+
+      - name: Ensure latest remote ref
+        run: |
+          set -euo pipefail
+          BRANCH="${{ inputs.ref }}"
+          git fetch origin "$BRANCH" --prune || true
+          if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
+            git reset --hard "origin/$BRANCH"
+          fi
+
       - name: Use Node.js 20
         uses: actions/setup-node@v4
         with:
@@ -30,9 +50,11 @@ jobs:
           cache: npm
           cache-dependency-path: |
             frontend/app/package-lock.json
+
       - name: Install deps
         working-directory: frontend/app
         run: npm ci
+
       - name: Build (expo export -p web)
         working-directory: frontend/app
         env:
@@ -45,7 +67,7 @@ jobs:
         run: |
           mkdir -p web-build
           cp -v public/*.json web-build/ 2>/dev/null || true
-
+          cp -v public/.nojekyll web-build/ 2>/dev/null || true
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -54,8 +76,8 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/app/web-build
+
   deploy:
-    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     environment:
