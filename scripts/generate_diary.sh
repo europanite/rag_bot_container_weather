@@ -10,7 +10,7 @@ set -euo pipefail
 # Optional env:
 #   BACKEND_URL (default: http://localhost:8000)
 #   TZ_NAME (default: Asia/Tokyo)
-#   WEATHER_PLACE (default: empty)
+#   PLACE (default: empty)
 #   RAG_TOP_K (default: 3)
 #   HASHTAGS (default: empty)
 #   RAG_TOKEN (optional bearer token)
@@ -33,7 +33,7 @@ export QUESTION
 LAT="${LAT:-}"
 LON="${LON:-}"
 TZ_NAME="${TZ_NAME:-Asia/Tokyo}"
-WEATHER_PLACE="${WEATHER_PLACE:-}"
+PLACE="${PLACE:-}"
 
 # Tweet config
 TOP_K="${RAG_TOP_K:-3}"
@@ -65,7 +65,7 @@ if [[ -z "${LAT}" || -z "${LON}" ]]; then
 fi
 
 echo "API_BASE: ${API_BASE}"
-echo "WEATHER: lat=${LAT} lon=${LON} tz=${TZ_NAME} place='${WEATHER_PLACE}'"
+echo "WEATHER: lat=${LAT} lon=${LON} tz=${TZ_NAME} place='${PLACE}'"
 echo "TOP_K=${TOP_K} MAX_CHARS=${MAX_CHARS}"
 echo "FEED_PATHS=${FEED_PATHS}"
 echo "LATEST_PATHS=${LATEST_PATHS}"
@@ -74,7 +74,7 @@ echo "LATEST_PATHS=${LATEST_PATHS}"
 # (Without export, Python sees nothing -> KeyError / empty context)
 export TOP_K
 export MAX_CHARS
-export WEATHER_PLACE
+export PLACE
 
 # -----------------------------------------------------------------------------
 # Helpers
@@ -186,7 +186,7 @@ SNAP_JSON="$(python scripts/fetch_weather.py \
   --lat "${LAT}" \
   --lon "${LON}" \
   --tz "${TZ_NAME}" \
-  --place "${WEATHER_PLACE}")"
+  --place "${PLACE}")"
 
 # Make sure the live weather JSON is available to Python payload builder.
 export SNAP_JSON
@@ -226,9 +226,9 @@ curl -fsS -X POST -H "Content-Type: application/json" \
 # 3) Query backend for today's tweet
 # -----------------------------------------------------------------------------
 
-QUESTION=$'Write exactly short tweet-style post about TODAY\x27s weather and events.\n'\
+QUESTION=$'Start with greeting on time. Write short tweet-style post about TODAY\x27s weather and events.\n'\
 $'Use the live weather JSON for the weather facts.\n'\
-$'If RAG context contains an upcoming local event, mention events in one short clause.\n'\
+$'If RAG context contains events, mention upcoming event suitable for the weather.\n'\
 $'Keep it within about '"${MAX_CHARS}"' characters.\n'\
 $'Output ONLY the tweet text (no quotes, no markdown).\n'
 
@@ -347,7 +347,7 @@ entry = {
   "date": t,
   "generated_at": n,
   "text": tw,
-  "place": os.getenv("WEATHER_PLACE",""),
+  "place": os.getenv("PLACE",""),
   "weather": snap,
 }
 print(json.dumps(entry, ensure_ascii=False, indent=2) + "\n")

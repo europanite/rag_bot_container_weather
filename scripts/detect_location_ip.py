@@ -129,7 +129,7 @@ def _to_env(loc: DetectedLocation) -> str:
     # Optional human hint
     place_bits = [b for b in [loc.city, loc.region, loc.country] if b]
     if place_bits:
-        lines.append(f"WEATHER_PLACE={', '.join(place_bits)}")
+        lines.append(f"PLACE={', '.join(place_bits)}")
     lines.append(f"WEATHER_GEO_SOURCE={loc.source}")
     lines.append(f"WEATHER_GEO_FETCHED_AT={loc.fetched_at}")
     return "\n".join(lines)
