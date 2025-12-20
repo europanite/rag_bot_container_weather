@@ -25,6 +25,7 @@ jobs:
           python-version: "3.12"
 
       - name: Restore caches
+        id: cache_chroma
         uses: actions/cache/restore@v4
         with:
           path: .ci_cache/chroma
@@ -107,6 +108,7 @@ jobs:
 
 
       - name: Commit & push if changed
+        id: commit
         run: |
           if git diff --quiet; then
             echo "No changes"
