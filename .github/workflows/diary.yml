@@ -77,7 +77,7 @@ jobs:
           TZ_NAME: "Asia/Tokyo"
           RAG_TOP_K: 6
           CURL_MAX_TIME: 32
-          WEATHER_PLACE: "Yokosuka"
+          PLACE: "Yokosuka"
           FEED_PATH: frontend/app/public
           LATEST_PATH: frontend/app/public/latest.json
           MAX_CHARS: 512

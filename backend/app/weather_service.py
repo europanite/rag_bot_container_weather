@@ -128,7 +128,7 @@ def _location_from_env() -> Location | None:
         latitude=lat,
         longitude=lon,
         timezone=os.getenv("TZ_NAME"),
-        place=os.getenv("WEATHER_PLACE"),
+        place=os.getenv("PLACE"),
         source="env",
     )
 

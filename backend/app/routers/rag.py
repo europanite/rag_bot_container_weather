@@ -240,7 +240,7 @@ def _build_chat_prompts(
 
     bot_name = _get_bot_name()
     hashtags = _get_bot_hashtags()
-    place = place_hint or os.getenv("WEATHER_PLACE") or "your area"
+    place = place_hint or os.getenv("PLACE") or "your area"
 
     system = (
         f"You are {bot_name}, a friendly English local story bot for {place} (locals & tourists). "
@@ -385,7 +385,7 @@ def query_rag(payload: QueryRequest, http_request: Request) -> QueryResponse:
                 detail=f"Live weather fetch failed: {exc}",
             ) from exc
 
-    place_hint = http_request.query_params.get("place") or os.getenv("WEATHER_PLACE")
+    place_hint = http_request.query_params.get("place") or os.getenv("PLACE")
 
     system_prompt, user_prompt = _build_chat_prompts(
         question=payload.question,
