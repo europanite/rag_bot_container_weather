@@ -1,25 +1,25 @@
 {
   "date": "2025-12-21",
-  "generated_at": "2025-12-21T20:21:08Z",
-  "text": "Good morning Yokosuka! ☀️ Today's weather: partly cloudy with a high of 12.6°C and a low of 7.3°C. Perfect day to enjoy the outdoors! Don't miss the Yoksuka Countdown event at Velney Park on Dec 31st, with stage events, food trucks, and a fireworks display! #Yokosuka #Miura #Yokohama",
+  "generated_at": "2025-12-21T21:19:27Z",
+  "text": "Good morning Yokosuka! It's a chilly morning with 11.4°C and 58% humidity. Today's weather is mostly cloudy with a high of 12.6°C and a low of 7.3°C. Don't miss the Yokosuka Countdown event on December 31st! #Yokosuka #Miura",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-21T20:14:07Z",
+    "generated_at": "2025-12-21T21:11:59Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-22T05:00",
-      "temp_c": 11.5,
-      "apparent_temp_c": 4.4,
-      "humidity_pct": 61,
+      "time": "2025-12-22T06:00",
+      "temp_c": 11.4,
+      "apparent_temp_c": 4.1,
+      "humidity_pct": 58,
       "precip_mm": 0.0,
       "weather_code": 3,
-      "cloud_cover_pct": 91,
-      "wind_kmh": 39.3,
-      "wind_dir_deg": 11
+      "cloud_cover_pct": 82,
+      "wind_kmh": 39.0,
+      "wind_dir_deg": 9
     },
     "today": {
       "date": "2025-12-22",
