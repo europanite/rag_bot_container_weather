@@ -1,4 +1,4 @@
-name: Ingest (Reindex Chroma)
+name: Ingest
 
 # Run manually after updating data/docs/**
 
@@ -59,7 +59,6 @@ jobs:
         env:
           CURL_MAX_TIME: 600
         run: |
-          # /rag/reindex が “docs -> chroma” を作り直す想定
           curl -fsS -X POST --max-time "${CURL_MAX_TIME}" \
             http://localhost:8000/rag/reindex | cat
 
