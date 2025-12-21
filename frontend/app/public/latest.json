@@ -1,25 +1,25 @@
 {
   "date": "2025-12-21",
-  "generated_at": "2025-12-21T11:24:30Z",
-  "text": "Good evening Yokosuka! LIVE WEATHER: Partly cloudy with 15.2°C, 87% humidity, and 0.7mm of precipitation. Perfect day to enjoy the outdoors! Join us for the Yokosuka Countdown event on Dec 31st, featuring live events, food, and fireworks. #Yokosuka #Miura #Yokohama",
+  "generated_at": "2025-12-21T11:46:25Z",
+  "text": "Good evening Yokosuka! Tonight's weather is mild with a temperature of 14.6°C, humidity at 85% and a gentle breeze. Make the most of the evening and head to Verney Park for the countdown event starting at 18:00 tomorrow! #Yokosuka #Miura #Yokohama",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-21T11:17:32Z",
+    "generated_at": "2025-12-21T11:39:20Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-21T20:15",
-      "temp_c": 15.2,
-      "apparent_temp_c": 12.7,
-      "humidity_pct": 87,
+      "time": "2025-12-21T20:30",
+      "temp_c": 14.6,
+      "apparent_temp_c": 11.5,
+      "humidity_pct": 85,
       "precip_mm": 0.7,
       "weather_code": 63,
-      "cloud_cover_pct": 70,
-      "wind_kmh": 24.0,
-      "wind_dir_deg": 334
+      "cloud_cover_pct": 68,
+      "wind_kmh": 25.9,
+      "wind_dir_deg": 339
     },
     "today": {
       "date": "2025-12-21",
