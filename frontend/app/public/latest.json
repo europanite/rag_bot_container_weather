@@ -1,25 +1,25 @@
 {
   "date": "2025-12-21",
-  "generated_at": "2025-12-21T09:51:01Z",
-  "text": "Good evening Yokosuka! Today's weather: 17.1°C, 86% humidity, and 0mm of precipitation. Perfect day to head out and enjoy the events! Don't miss the Yokosuka Countdown on December 31st and January 1st, featuring stage events, kitchen cars, and fireworks. #Yokosuka #YokosukaCountdown",
+  "generated_at": "2025-12-21T10:27:55Z",
+  "text": "Good evening Yokosuka! Today's weather is mild with 16.8°C and 87% humidity. Perfect for strolling around the city or enjoying the festive atmosphere at the Yokosuka Countdown event happening on December 31st and January 1st! #Yokosuka #Miura #Yokohama #Zushi #Hayama #MiuraPeninsula #Kanagawa",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-21T09:42:39Z",
+    "generated_at": "2025-12-21T10:20:57Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-21T18:30",
-      "temp_c": 17.1,
-      "apparent_temp_c": 16.4,
-      "humidity_pct": 86,
-      "precip_mm": 0.0,
-      "weather_code": 3,
-      "cloud_cover_pct": 83,
-      "wind_kmh": 15.3,
-      "wind_dir_deg": 223
+      "time": "2025-12-21T19:15",
+      "temp_c": 16.8,
+      "apparent_temp_c": 16.6,
+      "humidity_pct": 87,
+      "precip_mm": 0.2,
+      "weather_code": 53,
+      "cloud_cover_pct": 94,
+      "wind_kmh": 12.2,
+      "wind_dir_deg": 251
     },
     "today": {
       "date": "2025-12-21",
