@@ -67,8 +67,8 @@ jobs:
 
       - name: Fix permissions for feed dirs
         run: |
-          sudo chown -R "$USER:$USER" frontend/app/public public || true
-          chmod -R u+rwX frontend/app/public public || true
+          sudo chown -R "$USER:$USER" frontend/app/public || true
+          chmod -R u+rwX frontend/app/public || true
 
       - name: Generate weather tweet post
         env:
