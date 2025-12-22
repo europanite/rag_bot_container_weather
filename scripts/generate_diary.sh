@@ -44,7 +44,7 @@ PLACE="${PLACE:-}"
 
 # Tweet config
 TOP_K="${RAG_TOP_K:-3}"
-MAX_CHARS="${MAX_CHARS:-1024}"
+MAX_CHARS="${MAX_CHARS:-512}"
 HASHTAGS="${HASHTAGS:-}"
 
 echo ${TZ_NAME}

@@ -57,7 +57,7 @@ jobs:
           LON: "139.6722"
           PLACE: "Yokosuka"
           TOP_K: 6
-          MAX_CHARS: 1024
+          MAX_CHARS: 512
           RAG_REINDEX_ON_EMPTY: "0"
           FEED_PATH: frontend/app/public
           LATEST_PATH: frontend/app/public/latest.json
