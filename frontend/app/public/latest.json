@@ -1,25 +1,25 @@
 {
   "date": "2025-12-22",
-  "generated_at": "2025-12-22T09:25:41Z",
-  "text": "Good evening, Yokosuka! 🌃 Current weather: 10.4°C, partly cloudy with a gentle breeze. Perfect for a sunset stroll along the coast! 🏞️ Tomorrow, enjoy the Fuji views from the observation deck or hike to the top for a breathtaking panorama 🏃‍♀️🏞️ Upcoming events: Yokosuka Christmas Market (Dec 23-25) and \"Winter Illumination\" at Zushi Shrine (Dec 20-Jan 15). #Yokosuka #Miura #Yokohama #Zushi",
+  "generated_at": "2025-12-22T10:18:52Z",
+  "text": "🌅 Good evening, Yokosuka! 😊 Current temp: 9.8°C, humidity: 56%, and clear skies! ☀️ Tomorrow's forecast: partly cloudy with a high of 10.1°C. 🌞 Why not take a hike to enjoy the views? 🏞️ For a panoramic view of Mt. Fuji, head to a spot with a clear view! 🏔️ #Yokosuka #Miura",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-22T09:20:58Z",
+    "generated_at": "2025-12-22T10:15:21Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-22T18:15",
-      "temp_c": 10.4,
-      "apparent_temp_c": 5.5,
-      "humidity_pct": 53,
+      "time": "2025-12-22T19:15",
+      "temp_c": 9.8,
+      "apparent_temp_c": 4.5,
+      "humidity_pct": 56,
       "precip_mm": 0.0,
-      "weather_code": 1,
-      "cloud_cover_pct": 43,
-      "wind_kmh": 20.6,
-      "wind_dir_deg": 29
+      "weather_code": 2,
+      "cloud_cover_pct": 57,
+      "wind_kmh": 22.8,
+      "wind_dir_deg": 39
     },
     "today": {
       "date": "2025-12-22",
