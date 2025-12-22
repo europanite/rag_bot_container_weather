@@ -22,7 +22,7 @@ jobs:
       - name: Prepare chroma_db dir
         run: |
           mkdir -p chroma_db
-          rm -rf chroma_db/* || true
+          rm -rf chroma_db/*
 
       - name: Start stack (db + ollama + backend)
         env:
@@ -38,58 +38,31 @@ jobs:
         run: |
           ok=0
           for i in {1..600}; do
-            if curl -fsS http://localhost:8000/health >/dev/null; then
-              ok=$((ok+1))
-              [ "$ok" -ge 3 ] && break
-            else
-              ok=0
+            if curl -fsS http://localhost:8000/rag/status >/dev/null 2>&1; then
+              ok=1
+              break
             fi
-            sleep 2
+            sleep 1
           done
-
-          if [ "$ok" -ge 3 ]; then
-            echo "backend is stable"
-          else
-            echo "Backend did not become ready in time"
-            docker compose logs --no-color backend || true
+          if [ "$ok" != "1" ]; then
+            echo "backend not ready"
             exit 1
           fi
+          curl -fsS http://localhost:8000/rag/status
 
-      - name: Reindex (ingest docs -> chroma_db)
-        env:
-          CURL_MAX_TIME: 600
+      - name: Reindex (ingest)
         run: |
-          curl -fsS -X POST --max-time "${CURL_MAX_TIME}" \
-            http://localhost:8000/rag/reindex | cat
+          curl -fsS -X POST http://localhost:8000/rag/reindex
+          curl -fsS http://localhost:8000/rag/status
 
-      - name: Stop stack
-        if: always()
+      - name: Commit & push chroma_db
         run: |
-          docker compose down
-
-      - name: Fix permissions (host)
-        if: always()
-        run: |
-          sudo chown -R "$USER:$USER" chroma_db || true
-
-      - name: Commit & push if changed (chroma_db only)
-        id: commit
-        run: |
-          if git diff --quiet; then
-            echo "No changes"
-            exit 0
-          fi
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          git pull
-          git add chroma_db || true
-
+          git add chroma_db
           if git diff --cached --quiet; then
-            echo "No staged changes"
+            echo "No changes to commit."
             exit 0
           fi
-
-          git commit -m "chore: rebuild chroma_db"
+          git commit -m "chore: update chroma_db index"
           git push

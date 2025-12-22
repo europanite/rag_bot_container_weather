@@ -10,19 +10,36 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: diary
+  cancel-in-progress: false
+
 jobs:
-  run:
+  diary:
     runs-on: ubuntu-latest
-    outputs:
-      changed: ${{ steps.commit.outputs.changed }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+      - name: Verify local index (chroma_db)
+        run: |
+          if [[ ! -d chroma_db ]]; then
+            echo "ERROR: ./chroma_db not found. Run the manual Ingest workflow once to create it." >&2
+            exit 1
+          fi
+          # Exclude placeholder files (like .gitkeep)
+          files="$(find chroma_db -type f ! -name '.gitkeep' 2>/dev/null | head -n 1 || true)"
+          if [[ -z "${files}" ]]; then
+            echo "ERROR: ./chroma_db is empty. Run the manual Ingest workflow to build the index." >&2
+            exit 1
+          fi
+          echo "chroma_db looks present. (showing up to 20 files)"
+          find chroma_db -maxdepth 2 -type f ! -name '.gitkeep' | head -n 20 || true
+          du -sh chroma_db || true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Start stack (db + ollama + backend)
         env:
@@ -32,85 +49,37 @@ jobs:
         run: |
           docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --build
 
-      - name: Wait for backend
+      - name: Generate diary
         env:
-          REACT_NATIVE_PACKAGER_HOSTNAME: 127.0.0.1
-        run: |
-          ok=0
-          for i in {1..600}; do
-            if curl -fsS http://localhost:8000/health >/dev/null; then
-              ok=$((ok+1))
-              [ "$ok" -ge 3 ] && break
-            else
-              ok=0
-            fi
-            sleep 2
-          done
-
-          if [ "$ok" -ge 3 ]; then
-            echo "backend is stable"
-          else
-            echo "Backend did not become ready in time"
-            docker compose logs --no-color backend || true
-            exit 1
-          fi
-
-      - name: Fix permissions for feed dirs
-        run: |
-          sudo chown -R "$USER:$USER" frontend/app/public  || true
-          chmod -R u+rwX frontend/app/public || true
-
-      - name: Generate weather tweet post
-        env:
+          TZ: Asia/Tokyo
+          API_BASE: http://localhost:8000
           LAT: "35.2810"
           LON: "139.6722"
-          TZ_NAME: "Asia/Tokyo"
-          RAG_TOP_K: 6
-          CURL_MAX_TIME: 32
           PLACE: "Yokosuka"
-          FEED_PATH: frontend/app/public
-          LATEST_PATH: frontend/app/public/latest.json
+          TOP_K: 6
           MAX_CHARS: 1024
-          # DEBUG: "1"
+          RAG_REINDEX_ON_EMPTY: "0"
         run: |
           chmod +x scripts/generate_diary.sh
           scripts/generate_diary.sh
 
-      - name: Stop stack
-        env:
-          REACT_NATIVE_PACKAGER_HOSTNAME: 127.0.0.1
-        if: always()
+      - name: Fix permissions for feed dirs
         run: |
-          docker compose down
+          sudo chown -R runner:runner frontend/app/public/feed || true
+          sudo chown -R runner:runner frontend/app/public || true
+          ls -la frontend/app/public/feed || true
 
-      - name: Free disk
-        if: always()
+      - name: Commit and push changes
         run: |
-          docker system prune -af --volumes || true
-          df -h || true
-
-      - name: Commit & push if changed
-        id: commit
-        run: |
-          if git diff --quiet; then
-            echo "No changes"
-            echo "changed=0" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Stage outputs deterministically
-          git pull
-          git add public || true
-          git add frontend/app/public/*.json || true
-          git add frontend/app/public/feed/*.json || true
-          git add frontend/app/public/snapshot/*.json || true
-
-          git commit -m "chore: tweet"
+          git add frontend/app/public/feed frontend/app/public/latest.json || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: update diary feed"
           git push
-          echo "changed=1" >> "$GITHUB_OUTPUT"
 
   pages:
     needs: run

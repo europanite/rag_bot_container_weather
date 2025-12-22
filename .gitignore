@@ -111,5 +111,14 @@ db-data/
 data/
 tmp/
 
-# cache 
+# ---- DB / vector store ----
+chroma_db/
+postgres-data/
+data/
+tmp/
 .cache/
+
+# ---- ChromaDB persisted index ----
+!chroma_db/
+!chroma_db/**
+!chroma_db/**/*.sqlite3
