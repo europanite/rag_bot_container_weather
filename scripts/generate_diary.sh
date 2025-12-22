@@ -226,11 +226,10 @@ curl -fsS -X POST -H "Content-Type: application/json" \
 # 3) Query backend for today's tweet
 # -----------------------------------------------------------------------------
 
-QUESTION=$'Start with greeting on time.\n'\
-$'Write short tweet-style post.\n'\
-about TODAY\x27s weather and events.\n'\
-$'Use the live weather JSON for the weather facts.\n'\
-$'If RAG context contains events, mention upcoming events suitable for the weather and season.\n'\
+QUESTION=$'Write short tweet-style post.\n'\
+$'Start with greeting on time.\n'\
+$'Mention TODAY\x27s weather with weather JSON for the facts.\n'\
+$'Mention upcoming events which are suitable for the time, weather and season from the RAG context.\n'\
 $'Show URL if a topic contains it.\n'\
 $'Keep it within about '"${MAX_CHARS}"' characters.\n'\
 $'Output ONLY the tweet text (no quotes, no markdown).\n'
