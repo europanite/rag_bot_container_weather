@@ -93,13 +93,13 @@ jobs:
         run: |
           docker compose down
 
-      - name: Free disk before cache save
-        if: always()
-        run: |
-          rm -rf .ci_cache/ollama || true
-          docker system prune -af --volumes || true
-          df -h || true
-          du -sh .ci_cache/chroma || true
+      # - name: Free disk before cache save
+      #   if: always()
+      #   run: |
+      #     rm -rf .ci_cache/ollama || true
+      #     docker system prune -af --volumes || true
+      #     df -h || true
+      #     du -sh .ci_cache/chroma || true
 
       - name: Save chroma cache (best-effort) 
         if: always() && steps.cache_chroma.outputs.cache-hit != 'true'
