@@ -24,14 +24,14 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Restore caches
-        id: cache_chroma
-        uses: actions/cache/restore@v4
-        with:
-          path: .ci_cache/chroma
-          key: ${{ runner.os }}-chroma-v1
-          restore-keys: |
-            ${{ runner.os }}-chroma-d
+      # - name: Restore caches
+      #   id: cache_chroma
+      #   uses: actions/cache/restore@v4
+      #   with:
+      #     path: .ci_cache/chroma
+      #     key: ${{ runner.os }}-chroma-v1
+      #     restore-keys: |
+      #       ${{ runner.os }}-chroma-d
 
       - name: Start stack (db + ollama + backend)
         env:
