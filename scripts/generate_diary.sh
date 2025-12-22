@@ -230,11 +230,9 @@ QUESTION=$'Start with greeting on time.\n'\
 $'Write short tweet-style post.\n'\
 $'Use the live weather JSON for the weather facts.\n'\
 $'If time is daytime and weather is sunny, suggest going out.\n'\
-$'If RAG context contains events, mention one suitable for the weather and season randomly.\n'\
-$'If RAG context contains spots, mention one suitable for the weather and season randomly.\n'\
+$'If RAG context contains upcoming events or spots, mention one suitable for the weather, season and time randomly.\n'\
 $'Use Emoji.\n'\
-$'Keep it within about '"${MAX_CHARS}"' characters.\n'\
-$'Output ONLY the tweet text (no quotes, no markdown).\n'
+$'Keep it within '"${MAX_CHARS}"' characters.\n'
 
 # THIS is the direct fix for your KeyError: export the bash var so Python can read it.
 export QUESTION
