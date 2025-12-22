@@ -228,10 +228,12 @@ curl -fsS -X POST -H "Content-Type: application/json" \
 
 QUESTION=$'Start with greeting on time.\n'\
 $'Write short tweet-style post.\n'\
-about TODAY\x27s weather and events.\n'\
 $'Use the live weather JSON for the weather facts.\n'\
-$'If RAG context contains events, mention upcoming events suitable for the weather and season.\n'\
-$'Show URL if a topic contains it.\n'\
+$'If time is daytime and weather is sunny, suggest going out.\n'\
+$'If RAG context contains events, mention one suitable for the weather and season randomly.\n'\
+$'If RAG context contains spots, mention one suitable for the weather and season randomly.\n'\
+# $'If a topic about an event or a spot contains URL, mention it.\n'\
+$'Use Emoji.\n'\
 $'Keep it within about '"${MAX_CHARS}"' characters.\n'\
 $'Output ONLY the tweet text (no quotes, no markdown).\n'
 
