@@ -226,11 +226,12 @@ curl -fsS -X POST -H "Content-Type: application/json" \
 # 3) Query backend for today's tweet
 # -----------------------------------------------------------------------------
 
-QUESTION=$'Start with greeting on time. Write short tweet-style post about TODAY\x27s weather and events.\n'\
+QUESTION=$'Write short tweet-style post starting with greeting on time.\n'\
 $'Use the live weather JSON for the weather facts.\n'\
-$'If RAG context contains events, mention upcoming events suitable for the weather and season.\n'\
-$'Keep it within about '"${MAX_CHARS}"' characters.\n'\
-$'Output ONLY the tweet text (no quotes, no markdown).\n'
+$'Mention upcoming events suitable for the datetime, weather and season from the RAG context.\n'\
+$'Show URLs if a topic includes them.'\
+$'Keep this article within about '"${MAX_CHARS}"' characters.\n'\
+$'Use Emoji.\n'
 
 # THIS is the direct fix for your KeyError: export the bash var so Python can read it.
 export QUESTION

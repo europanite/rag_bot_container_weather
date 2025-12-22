@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 jobs:
-  run:
+  rag:
     runs-on: ubuntu-latest
     outputs:
       changed: ${{ steps.commit.outputs.changed }}
@@ -24,14 +24,14 @@ jobs:
         with:
           python-version: "3.12"
 
-      # - name: Restore caches
-      #   id: cache_chroma
-      #   uses: actions/cache/restore@v4
-      #   with:
-      #     path: .ci_cache/chroma
-      #     key: ${{ runner.os }}-chroma-v1
-      #     restore-keys: |
-      #       ${{ runner.os }}-chroma-d
+      - name: Restore caches
+        id: cache_chroma
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci_cache/chroma
+          key: ${{ runner.os }}-chroma-v1
+          restore-keys: |
+            ${{ runner.os }}-chroma-d
 
       - name: Start stack (db + ollama + backend)
         env:
@@ -101,13 +101,13 @@ jobs:
           df -h || true
           du -sh .ci_cache/chroma || true
 
-      # - name: Save chroma cache (best-effort)
-      #   if: always() && steps.cache_chroma.outputs.cache-hit != 'true'
-      #   continue-on-error: true
-      #   uses: actions/cache/save@v4
-      #   with:
-      #     path: .ci_cache/chroma
-      #     key: ${{ runner.os }}-chroma-v1
+      - name: Save chroma cache (best-effort)
+        if: always() && steps.cache_chroma.outputs.cache-hit != 'true'
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: .ci_cache/chroma
+          key: ${{ runner.os }}-chroma-v1
 
       - name: Commit & push if changed
         id: commit
@@ -133,7 +133,7 @@ jobs:
           echo "changed=1" >> "$GITHUB_OUTPUT"
 
   pages:
-    needs: run
+    needs: rag
     if: needs.run.outputs.changed == '1'
     uses: ./.github/workflows/pages.yml
     with:
