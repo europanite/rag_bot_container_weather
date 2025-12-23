@@ -1,25 +1,25 @@
 {
   "date": "2025-12-23",
-  "generated_at": "2025-12-23T07:23:49Z",
-  "text": "Good afternoon! ☀️ In Yokosuka, it's a chilly 10.6°C with a gentle 14.8 km/h wind. Today's forecast: partly cloudy with 56% humidity. Don't miss the Yokosuka Countdown on Dec 31st at Velny Park! 🎉 https://www.cocoyoko.net/yoksuka-countdown/",
+  "generated_at": "2025-12-23T08:24:54Z",
+  "text": "Good evening from Yokosuka! 🌃 It's a chilly 10.1°C with 57% humidity and 14.8km/h winds. Tomorrow's weather looks gloomy, but don't miss the Yoksuka Countdown on Dec 31st! 🎉https://www.cocoyoko.net/yoksuka-countdown/",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-23T07:18:50Z",
+    "generated_at": "2025-12-23T08:19:29Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-23T16:15",
-      "temp_c": 10.6,
-      "apparent_temp_c": 6.6,
-      "humidity_pct": 56,
+      "time": "2025-12-23T17:15",
+      "temp_c": 10.1,
+      "apparent_temp_c": 6.2,
+      "humidity_pct": 57,
       "precip_mm": 0.0,
       "weather_code": 0,
-      "cloud_cover_pct": 6,
+      "cloud_cover_pct": 2,
       "wind_kmh": 14.8,
-      "wind_dir_deg": 72
+      "wind_dir_deg": 89
     },
     "today": {
       "date": "2025-12-23",
