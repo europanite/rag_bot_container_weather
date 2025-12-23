@@ -259,7 +259,7 @@ function AdSlot() {
     >
       <Text style={{ fontWeight: "800" }}>Ad / Promo</Text>
       <Text style={{ color: TEXT_DIM, marginTop: 6, lineHeight: 18 }}>
-        Reserved space for future ads, sponsor banner, or a “What is this?” card.
+        Reserved space.
       </Text>
     </View>
   );
@@ -432,7 +432,6 @@ export default function HomeScreen() {
                   }}
                 >
                   <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
-                    <Text style={{ color: TEXT_DIM, fontWeight: "800" }}>{item.date}</Text>
                     {item.generated_at ? <Text style={{ color: TEXT_DIM }}>{formatJst(item.generated_at)}</Text> : null}
                     {item.place ? <Text style={{ color: TEXT_DIM }}>• {item.place}</Text> : null}
                   </View>

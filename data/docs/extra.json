@@ -1,0 +1,23 @@
+[
+  {
+    "id": "0001",
+    "text": "My favorite navy curry is definitely the one at Kurihama Ferry Port.",
+    "source": "local-notes",
+    "metadata": { "lang": "ja", "tags": ["miura", "Yokosuka" ,"Kurihama","kanagawa", "tourism"] }
+  },  {
+    "id": "0002",
+    "text": "Kurihama Flower park is really funtastic. You will be atracted to Sunflowers planted through the valley vin summer.",
+    "source": "local-notes",
+    "metadata": { "lang": "ja", "tags": ["miura", "Yokosuka" ,"Kurihama","kanagawa", "tourism"] }
+  }, {
+    "id": "0003",
+    "text": "Kannonzaki Lighthouse is amazing, it's a little scary but once you climb up you get amazing views of Tokyo Bay and the coastline.",
+    "source": "local-notes",
+    "metadata": { "lang": "ja", "tags": ["miura", "Yokosuka" ,"Kurihama","kanagawa", "tourism"] }
+  }, {
+    "id": "0004",
+    "text": "Prefectural Route 212 is the perfect road with the great coastal view of the Tokyo Bay. You can enjoy driving with a car, motarcycle and bike. Of course walking is also asesome.",
+    "source": "local-notes",
+    "metadata": { "lang": "ja", "tags": ["miura", "Yokosuka" ,"Kurihama","kanagawa", "tourism"] }
+  },
+]
