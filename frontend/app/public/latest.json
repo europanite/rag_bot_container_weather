@@ -1,30 +1,30 @@
 {
   "date": "2025-12-23",
-  "generated_at": "2025-12-23T10:20:32Z",
-  "text": "Good evening! 🌃 In Yokosuka, it's a chilly 10°C with 62% humidity and 0mm of precipitation. Tomorrow's weather looks gloomy, but let's look forward to the Yokosuka Countdown on December 31st! 🎉 https://www.cocoyoko.net/yoksuka-countdown/",
+  "generated_at": "2025-12-23T11:19:00Z",
+  "text": "Good evening! 🌃 It's a chilly 9.9°C in Yokosuka with 63% humidity and a gentle breeze. Tomorrow, expect a chance of rain and cloudy skies. Don't miss the Yokosuka Countdown event on December 31st at Velney Park! 🎉🔥 #Yokosuka #Miura",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-23T10:15:17Z",
+    "generated_at": "2025-12-23T11:13:34Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-23T19:15",
-      "temp_c": 10.0,
-      "apparent_temp_c": 6.9,
-      "humidity_pct": 62,
+      "time": "2025-12-23T20:00",
+      "temp_c": 9.9,
+      "apparent_temp_c": 6.2,
+      "humidity_pct": 63,
       "precip_mm": 0.0,
-      "weather_code": 0,
-      "cloud_cover_pct": 10,
-      "wind_kmh": 10.4,
-      "wind_dir_deg": 34
+      "weather_code": 1,
+      "cloud_cover_pct": 36,
+      "wind_kmh": 15.2,
+      "wind_dir_deg": 22
     },
     "today": {
       "date": "2025-12-23",
       "weather_code": 2,
-      "temp_max_c": 10.6,
+      "temp_max_c": 10.3,
       "temp_min_c": 5.6,
       "precip_sum_mm": 0.0,
       "wind_max_kmh": 26.9
@@ -32,10 +32,10 @@
     "tomorrow": {
       "date": "2025-12-24",
       "weather_code": 63,
-      "temp_max_c": 9.6,
-      "temp_min_c": 6.8,
-      "precip_sum_mm": 28.5,
-      "wind_max_kmh": 20.8
+      "temp_max_c": 10.4,
+      "temp_min_c": 6.5,
+      "precip_sum_mm": 30.4,
+      "wind_max_kmh": 20.1
     }
   }
 }
