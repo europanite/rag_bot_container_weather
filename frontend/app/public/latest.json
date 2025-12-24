@@ -1,25 +1,25 @@
 {
   "date": "2025-12-24",
-  "generated_at": "2025-12-24T04:00:43Z",
-  "text": "Merry Christmas Eve! 🎄 It's a cloudy winter afternoon in Yokosuka, with a mild 8.2°C and 94% humidity. Perfect weather to enjoy the Yoksuka Countdown event at Vellini Park 🏞️! 🎉",
+  "generated_at": "2025-12-24T04:33:11Z",
+  "text": "Merry Christmas Eve! ☕️🎄 It's a cloudy but mild winter afternoon in Yokosuka, perfect for a warm cup of curry ramen at a cozy cafe like \"夕日の丘\" 🍜🏙️. Enjoy the views of Mt. Fuji and the surrounding hills while you sip and savor! 🏃‍♀️ #Yokosuka",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-24T03:55:27Z",
+    "generated_at": "2025-12-24T04:29:34Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-24T12:45",
-      "temp_c": 8.2,
-      "apparent_temp_c": 5.1,
+      "time": "2025-12-24T13:15",
+      "temp_c": 8.4,
+      "apparent_temp_c": 5.4,
       "humidity_pct": 94,
       "precip_mm": 0.1,
       "weather_code": 51,
-      "cloud_cover_pct": 74,
-      "wind_kmh": 16.2,
-      "wind_dir_deg": 32
+      "cloud_cover_pct": 81,
+      "wind_kmh": 15.5,
+      "wind_dir_deg": 31
     },
     "today": {
       "date": "2025-12-24",
