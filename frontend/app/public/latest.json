@@ -1,25 +1,25 @@
 {
   "date": "2025-12-24",
-  "generated_at": "2025-12-24T05:22:36Z",
-  "text": "Merry Christmas Eve 🎄 in Yokosuka! 🎅️ Current weather: 8.4°C, rainy, and cloudy ☁️ with 95% humidity and 16.9 km/h winds 💨. Visit our local market fair today from 11:00-12:00 at ① (limited to 20 spots) ⏰ #Yokosuka #MiuraPeninsula",
+  "generated_at": "2025-12-24T05:53:49Z",
+  "text": "Merry Christmas Eve 🎄! 🌨️ Rainy and cloudy skies today in Yokosuka, with a high of 9.5°C and 14.5mm of precipitation. Join us at the Winter Market Fair 🛍️ from 11:00am to 12:00pm for a festive atmosphere and local vendors! #Yokosuka #Miura",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-24T05:18:49Z",
+    "generated_at": "2025-12-24T05:49:44Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-24T14:15",
-      "temp_c": 8.4,
-      "apparent_temp_c": 5.3,
+      "time": "2025-12-24T14:45",
+      "temp_c": 8.8,
+      "apparent_temp_c": 5.5,
       "humidity_pct": 95,
       "precip_mm": 0.7,
       "weather_code": 63,
-      "cloud_cover_pct": 73,
-      "wind_kmh": 16.9,
-      "wind_dir_deg": 12
+      "cloud_cover_pct": 88,
+      "wind_kmh": 18.8,
+      "wind_dir_deg": 17
     },
     "today": {
       "date": "2025-12-24",
