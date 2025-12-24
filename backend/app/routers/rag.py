@@ -7,7 +7,8 @@ from typing import Literal
 
 import rag_store
 import requests
-import weather_service
+import hashlib
+import random
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 from rag_store import RAGChunk
@@ -269,7 +270,17 @@ def _build_chat_prompts(
         f"- If you add hashtags, pick 1-3 from: {hashtags}.\n"
     )
 
-    rag_lines = "\n".join(f"- {c}" for c in rag_context[:5]) if rag_context else "- (none)"
+    def _sample_context(ctx: list[str], seed_text: str, k: int = 8, pool: int = 18) -> list[str]:
+        if not ctx:
+            return []
+        cand = ctx[: min(len(ctx), pool)]
+        seed = int(hashlib.sha256(seed_text.encode("utf-8")).hexdigest()[:8], 16)
+        rng = random.Random(seed)
+        rng.shuffle(cand)
+        return cand[: min(k, len(cand))]
+
+    sampled = _sample_context(rag_context, question, k=8, pool=18)
+    rag_lines = "\n".join(f"- {c}" for c in sampled) if sampled else "- (none)"
     live_block = live_weather.strip() if isinstance(live_weather, str) and live_weather.strip() else "(not available)"
 
     user = (
