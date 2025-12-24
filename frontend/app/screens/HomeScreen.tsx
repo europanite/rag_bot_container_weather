@@ -243,7 +243,7 @@ function Mascot({ size = MASCOT_SIZE }: { size?: number }) {
   );
 }
 
-function AdSlot() {
+function Slot() {
   const enabled = process.env.EXPO_PUBLIC_SHOW_AD_SLOT === "1";
   if (!enabled) return null;
 
@@ -477,13 +477,13 @@ export default function HomeScreen() {
   return (
     <View style={{ flex: 1, flexDirection: "row", justifyContent: "center", backgroundColor: APP_BG }}>
       <View style={{ width: SIDEBAR_W, paddingTop: 16, paddingLeft: 12 }}>
-        <AdSlot />
+        <Slot />
       </View>
 
       <View style={{ flex: 1, maxWidth: CONTENT_MAX_W }}>{list}</View>
 
       <View style={{ width: SIDEBAR_W, paddingTop: 16, paddingRight: 12 }}>
-        <AdSlot />
+        <Slot />
       </View>
     </View>
   );

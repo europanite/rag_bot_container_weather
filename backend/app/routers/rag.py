@@ -358,110 +358,86 @@ def reindex() -> ReindexResponse:
             detail=str(exc),
         ) from exc
 
+@router.post("/query", response_model=QueryResponse)
+def query_rag(payload: QueryPayload) -> QueryResponse:
+    # Validate inputs
+    payload.question = (payload.question or "").strip()
+    if not payload.question:
+        raise HTTPException(status_code=400, detail="question is required")
 
-@router.post("/query", response_model=QueryResponse, response_model_exclude_none=True)
-def query_rag(payload: QueryRequest, http_request: Request) -> QueryResponse:
-    """Run a full RAG cycle: retrieve similar chunks and ask the chat model."""
+    if payload.top_k is None:
+        payload.top_k = 6
+
+    if payload.max_chars is None:
+        payload.max_chars = 512
+
+    # Query
     try:
         raw_k = payload.top_k * 4 if payload.output_style == "tweet_bot" else payload.top_k
-        chunks: list[RAGChunk] = rag_store.query_similar_chunks(
-            payload.question,
-            top_k=raw_k,
-        )
+        chunks = rag_store.query_similar_chunks(payload.question, top_k=raw_k)
 
         if payload.output_style == "tweet_bot":
             seen = set()
             diversified = []
             for c in sorted(chunks, key=lambda x: x.distance):
                 meta = c.metadata if isinstance(c.metadata, dict) else {}
-                key = meta.get("file") or meta.get("doc_id") or c.text[:40]
+                key = meta.get("file") or meta.get("doc_id") or (c.text or "")[:40]
                 if key in seen:
                     continue
+
                 diversified.append(c)
                 seen.add(key)
                 if len(diversified) >= payload.top_k:
                     break
             chunks = diversified or chunks[: payload.top_k]
-    except Exception as exc:
-        logger.exception("Vector search failed", exc_info=exc)
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_GATEWAY,
-            detail=f"Vector search failed: {exc}",
-        ) from exc
 
-    if not chunks:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail="No relevant context found for the given question.",
-        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"rag query failed: {e}")
 
-    context_texts = [c.text for c in chunks]
+    # Build context
+    context_texts = []
+    for c in chunks:
+        if c.text:
+            context_texts.append(c.text)
 
-    # Compat: accept `context` / `user_context` as aliases for `extra_context`
-    extra_ctx: str | None = payload.extra_context or payload.context or payload.user_context
-    live_extra: str | None = extra_ctx
-    if (live_extra is None or not live_extra.strip()) and payload.use_live_weather:
-        try:
-            live_extra = weather_service.get_live_weather_context(
-                http_request=http_request,
-                session=_session,
-            )
-        except Exception as exc:
-            logger.exception("Live weather fetch failed", exc_info=exc)
-            raise HTTPException(
-                status_code=HTTPStatus.SERVICE_UNAVAILABLE,
-                detail=f"Live weather fetch failed: {exc}",
-            ) from exc
-
-    place_hint = http_request.query_params.get("place") or os.getenv("PLACE")
-
+    # Build prompts & call LLM
     system_prompt, user_prompt = _build_chat_prompts(
         question=payload.question,
-        rag_context=context_texts,
-        live_weather=live_extra,
+        context_texts=context_texts,
+        use_live_weather=payload.use_live_weather,
         output_style=payload.output_style,
         max_chars=payload.max_chars,
-        place_hint=place_hint,
     )
 
-    try:
-        answer = _call_ollama_chat(
-            question=payload.question,
-            system_prompt=system_prompt,
-            user_prompt=user_prompt,
-        )
-    except Exception as exc:
-        logger.exception("Ollama chat failed", exc_info=exc)
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_GATEWAY,
-            detail=str(exc),
-        ) from exc
+    llm_text = call_llm(system_prompt=system_prompt, user_prompt=user_prompt)
+    llm_text = (llm_text or "").strip()
+    llm_text = _enforce_max_chars(llm_text, payload.max_chars)
 
-    answer = _enforce_max_chars(_strip_wrapping_quotes(_clean_single_line(answer)), payload.max_chars)
-
-    debug_context: list[str] | None = None
-    debug_chunks: list[ChunkOut] | None = None
-
+    # Debug (optional)
+    chosen = chunks[0] if chunks else None
+    chunk_out = None
     if payload.include_debug:
-        debug_context = list(context_texts)
-        if live_extra and live_extra.strip():
-            debug_context.append(f"[Live context]\n{live_extra.strip()}")
-
-        chunk_out: list[ChunkOut] = []
-        for c in chunks:
-            meta = c.metadata if isinstance(c.metadata, dict) else {}
+        chunk_out = []
+        for c in chunks[: payload.top_k]:
+            md = c.metadata if isinstance(c.metadata, dict) else {}
             chunk_out.append(
                 ChunkOut(
-                    id=_chunk_id_from_metadata(meta),
                     text=c.text,
                     distance=c.distance,
-                    metadata=meta,
+                    metadata=md,
                 )
             )
-        debug_chunks = chunk_out
 
     return QueryResponse(
-        answer=answer,
-        context=debug_context,
-        chunks=debug_chunks,
+        text=llm_text,
+        chunks=chunk_out,
+        chosen_chunk=(
+            ChunkOut(
+                text=chosen.text,
+                distance=chosen.distance,
+                metadata=(chosen.metadata if isinstance(chosen.metadata, dict) else {}),
+            )
+            if chosen
+            else None
+        ),
     )
