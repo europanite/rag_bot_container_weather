@@ -202,43 +202,205 @@ def fetch_weather_snapshot(lat: str, lon: str, tz_name: str, place: str) -> Tupl
     return raw, snap
 
 
+def _as_float(x: Any) -> Optional[float]:
+    if isinstance(x, (int, float)):
+        return float(x)
+    return None
 
 
-def pick_topic(now_local: datetime, snap_obj: Dict[str, Any]) -> str:
+def _time_of_day_bucket(hour: int) -> str:
+    # Local time bucket for topic bias (NOT greeting; greeting remains model-side from weather JSON)
+    if 5 <= hour <= 10:
+        return "morning"
+    if 11 <= hour <= 15:
+        return "afternoon"
+    if 16 <= hour <= 20:
+        return "evening"
+    return "night"
+
+
+def _season_bucket(month: int) -> str:
+    # Simple JP season mapping
+    if month in (12, 1, 2):
+        return "winter"
+    if month in (3, 4, 5):
+        return "spring"
+    if month in (6, 7, 8):
+        return "summer"
+    return "autumn"
+
+
+def _weather_hint(cur: Dict[str, Any]) -> str:
+    temp = _as_float(cur.get("temp_c"))
+    precip = _as_float(cur.get("precip_mm"))
+    cloud = _as_float(cur.get("cloud_cover_pct"))
+    wind = _as_float(cur.get("wind_kmh"))
+    code = cur.get("weather_code")
+
+    snow_codes = {71, 73, 75, 77, 85, 86}
+    thunder_codes = {95, 96, 99}
+
+    tags: list[str] = []
+    if isinstance(code, int) and code in thunder_codes:
+        tags.append("thunder")
+    if isinstance(code, int) and code in snow_codes:
+        tags.append("snowy")
+    if precip is not None and precip >= 0.2:
+        tags.append("rainy")
+    if wind is not None and wind >= 20:
+        tags.append("windy")
+    if cloud is not None and cloud >= 70:
+        tags.append("cloudy")
+
+    if temp is not None:
+        if temp <= 8:
+            tags.append("cold")
+        elif temp >= 26:
+            tags.append("hot")
+        else:
+            tags.append("mild")
+
+    return ", ".join(tags) if tags else "unknown"
+
+
+def pick_topic(now_local: datetime, snap_obj: Dict[str, Any]) -> Tuple[str, str]:
+    """
+    Pick topic as (family, mode) where family ∈ {event, place, chat}.
+    mode adds variety while keeping the 3-family constraint.
+    """
     cur = (snap_obj or {}).get("current") or {}
-    temp = cur.get("temp_c")
-    precip = cur.get("precip_mm")
+    temp = _as_float(cur.get("temp_c"))
+    precip = _as_float(cur.get("precip_mm"))
+    code = cur.get("weather_code")
 
-    topics = ["spot", "food", "trivia", "history", "activity", "event"]
-    weights = [30,     20,     20,       15,        10,        5]
+    tod = _time_of_day_bucket(now_local.hour)
+    season = _season_bucket(now_local.month)
+    hint = _weather_hint(cur)
 
-    if isinstance(precip, (int, float)) and precip > 0:
-        weights = [15, 30, 25, 15, 5, 10]
-    if isinstance(temp, (int, float)) and temp <= 8:
-        weights = [20, 30, 25, 10, 5, 10]
+    # 1) Choose family: event/place/chat (as requested)
+    family_w = {"event": 34, "place": 33, "chat": 33}
 
-    seed_str = f"{now_local.strftime('%Y-%m-%d-%H')}"
+    # Weather bias
+    if precip is not None and precip >= 0.2:
+        family_w["place"] -= 12
+        family_w["chat"] += 8
+        family_w["event"] += 4
+    if temp is not None and temp <= 8:
+        family_w["place"] -= 6
+        family_w["chat"] += 6
+        # winter events (illumination, seasonal) remain viable
+        family_w["event"] += 0
+    if temp is not None and temp >= 24 and (precip is None or precip < 0.2):
+        family_w["place"] += 6
+        family_w["event"] += 3
+        family_w["chat"] -= 4
+
+    # Time-of-day bias
+    if tod in ("evening", "night"):
+        family_w["event"] += 10
+        family_w["chat"] += 4
+        family_w["place"] -= 6
+    elif tod == "morning":
+        family_w["place"] += 6
+        family_w["chat"] += 2
+        family_w["event"] -= 2
+    elif tod == "afternoon":
+        family_w["place"] += 4
+        family_w["event"] += 2
+
+    # Seasonal bias
+    if season == "winter":
+        family_w["event"] += 6   # illumination / holiday / new year
+        family_w["chat"] += 2    # warm food/drinks
+    elif season == "summer":
+        family_w["place"] += 6   # coast / outdoor
+        family_w["event"] += 4   # matsuri
+        family_w["chat"] -= 4
+
+    for k in list(family_w.keys()):
+        family_w[k] = max(1, int(family_w[k]))
+
+    # Deterministic per-hour, but still "random" and condition-aware
+    seed_str = f"{now_local.strftime('%Y-%m-%d-%H')}|{season}|{tod}|{hint}|{code}"
     seed = int(hashlib.sha256(seed_str.encode("utf-8")).hexdigest()[:8], 16)
     rng = random.Random(seed)
-    return rng.choices(topics, weights=weights, k=1)[0]
+
+    families = list(family_w.keys())
+    family = rng.choices(families, weights=[family_w[f] for f in families], k=1)[0]
+
+    # 2) Choose mode inside family
+    if family == "place":
+        modes = ["coast", "park", "viewpoint", "shrine", "museum", "walk"]
+        w =     [  20,     18,       18,       16,       14,     14]
+        if precip is not None and precip >= 0.2:
+            # rain -> indoor-ish / short walk
+            w = [8, 10, 10, 14, 38, 20]
+        if season == "winter" and tod in ("evening", "night"):
+            # winter evening -> viewpoints for lights / night scenery
+            w = [14, 10, 26, 12, 20, 18]
+    elif family == "event":
+        modes = ["illumination", "festival", "market", "exhibition", "seasonal"]
+        w =     [      26,        20,       18,          18,        18]
+        if season == "winter":
+            w = [40, 12, 12, 16, 20]
+        if tod in ("evening", "night"):
+            w = [38, 16, 14, 14, 18]
+        if precip is not None and precip >= 0.2:
+            # rain -> exhibitions/indoor events
+            w = [14, 10, 10, 42, 24]
+    else:  # chat
+        modes = ["food", "trivia", "history", "activity"]
+        w =     [  30,      25,       20,        25]
+        if precip is not None and precip >= 0.2:
+            w = [40, 25, 25, 10]
+        if temp is not None and temp <= 8:
+            w = [44, 22, 24, 10]
+        if temp is not None and temp >= 24 and (precip is None or precip < 0.2):
+            w = [24, 18, 18, 40]
+        if tod in ("evening", "night"):
+            w = [42, 24, 20, 14]
+
+    mode = rng.choices(modes, weights=w, k=1)[0]
+    return family, mode
 
 
-def build_question(max_chars: str, topic: str) -> str:
-    topic_keywords = {
-        "spot": "viewpoint park coast walk scenery",
-        "food": "curry ramen cafe bakery warm drink",
-        "trivia": "fun fact local tip small story",
-        "history": "history navy port heritage museum",
-        "activity": "running fishing hike workout",
-        "event": "event festival illumination market",
-    }[topic]
+def build_question(max_chars: str, topic_family: str, topic_mode: str, now_local: datetime, snap_obj: Dict[str, Any]) -> str:
+    cur = (snap_obj or {}).get("current") or {}
+    tod = _time_of_day_bucket(now_local.hour)
+    season = _season_bucket(now_local.month)
+    hint = _weather_hint(cur)
+
+    # Keywords help retrieval; family/mode enforce "event/place/chat"
+    keyword_map: Dict[Tuple[str, str], str] = {
+        # place
+        ("place", "coast"): "coast beach sea bay port waterfront",
+        ("place", "park"): "park garden green nature trail",
+        ("place", "viewpoint"): "viewpoint hill lookout skyline sunset night-view",
+        ("place", "shrine"): "shrine temple heritage tradition",
+        ("place", "museum"): "museum exhibition indoor history culture",
+        ("place", "walk"): "walk stroll promenade shopping street",
+        # event
+        ("event", "illumination"): "illumination lights winter evening night-view",
+        ("event", "festival"): "festival matsuri parade performance",
+        ("event", "market"): "market fair flea local vendors",
+        ("event", "exhibition"): "exhibition art museum gallery indoor",
+        ("event", "seasonal"): "seasonal holiday christmas new year event",
+        # chat
+        ("chat", "food"): "curry ramen cafe bakery warm drink",
+        ("chat", "trivia"): "fun fact local tip small story",
+        ("chat", "history"): "history navy port heritage museum",
+        ("chat", "activity"): "running fishing hike workout",
+    }
+    topic_keywords = keyword_map.get((topic_family, topic_mode), "local tip short story")
 
     return (
         "Write ONE short tweet in English.\n"
         "Decide the greeting using the local time in LIVE WEATHER JSON (current.time + timezone; assume Asia/Tokyo if missing).\n"
         "Summarize the weather using ONLY LIVE WEATHER facts.\n"
-        f"TOPIC MODE: {topic} (keywords: {topic_keywords}).\n"
-        "Pick ONE matching idea from RAG Context that fits the current weather/season.\n"
+        f"TOPIC FAMILY: {topic_family} (event/place/chat).\n"
+        f"SUBTOPIC: {topic_mode} (keywords: {topic_keywords}).\n"
+        f"HINTS: time_of_day={tod}, season={season}, weather_hint={hint}.\n"
+        "Pick ONE matching idea from RAG Context that fits the HINTS.\n"
         "You may include at most one official URL only if it exists in the chosen text.\n"
         "Use emojis.\n"
         f"Keep within {max_chars} characters.\n"
@@ -452,8 +614,8 @@ def main() -> int:
 
     # 3) Query backend for today's tweet
     now_dt_local = datetime.now(ZoneInfo(tz_name))
-    topic = pick_topic(now_local=now_dt_local, snap_obj=snap_obj)
-    question = build_question(max_chars=max_chars, topic=topic)
+    topic_family, topic_mode = pick_topic(now_local=now_dt_local, snap_obj=snap_obj)
+    question = build_question(max_chars=max_chars, topic_family=topic_family, topic_mode=topic_mode, now_local=now_dt_local, snap_obj=snap_obj)
     payload = build_payload(question=question, top_k=top_k, snap_json_raw=snap_json_raw)
 
     if debug:
