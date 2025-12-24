@@ -1,25 +1,25 @@
 {
   "date": "2025-12-24",
-  "generated_at": "2025-12-24T07:22:12Z",
-  "text": "Merry Christmas Eve 🎄🌃 in Yokosuka! 🌉 The evening is mild with 9.2°C and 96% cloud cover 🌫️. Perfect time to head out to the observation deck of 'Yūhi no Oka' and enjoy the winter scenery 🏞️. #Yokosuka #Christmas",
+  "generated_at": "2025-12-24T08:22:43Z",
+  "text": "Merry Christmas Eve! 🎄 In Yokosuka, it's a cloudy evening with a mild 9°C. Take a stroll along the promenade or shopping street, and enjoy the winter atmosphere! 🏃‍♀️🛍️ #Yokosuka",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-24T07:18:38Z",
+    "generated_at": "2025-12-24T08:19:06Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-24T16:15",
-      "temp_c": 9.2,
-      "apparent_temp_c": 6.6,
-      "humidity_pct": 94,
+      "time": "2025-12-24T17:15",
+      "temp_c": 9.0,
+      "apparent_temp_c": 6.5,
+      "humidity_pct": 95,
       "precip_mm": 0.1,
       "weather_code": 51,
-      "cloud_cover_pct": 96,
-      "wind_kmh": 15.1,
-      "wind_dir_deg": 3
+      "cloud_cover_pct": 71,
+      "wind_kmh": 13.9,
+      "wind_dir_deg": 17
     },
     "today": {
       "date": "2025-12-24",
