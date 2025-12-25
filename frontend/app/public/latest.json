@@ -1,25 +1,25 @@
 {
   "date": "2025-12-25",
-  "generated_at": "2025-12-25T13:33:04Z",
-  "text": "Merry Christmas! 🎄 It's a mild winter evening in Yokosuka! 🌃 Enjoy the #IllumiYokosuka2025 lights from 9:30pm to 10:30pm or 11:00pm to 12:00pm. See you there! 🎅️",
+  "generated_at": "2025-12-25T13:51:35Z",
+  "text": "Good evening from Yokosuka! Tonight, enjoy the #IllumiYokosuka2025 winter lights with a mild 10.5°C weather. Don't miss the romantic views! 🌃💡",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-25T13:28:07Z",
+    "generated_at": "2025-12-25T13:46:48Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-25T22:15",
-      "temp_c": 10.6,
-      "apparent_temp_c": 8.5,
+      "time": "2025-12-25T22:45",
+      "temp_c": 10.5,
+      "apparent_temp_c": 8.7,
       "humidity_pct": 87,
       "precip_mm": 0.0,
       "weather_code": 2,
-      "cloud_cover_pct": 67,
-      "wind_kmh": 11.5,
-      "wind_dir_deg": 2
+      "cloud_cover_pct": 57,
+      "wind_kmh": 9.7,
+      "wind_dir_deg": 4
     },
     "today": {
       "date": "2025-12-25",
