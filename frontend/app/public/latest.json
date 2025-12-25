@@ -1,25 +1,25 @@
 {
   "date": "2025-12-25",
-  "generated_at": "2025-12-25T21:17:39Z",
-  "text": "Good morning! 🌅 It's a chilly winter morning in Yokosuka! ☕️ Warm up with a bowl of curry ramen at our cozy cafe 🍜👌 #IllumiYokosuka2025 #WinterCool",
+  "generated_at": "2025-12-25T22:18:01Z",
+  "text": "\"Good morning from Yokosuka! 🌅️️️️️️️️️️️️️️️️️️️️️️️️️️️️️️️",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-25T21:12:48Z",
+    "generated_at": "2025-12-25T22:12:58Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-26T06:00",
-      "temp_c": 10.8,
-      "apparent_temp_c": 5.2,
-      "humidity_pct": 55,
+      "time": "2025-12-26T07:00",
+      "temp_c": 10.4,
+      "apparent_temp_c": 5.0,
+      "humidity_pct": 56,
       "precip_mm": 0.0,
       "weather_code": 0,
       "cloud_cover_pct": 0,
-      "wind_kmh": 25.7,
-      "wind_dir_deg": 252
+      "wind_kmh": 24.6,
+      "wind_dir_deg": 255
     },
     "today": {
       "date": "2025-12-26",
