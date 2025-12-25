@@ -1,25 +1,25 @@
 {
   "date": "2025-12-25",
-  "generated_at": "2025-12-25T12:42:07Z",
-  "text": "Good evening! 🌃 It's a mild winter night in Yokosuka! ☁️ 10.6°C, 88% humidity, and a gentle 16.3km/h breeze. Don't miss the #IllumiYokosuka2025 festival parade tonight at 10:00! 🎉 https://www.city.yokosuka.lg.jp/illumi/",
+  "generated_at": "2025-12-25T13:06:29Z",
+  "text": "Good evening from Yokosuka! 🌃 It's a mild winter evening with 10.6°C and 87% humidity. Tonight, join us for a magical illumination experience at #IllumiYokosuka2025! 🎅️ #Nostalgic",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-25T12:36:13Z",
+    "generated_at": "2025-12-25T13:01:43Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-25T21:30",
+      "time": "2025-12-25T22:00",
       "temp_c": 10.6,
-      "apparent_temp_c": 7.9,
-      "humidity_pct": 88,
-      "precip_mm": 0.1,
-      "weather_code": 51,
-      "cloud_cover_pct": 55,
-      "wind_kmh": 16.3,
-      "wind_dir_deg": 5
+      "apparent_temp_c": 8.4,
+      "humidity_pct": 87,
+      "precip_mm": 0.0,
+      "weather_code": 2,
+      "cloud_cover_pct": 68,
+      "wind_kmh": 12.6,
+      "wind_dir_deg": 2
     },
     "today": {
       "date": "2025-12-25",
