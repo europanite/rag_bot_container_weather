@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):
 
     # Optional: build the vector DB from local JSON files at startup
     if _truthy(os.getenv("RAG_AUTO_INDEX", "false")):
-        docs_dir = os.getenv("RAG_DOCS_DIR") or os.getenv("DOCS_DIR", "/data/docs")
+        docs_dir = os.getenv("RAG_DOCS_DIR") or os.getenv("DOCS_DIR", "/data/json")
         rebuild = _truthy(os.getenv("RAG_REBUILD_ON_START", "true"))
         fail_fast = _truthy(os.getenv("RAG_FAIL_FAST") or os.getenv("RAG_INDEX_FAIL_FAST", "false"))
 

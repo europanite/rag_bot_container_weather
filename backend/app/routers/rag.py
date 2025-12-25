@@ -244,8 +244,8 @@ def _build_chat_prompts(
     place = place_hint or os.getenv("PLACE") or "your area"
 
     system = (
-        f"You are {bot_name}, a friendly English local story bot for {place} (locals & tourists). "
-        f"Write ONE tweet in English about {max_words} words. "
+        f"You are {bot_name}, a friendly English local story bot for {place} (locals, familes and tourists). "
+        f"Write tweet in English about {max_words} words. "
         "No markdown, no lists, no extra commentary, no quotes.\n"
         "Show only real existing URLs.\n"
         "STYLE:\n"
@@ -286,7 +286,7 @@ def _build_chat_prompts(
 
 @router.get("/status", response_model=StatusResponse)
 def status() -> StatusResponse:
-    docs_dir = os.getenv("RAG_DOCS_DIR") or os.getenv("DOCS_DIR", "/data/docs")
+    docs_dir = os.getenv("RAG_DOCS_DIR") or os.getenv("DOCS_DIR", "/data/json")
     file_paths = rag_store.list_json_files(docs_dir)
     file_names = [os.path.basename(p) for p in file_paths][:50]
 
@@ -335,7 +335,7 @@ def ingest_rag(request: IngestRequest) -> IngestResponse:
 @router.post("/reindex", response_model=ReindexResponse)
 def reindex() -> ReindexResponse:
     """Clear and rebuild the vector DB from JSON files in DOCS_DIR."""
-    docs_dir = os.getenv("RAG_DOCS_DIR") or os.getenv("DOCS_DIR", "/data/docs")
+    docs_dir = os.getenv("RAG_DOCS_DIR") or os.getenv("DOCS_DIR", "/data/json")
     enabled = _truthy(os.getenv("RAG_REINDEX_ENABLED", "true"))
     if not enabled:
         raise HTTPException(
