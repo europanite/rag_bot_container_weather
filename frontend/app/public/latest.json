@@ -1,25 +1,25 @@
 {
   "date": "2025-12-25",
-  "generated_at": "2025-12-25T14:02:25Z",
-  "text": "Merry Christmas! Enjoy the winter evening lights in Yokosuka! 🎄🌃 Current weather: 10.5°C, 87% humidity, gentle winds. Don't miss the IllumiYokosuka2025 event tonight! 🎅 #IllumiYokosuka2025 #WinterCool",
+  "generated_at": "2025-12-25T14:20:07Z",
+  "text": "Merry Christmas! 🎄🎅️ It's a mild winter evening in Yokosuka, with a gentle 10.4°C and partly cloudy skies. Perfect for a warm cup of hot drink at ②11:00～12:00 (Curry Ramen Cafe anyone?)! #IllumiYokosuka2025 #WinterCool",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-25T13:56:57Z",
+    "generated_at": "2025-12-25T14:13:19Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-25T22:45",
-      "temp_c": 10.5,
+      "time": "2025-12-25T23:00",
+      "temp_c": 10.4,
       "apparent_temp_c": 8.7,
       "humidity_pct": 87,
       "precip_mm": 0.0,
       "weather_code": 2,
-      "cloud_cover_pct": 57,
-      "wind_kmh": 9.7,
-      "wind_dir_deg": 4
+      "cloud_cover_pct": 54,
+      "wind_kmh": 9.1,
+      "wind_dir_deg": 7
     },
     "today": {
       "date": "2025-12-25",
