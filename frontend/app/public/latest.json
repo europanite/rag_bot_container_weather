@@ -1,25 +1,25 @@
 {
   "date": "2025-12-25",
-  "generated_at": "2025-12-25T07:04:37Z",
-  "text": "Merry Christmas! 🎄 In Yokosuka, it's a cloudy winter evening with a mild 10.7°C. Perfect weather to enjoy the Yoksuka Countdown exhibition at Vellerny Park 🎉, featuring live events, kitchen cars, and more! 🎊 https://www.cocoyoko.net/yoksuka-countdown/",
+  "generated_at": "2025-12-25T07:21:50Z",
+  "text": "Merry Christmas! 🎄 It's a cloudy and mild evening in Yokosuka, with a temperature of 10.6°C and 93% humidity. Join the Yokosuka Countdown exhibition at Velini Park from 18:00 to 01:00 on December 31st to January 1st! 🎉 #Yokosuka #Miura",
   "place": "Yokosuka",
   "weather": {
     "source": "open-meteo",
-    "generated_at": "2025-12-25T07:00:20Z",
+    "generated_at": "2025-12-25T07:17:05Z",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-25T16:00",
-      "temp_c": 10.7,
-      "apparent_temp_c": 8.9,
+      "time": "2025-12-25T16:15",
+      "temp_c": 10.6,
+      "apparent_temp_c": 8.8,
       "humidity_pct": 93,
       "precip_mm": 0.0,
       "weather_code": 3,
-      "cloud_cover_pct": 92,
-      "wind_kmh": 11.6,
-      "wind_dir_deg": 7
+      "cloud_cover_pct": 89,
+      "wind_kmh": 11.9,
+      "wind_dir_deg": 5
     },
     "today": {
       "date": "2025-12-25",
