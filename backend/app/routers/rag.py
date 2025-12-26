@@ -226,8 +226,8 @@ def _enforce_max_chars(text: str, max_words: int) -> str:
 # URL safety: only allow URLs that appear in retrieved context (or explicit allowlists)
 # -------------------------------------------------------------------
 
-_URL_RE = re.compile(r"https?://[^\s<>()\[\]"']+")
-                     
+# NOTE: the double-quote inside the character class must be escaped for Python string syntax.
+_URL_RE = re.compile(r"https?://[^\s<>()\[\]\"']+")
 _MD_LINK_RE = re.compile(r"\[([^\]]+)\]\((https?://[^)\s]+)\)")
 
 _TRAILING_PUNCT_RE = re.compile(r"[\]\)\}\>,\.;:!\?\"']+$")

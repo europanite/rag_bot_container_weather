@@ -1,17 +1,12 @@
-name: GitHub Pages
+name: Deploy Web to GitHub Pages
 
 on:
-  workflow_call:
-    inputs:
-      ref:
-        description: "Branch/ref to build & deploy"
-        required: false
-        type: string
-        default: "main"
+  push:
+    branches: [ "main" ]
   workflow_dispatch:
     inputs:
-      ref:
-        description: "Branch/ref to build & deploy"
+      git_ref:
+        description: "Git ref to deploy (branch, tag, or SHA)"
         required: false
         default: "main"
 
@@ -22,68 +17,61 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (ref)
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref }}
-          fetch-depth: 0
+          # Use workflow_dispatch input when provided; otherwise deploy the triggering ref.
+          ref: ${{ github.event.inputs.git_ref || github.ref }}
 
-      - name: Ensure latest remote ref
-        run: |
-          set -euo pipefail
-          BRANCH="${{ inputs.ref }}"
-          git fetch origin "$BRANCH" --prune || true
-          if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
-            git reset --hard "origin/$BRANCH"
-          fi
-
-      - name: Use Node.js 20
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: |
-            frontend/app/package-lock.json
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/app/package-lock.json
 
-      - name: Install deps
+      - name: Install & Check
         working-directory: frontend/app
-        run: npm ci
+        run: |
+          npm ci
+          npm run check
 
-      - name: Build (expo export -p web)
+      - name: Build (Expo Web export)
         working-directory: frontend/app
         env:
           EXPO_PUBLIC_FEED_URL: ./latest.json
-          EXPO_PUBLIC_FEEDBACK_FORM_URL: ${{ vars.EXPO_PUBLIC_FEEDBACK_FORM_URL }}
         run: |
+          rm -rf web-build
           npx expo export --platform web --output-dir web-build
 
-      - name: Copy JSON feeds into web-build
+      - name: Copy extra static files into web-build
         working-directory: frontend/app
         run: |
-          mkdir -p web-build
-          cp -av public/. web-build/ 2>/dev/null || true
+          # Ensure GitHub Pages serves files from /public (feed/, snapshot/, latest.json, robots.txt, etc.)
+          if [ -d public ]; then
+            cp -av public/. web-build/
+          fi
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload Pages artifact
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/app/web-build
 
   deploy:
-    needs: build
     runs-on: ubuntu-latest
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
