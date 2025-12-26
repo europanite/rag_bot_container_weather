@@ -47,7 +47,7 @@ class QueryRequest(BaseModel):
     top_k: int = Field(
         5,
         ge=1,
-        le=20,
+        le=128,
         description="Number of similar chunks to retrieve from the vector store.",
     )
 
