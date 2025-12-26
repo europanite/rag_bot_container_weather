@@ -9,6 +9,31 @@ from fastapi.testclient import TestClient
 from rag_store import RAGChunk
 
 
+def test_rag_query_strips_incomplete_scheme(client, monkeypatch):
+    allowed = "https://example.com/allowed"
+    chunk_text = f"Tourism info. Link: {allowed}"
+
+    monkeypatch.setattr(
+        rag_store,
+        "query_similar_chunks",
+        lambda query, top_k=3: [
+            rag_store.RAGChunk(text=chunk_text, distance=0.1, metadata={"source": "test"})
+        ],
+    )
+
+    def fake_call_ollama_chat(*, question: str, system_prompt: str, user_prompt: str) -> str:
+        return f"Nice spot! (https://) Official: {allowed}"
+
+    monkeypatch.setattr(rag_router, "_call_ollama_chat", fake_call_ollama_chat)
+
+    r = client.post("/rag/query", json={"question": "hello"})
+    assert r.status_code == 200
+    ans = r.json()["answer"]
+    assert allowed in ans
+    assert "(https://)" not in ans
+    assert "https://" not in ans
+    
+
 def test_rag_ingest_success(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     calls: list[str] = []
 

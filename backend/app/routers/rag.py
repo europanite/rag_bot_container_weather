@@ -278,6 +278,8 @@ def _is_allowed_url(url: str, *, allowed_urls: set[str], allowlist_regexes: list
             return True
     return False
 
+_INCOMPLETE_SCHEME_RE = re.compile(r"https?://(?=[\s\)\]\}\>,\.;:!\?\"']|$)")
+_EMPTY_PARENS_RE = re.compile(r"\(\s*\)")
 
 def _filter_answer_urls(
     answer: str,
@@ -310,6 +312,8 @@ def _filter_answer_urls(
         return ""
 
     out = _URL_RE.sub(_raw_repl, out)
+    out = _INCOMPLETE_SCHEME_RE.sub("", out)     # "https://)", "https://"
+    out = _EMPTY_PARENS_RE.sub("", out)          # "( )" , "()"
 
     # Cleanup: collapse extra spaces created by URL removal.
     out = re.sub(r"\s{2,}", " ", out).strip()
