@@ -494,7 +494,9 @@ def reindex() -> ReindexResponse:
 def query_rag(payload: QueryRequest, http_request: Request) -> QueryResponse:
     """Run a full RAG cycle: retrieve similar chunks and ask the chat model."""
     try:
-        raw_k = payload.top_k * 4 if payload.output_style == "tweet_bot" else payload.top_k
+        tweet_pool = int(os.getenv("RAG_TWEET_CONTEXT_POOL", "18"))
+        raw_k = max(payload.top_k * 4, tweet_pool * 4) if payload.output_style == "tweet_bot" else payload.top_k
+
         chunks: list[RAGChunk] = rag_store.query_similar_chunks(
             payload.question,
             top_k=raw_k,
@@ -510,9 +512,9 @@ def query_rag(payload: QueryRequest, http_request: Request) -> QueryResponse:
                     continue
                 diversified.append(c)
                 seen.add(key)
-                if len(diversified) >= payload.top_k:
+                if len(diversified) >= tweet_pool:
                     break
-            chunks = diversified or chunks[: payload.top_k]
+            chunks = diversified or chunks[:tweet_pool]
     except Exception as exc:
         logger.exception("Vector search failed", exc_info=exc)
         raise HTTPException(
