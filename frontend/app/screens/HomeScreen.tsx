@@ -259,7 +259,6 @@ function Slot() {
       }}
     >
       <Text style={{ color: TEXT_DIM, marginTop: 6, lineHeight: 18 }}>
-        Slot
       </Text>
     </View>
   );
