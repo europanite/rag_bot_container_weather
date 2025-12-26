@@ -583,7 +583,7 @@ def main() -> int:
         return 1
 
     # Tweet config
-    top_k = int(env("RAG_TOP_K", "3") or "3")
+    top_k = int(env("RAG_TOP_K", "16") or "16")
     max_words = env("MAX_WORDS", "128") or "128"
     hashtags = env("HASHTAGS", "")
 
