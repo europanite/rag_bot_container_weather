@@ -399,31 +399,30 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
 
     cleaned_texts = []
     for t in texts:
-        if not t:
-            continue
-        stripped = t.strip()
-        if not stripped:
-            continue
-        cleaned_texts.append(stripped)
-
-    if not cleaned_texts:
-        return []
+        if not t or not t.strip():
+            raise ValueError("Blank chunk text encountered (unexpected).")
+        cleaned_texts.append(t.strip())
 
     embeddings: list[list[float]] = []
     errors: list[Exception] = []
 
     for t in cleaned_texts:
-        try:
-            emb = _embed_with_ollama(t)
-            embeddings.append(emb)
-        except Exception as exc:  # requests.HTTPError
-            logger.exception("Embedding failed for text chunk", exc_info=exc)
-            errors.append(exc)
+        last_exc: Exception | None = None
+        for _attempt in range(3):  # retry 3 times
+            try:
+                embeddings.append(_embed_with_ollama(t))
+                last_exc = None
+                break
+            except Exception as exc:
+                last_exc = exc
+                time.sleep(1)  # 1s (シンプルでOK)
+        if last_exc is not None:
+            errors.append(last_exc)
 
-    if not embeddings:
+    if errors:
         raise RuntimeError(
-            f"Failed to embed any of the {len(cleaned_texts)} text chunks; "
-            f"last error: {errors[-1] if errors else 'unknown'}"
+            f"Embedding failed for {len(errors)}/{len(cleaned_texts)} chunks; "
+            f"last error: {errors[-1]}"
         )
 
     return embeddings
@@ -697,6 +696,11 @@ def upsert_document(
 
     chunk_texts = [c.text for c in chunks]
     embeddings = embed_texts(chunk_texts)
+    if len(embeddings) != len(chunk_texts):
+        raise RuntimeError(
+            f"Embedding count mismatch for doc_id={doc_id}: "
+            f"chunks={len(chunk_texts)} embeddings={len(embeddings)}"
+    )
 
     base_meta = _chroma_safe_metadata(dict(metadata or {}))
     base_meta["doc_id"] = doc_id
@@ -789,7 +793,10 @@ def reset_collection() -> None:
 
 
 def rebuild_from_json_dir(docs_dir: str) -> dict[str, int]:
-    """Clear the collection and ingest JSON documents from `docs_dir`."""
     reset_collection()
-    return ingest_json_dir(docs_dir)
+    try:
+        return ingest_json_dir(docs_dir)
+    except Exception:
+        reset_collection()
+        raise
 
