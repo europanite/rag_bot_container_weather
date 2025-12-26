@@ -144,6 +144,23 @@ def http_json(method: str, url: str, payload: Optional[Dict[str, Any]], cfg: Htt
                     return last
                 # If last is not dict, still return wrapped
                 return {"_value": last}
+        except urllib.error.HTTPError as e:
+            # IMPORTANT: read FastAPI error JSON (e.g. {"detail":"..."})
+            try:
+                raw = e.read()
+                body = raw.decode("utf-8", errors="replace")
+                if body:
+                    try:
+                        objs = parse_possibly_concatenated_json(body)
+                        last = objs[-1]
+                        if isinstance(last, dict):
+                            return last
+                        return {"_value": last}
+                    except Exception:
+                        pass
+            finally:
+                last_exc = e
+            time.sleep(2)
         except BaseException as e:
             last_exc = e
             if cfg.debug:
@@ -643,7 +660,7 @@ def main() -> int:
         try:
             resp_obj = http_json("POST", f"{api_base}/rag/query", payload, cfg)
         except Exception as e:
-            print(f"WARN: /rag/query call failed (attempt {attempt}/{cfg.retries+2}). Retrying...", file=sys.stderr)
+            print(f"WARN: /rag/query call failed (attempt {attempt}/{cfg.retries+2}). Retrying... err={e!r}", file=sys.stderr)
             time.sleep(2)
             continue
 
