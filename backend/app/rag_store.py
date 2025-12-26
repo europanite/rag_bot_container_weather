@@ -3,6 +3,7 @@ import logging
 import os
 import re
 import uuid
+import time
 from pathlib import Path
 from typing import Any
 
@@ -397,32 +398,47 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
     if not texts:
         return []
 
-    cleaned_texts = []
+    cleaned_texts: list[str] = []
     for t in texts:
-        if not t or not t.strip():
-            raise ValueError("Blank chunk text encountered (unexpected).")
-        cleaned_texts.append(t.strip())
+        if not t:
+            continue
+        stripped = t.strip()
+        if not stripped:
+            continue
+        cleaned_texts.append(stripped)
+
+    if not cleaned_texts:
+        return []
 
     embeddings: list[list[float]] = []
     errors: list[Exception] = []
 
     for t in cleaned_texts:
         last_exc: Exception | None = None
-        for _attempt in range(3):  # retry 3 times
+        for attempt in range(3):
             try:
                 embeddings.append(_embed_with_ollama(t))
                 last_exc = None
                 break
             except Exception as exc:
                 last_exc = exc
-                time.sleep(1)  # 1s (シンプルでOK)
+                if attempt < 2:
+                    time.sleep(1)
+
         if last_exc is not None:
+            logger.exception("Embedding failed for text chunk", exc_info=last_exc)
             errors.append(last_exc)
+
+    if not embeddings:
+        raise RuntimeError(
+            f"Failed to embed any of the {len(cleaned_texts)} text chunks; "
+            f"last error: {errors[-1] if errors else 'unknown'}"
+        )
 
     if errors:
         raise RuntimeError(
             f"Embedding failed for {len(errors)}/{len(cleaned_texts)} chunks; "
-            f"last error: {errors[-1]}"
+            f"last error: {errors[-1] if errors else 'unknown'}"
         )
 
     return embeddings
