@@ -52,5 +52,9 @@
       "area_code": null,
       "temp_city_code": null
     }
-  }
+  },
+  "image_url": "/diary/2025-12-27_053518fd.png",
+  "image_prompt": "Japanese picture diary illustration, illustrated diary style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this diary message: Good evening Yokosuka! 🌃 It's 5.4°C and cloudy tonight. Looking forward to serving warm drinks and food at Kumura Otaki Shrine's New Year's Eve celebration 🎉🍜!",
+  "image_model": "stabilityai/sd-turbo",
+  "image_generated_at": "2025-12-27T08:55:30.467328Z"
 }
