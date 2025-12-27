@@ -55,6 +55,19 @@ jobs:
         working-directory: frontend/app
         run: npm ci
 
+      - name: Use Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build paged feed (for infinite scroll)
+        env:
+          FEED_PATH: frontend/app/public
+          LATEST_PATH: frontend/app/public/latest.json
+          FEED_PAGE_SIZE: "20"
+        run: |
+          python scripts/build_feed_pages.py
+
       - name: Build (expo export -p web)
         working-directory: frontend/app
         env:
