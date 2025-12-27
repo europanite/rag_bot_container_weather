@@ -56,8 +56,9 @@ jobs:
           path: |
             ~/.cache/huggingface
             ~/.cache/torch
-          key: ${{ runner.os }}-hf-torch-${{ hashFiles('**/requirements*.txt') }}
+          key: ${{ runner.os }}-hf-torch-sdshare-${{ inputs.ref }}
           restore-keys: |
+            ${{ runner.os }}-hf-torch-sdshare-
             ${{ runner.os }}-hf-torch-
 
       - name: Install deps (CPU)
@@ -81,11 +82,8 @@ jobs:
           test -f "$FEED_JSON"
 
           python - <<'PY'
-          import os, json, hashlib, re, textwrap
+          import os, json, hashlib, re
           from pathlib import Path
-
-          import torch
-          from diffusers import DiffusionPipeline
 
           FEED_JSON = Path(os.environ["FEED_JSON"])
           OUT_DIR = Path(os.environ["OUT_DIR"])
@@ -96,9 +94,34 @@ jobs:
           H = int(os.environ.get("HEIGHT","512"))
 
           data = json.loads(FEED_JSON.read_text(encoding="utf-8"))
-          items = data.get("items", []) if isinstance(data, dict) else []
+
+          # Support BOTH schemas:
+          # 1) { "items": [ ... ] }
+          # 2) { "date": "...", "text": "...", ... } (single object)
+          def to_items(d):
+            if isinstance(d, dict):
+              if isinstance(d.get("items"), list):
+                return d["items"]
+              if d.get("date") and d.get("text"):
+                return [d]
+              return []
+            if isinstance(d, list):
+              return d
+            return []
+
+          items = to_items(data)
           items = [it for it in items if isinstance(it, dict) and it.get("date") and it.get("text")]
           items = items[: max(1, MAX_ITEMS)]
+
+          if not items:
+            print("No usable items found in latest.json.")
+            if isinstance(data, dict):
+              print("Top-level keys:", sorted(list(data.keys()))[:50])
+            raise SystemExit(0)
+
+          # Load model only if we have items (avoid huge downloads when feed is empty)
+          import torch
+          from diffusers import DiffusionPipeline
 
           device = "cuda" if torch.cuda.is_available() else "cpu"
           dtype = torch.float16 if device == "cuda" else torch.float32
@@ -106,7 +129,7 @@ jobs:
           pipe = DiffusionPipeline.from_pretrained(MODEL_ID, torch_dtype=dtype)
           pipe = pipe.to(device)
 
-          # Turbo guidance  SDXL-Turbo guidance_scale=0.0 :contentReference[oaicite:5]{index=5}
+          # Turbo系は guidance
           guidance_scale = 0.0
 
           def slug(s: str) -> str:
@@ -115,14 +138,12 @@ jobs:
             return s[:60] or "item"
 
           def build_prompt(text: str, place: str) -> str:
-            t = re.sub(r"\s+"," ", text).strip()
-            t = t[:240]
+            t = re.sub(r"\s+"," ", text).strip()[:240]
             if place:
               return f"cinematic illustration, {place}, based on this short story: {t}"
             return f"cinematic illustration, based on this short story: {t}"
 
           OUT_DIR.mkdir(parents=True, exist_ok=True)
-
           manifest = {"items":[]}
 
           for it in items:
@@ -130,7 +151,8 @@ jobs:
             place = str(it.get("place","") or "")
             text = str(it.get("text",""))
 
-            seed = int(hashlib.sha1((date+"\n"+text).encode("utf-8", errors="ignore")).hexdigest()[:8], 16)
+            seed_hex8 = hashlib.sha1((date+"\n"+text).encode("utf-8", errors="ignore")).hexdigest()[:8]
+            seed = int(seed_hex8, 16)
             g = torch.Generator(device=device).manual_seed(seed)
 
             prompt = build_prompt(text, place)
@@ -147,8 +169,14 @@ jobs:
             out_path = OUT_DIR / fn
             image.save(out_path)
 
+            # Store path relative to frontend/app/public
             rel = "/" + str(out_path.relative_to(Path("frontend/app/public"))).replace("\\","/")
-            manifest["items"].append({"date": date, "place": place, "image": rel, "prompt": prompt})
+            manifest["items"].append({
+              "date": date,
+              "place": place,
+              "image": rel,
+              "prompt": prompt
+            })
 
           (OUT_DIR / "index.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
           print("generated:", len(manifest["items"]), "images ->", OUT_DIR)
