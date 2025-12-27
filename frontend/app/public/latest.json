@@ -1,40 +1,29 @@
 {
   "date": "2025-12-27",
-  "generated_at": "2025-12-27T14:58:18Z",
-  "text": "Good night! It's a chilly winter night in Yokosuka with partly cloudy skies and a low of 4.3°C. Get ready for Dondo-yaki / Otakiage at Kurihama Beach on January 11th! #Yokosuka",
+  "generated_at": "2025-12-27T15:17:02Z",
+  "text": "Good morning from Yokosuka! ☀️ Today's forecast: partly cloudy, 4°C, and a gentle breeze. Perfect for a winter stroll along the promenade! 🌳 Join the Dondo-yaki / Otakiage event at Kurihama Beach on Jan 11 (https://kurihama.info/event/newyear/) #Yokosuka",
   "place": "Yokosuka",
   "weather": {
     "source": "jma",
-    "generated_at": "2025-12-27T14:53:49.689509+00:00",
+    "generated_at": "2025-12-27T15:12:35.767401+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-27T23:40:00+09:00",
-      "temp_c": 4.3,
+      "time": "2025-12-28T00:00:00+09:00",
+      "temp_c": 4.0,
       "apparent_temp_c": null,
-      "humidity_pct": 73.0,
+      "humidity_pct": 75.0,
       "precip_mm": 0.0,
-      "weather_code": 2,
+      "weather_code": 0,
       "cloud_cover_pct": null,
-      "wind_kmh": 5.4,
-      "wind_dir_deg": 67.5,
+      "wind_kmh": 6.48,
+      "wind_dir_deg": 45.0,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
     },
     "today": {
-      "date": "2025-12-27",
-      "weather_code": 2,
-      "precip_sum_mm": null,
-      "wind_max_kmh": null,
-      "temp_max_c": null,
-      "temp_min_c": null,
-      "weather_text_ja": "くもり　夜遅く　晴れ",
-      "jma_weather_code": "211",
-      "precip_prob_pct": 10
-    },
-    "tomorrow": {
       "date": "2025-12-28",
       "weather_code": 0,
       "precip_sum_mm": null,
@@ -45,6 +34,17 @@
       "jma_weather_code": "100",
       "precip_prob_pct": 10
     },
+    "tomorrow": {
+      "date": "2025-12-29",
+      "weather_code": 2,
+      "precip_sum_mm": null,
+      "wind_max_kmh": null,
+      "temp_max_c": 11.0,
+      "temp_min_c": 4.0,
+      "weather_text_ja": "くもり　時々　晴れ",
+      "jma_weather_code": "201",
+      "precip_prob_pct": null
+    },
     "jma_meta": {
       "publishing_office": "横浜地方気象台",
       "report_datetime": "2025-12-27T17:00:00+09:00",
@@ -52,9 +52,5 @@
       "area_code": null,
       "temp_city_code": null
     }
-  },
-  "image_url": "/image/feed_20251227_235347_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good night! It's a chilly winter night in Yokosuka with partly cloudy skies and a low of 4.3°C. Get ready for Dondo-yaki / Otakiage at Kurihama Beach on January 11th!",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2025-12-27T15:01:46.483226Z"
+  }
 }
