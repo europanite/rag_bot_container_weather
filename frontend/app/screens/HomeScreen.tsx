@@ -40,6 +40,31 @@ const MASCOT_RADIUS = 12;
 const MASCOT_BORDER_W = 2;
 const SIDEBAR_W = 240;
 
+const FEED_SCROLL_ID = "feed-scroll";
+
+function ensureWebScrollbarStyle() {
+  if (Platform.OS !== "web") return;
+
+  const STYLE_ID = "hide-scrollbar-style";
+  if (document.getElementById(STYLE_ID)) return;
+
+  const style = document.createElement("style");
+  style.id = STYLE_ID;
+  style.textContent = `
+    /* target only the FlatList scroll node */
+    #${FEED_SCROLL_ID} {
+      -ms-overflow-style: none;   /* IE/Edge legacy */
+      scrollbar-width: none;      /* Firefox */
+    }
+    #${FEED_SCROLL_ID}::-webkit-scrollbar {
+      width: 0px;
+      height: 0px;
+      display: none;              /* Chrome/Safari */
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 function parseTimeLike(input: string): Date | null {
   const s = String(input ?? "").trim();
   if (!s) return null;
@@ -332,6 +357,10 @@ export default function HomeScreen() {
     setEffectiveUrl(RESOLVED_FEED_URL);
   }, [RESOLVED_FEED_URL]);
 
+  useEffect(() => {
+  ensureWebScrollbarStyle();
+  }, []);
+
   const load = useCallback(async () => {
     let currentEffectiveUrl = RESOLVED_FEED_URL;
 
@@ -460,14 +489,16 @@ export default function HomeScreen() {
 
   const list = (
     <FlatList
+      nativeID={FEED_SCROLL_ID}
+      showsVerticalScrollIndicator={false}
       style={{ flex: 1, backgroundColor: APP_BG }}
       contentContainerStyle={{ paddingBottom: 18 }}
       data={sortedItems}
       keyExtractor={(it) => it.id}
       ListHeaderComponent={Header}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-            onEndReached={loadMore}
-            onEndReachedThreshold={0.5}
+      onEndReached={loadMore}
+      onEndReachedThreshold={0.5}
             ListFooterComponent={
               loadingMore ? (
                 <View style={{ padding: 16, alignItems: "center" }}>
