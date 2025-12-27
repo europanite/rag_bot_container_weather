@@ -704,31 +704,28 @@ const getImageUriForItem = useCallback(
                     zIndex: 1,
                   }}
                 >
+
+                  {imageUri ? (
+                    <View
+                      style={{
+                        marginBottom: 10,
+                        borderRadius: 12,
+                        overflow: "hidden",
+                      }}
+                    >
+                      <Image
+                        source={{ uri: imageUri }}
+                        style={{ width: "100%", aspectRatio: 16 / 9 }}
+                        resizeMode="cover"
+                        accessibilityLabel="Generated image"
+                      />
+                    </View>
+                  ) : null}
+
                   <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
                     {item.generated_at ? <Text style={{ color: TEXT_DIM }}>{formatJst(item.generated_at)}</Text> : null}
                     {item.place ? <Text style={{ color: TEXT_DIM }}>• {item.place}</Text> : null}
                   </View>
-
-                  
-{imageUri ? (
-  <View
-    style={{
-      marginTop: 10,
-      borderRadius: 12,
-      overflow: "hidden",
-      borderWidth: 1,
-      borderColor: BORDER,
-      backgroundColor: "#ffffff",
-    }}
-  >
-    <Image
-      source={{ uri: imageUri }}
-      style={{ width: "100%", aspectRatio: 16 / 9 }}
-      resizeMode="cover"
-      accessibilityLabel="Generated image"
-    />
-  </View>
-) : null}
 
 <Text style={{ color: "#000000", marginTop: 8, fontSize: 16, lineHeight: 22 }}>{item.text}</Text>
                 </View>
