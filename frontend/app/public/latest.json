@@ -52,5 +52,9 @@
       "area_code": null,
       "temp_city_code": null
     }
-  }
+  },
+  "image_url": "/image/2025-12-27_d97ae081.png",
+  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good evening! 🌃️☁️ Cold and cloudy tonight in Yokosuka, Kanagawa, with a temperature of 6°C. 🌫️ Don't miss Dondo-yaki / Otakiage at Kurihama Beach on January 11th! 🎄",
+  "image_model": "stabilityai/sd-turbo",
+  "image_generated_at": "2025-12-27T12:21:07.503599Z"
 }
