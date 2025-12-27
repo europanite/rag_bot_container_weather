@@ -52,5 +52,9 @@
       "area_code": null,
       "temp_city_code": null
     }
-  }
+  },
+  "image_url": "/image/feed_20251227_235347_JST.png",
+  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Happy New Year's Eve! It's a chilly night in Yokosuka with a temperature of 3.4°C and a gentle wind. Perfect weather to enjoy the New Year's Eve festivities at Kumura Otaki Shrine! 🎉🕰️",
+  "image_model": "stabilityai/sd-turbo",
+  "image_generated_at": "2025-12-27T17:28:19.322380Z"
 }
