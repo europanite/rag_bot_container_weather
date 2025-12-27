@@ -269,8 +269,13 @@ jobs:
           place = str(latest.get("place", "") or PLACE_FALLBACK).strip()
           generated_at = str(latest.get("generated_at", "")).strip()
 
-          seed_hex8 = hashlib.sha1((date + "\n" + text).encode("utf-8", errors="ignore")).hexdigest()[:8]
-          fn = f"{slug(date)}_{seed_hex8}.png"
+
+          feeds = []
+          if FEED_DIR.exists():
+              feeds = sorted(FEED_DIR.glob("feed_*.json"), key=lambda x: x.stat().st_mtime, reverse=True)
+
+          feed_stem = feeds[0].stem if feeds else f"{slug(date)}_{seed_hex8}"
+          fn = f"{feed_stem}.png"
           OUT_DIR.mkdir(parents=True, exist_ok=True)
           out_path = OUT_DIR / fn
           rel_url = "/" + str(out_path.relative_to(Path("frontend/app/public"))).replace("\\", "/")
@@ -404,11 +409,13 @@ jobs:
               same_id = bool(generated_at) and str(it.get("id", "")) == generated_at
               same_dt = str(it.get("date", "")) == date and str(it.get("text", "")) == text
               if same_id or same_dt:
-                it["image_url"] = rel_url
-                it["image_prompt"] = prompt
-                it["image_model"] = MODEL_ID
-                it["image_generated_at"] = now_iso
-                changed = True
+                  it["id"] = feed_stem
+                  it["image"] = rel_url
+                  it["image_url"] = rel_url
+                  it["image_prompt"] = prompt
+                  it["image_model"] = MODEL_ID
+                  it["image_generated_at"] = now_iso
+                  changed = True
             if changed:
               dump_json(p, obj)
             return changed
