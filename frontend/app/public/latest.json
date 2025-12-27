@@ -1,25 +1,25 @@
 {
   "date": "2025-12-27",
-  "generated_at": "2025-12-27T10:27:32Z",
-  "text": "Good evening from Yokosuka! Partly cloudy with a chill at 4.7°C. Perfect excuse to grab a warm drink and head to Kumura Otaki Shrine for Hatsumode and toshikoshi soba on New Year's Eve! 🍜🎄 #Yokosuka #NewYear",
+  "generated_at": "2025-12-27T11:15:39Z",
+  "text": "Good evening! It's 4.4°C with 64% humidity in Yokosuka today. Tomorrow's forecast is sunny! Don't miss Hatsumode at Kumura Otaki Shrine on New Year's Eve, starting around 23:30, with toshikoshi soba planned! #Yokosuka #NewYear",
   "place": "Yokosuka",
   "weather": {
     "source": "jma",
-    "generated_at": "2025-12-27T10:22:57.303118+00:00",
+    "generated_at": "2025-12-27T11:11:13.653632+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-27T19:10:00+09:00",
-      "temp_c": 4.7,
+      "time": "2025-12-27T20:00:00+09:00",
+      "temp_c": 4.4,
       "apparent_temp_c": null,
-      "humidity_pct": 62.0,
+      "humidity_pct": 64.0,
       "precip_mm": 0.0,
       "weather_code": 2,
       "cloud_cover_pct": null,
-      "wind_kmh": 3.9600000000000004,
-      "wind_dir_deg": 22.5,
+      "wind_kmh": 2.16,
+      "wind_dir_deg": 90.0,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
     },
@@ -52,9 +52,5 @@
       "area_code": null,
       "temp_city_code": null
     }
-  },
-  "image_url": "/image/2025-12-27_c92992be.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good evening from Yokosuka! Partly cloudy with a chill at 4.7°C. Perfect excuse to grab a warm drink and head to Kumura Otaki Shrine for Hatsumode and toshikoshi soba on New Year's Eve! 🍜🎄",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2025-12-27T10:30:41.923096Z"
+  }
 }
