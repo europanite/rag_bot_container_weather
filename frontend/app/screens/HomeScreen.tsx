@@ -174,16 +174,16 @@ function normalizeFeed(parsed: unknown): Feed | null {
         const id = typeof it?.id === "string" ? it.id : `${date}-${idx}`;
         const place = typeof it?.place === "string" ? it.place : undefined;
         const generated_at = typeof it?.generated_at === "string" ? it.generated_at : undefined;
-          const image =
-            typeof it?.image === "string"
-              ? it.image
-              : typeof it?.image_url === "string"
-              ? it.image_url
-              : typeof it?.imageUri === "string"
-              ? it.imageUri
-              : undefined;
-          const image_prompt = typeof it?.image_prompt === "string" ? it.image_prompt : undefined;
-          return { id, date, text, place, generated_at, image, image_prompt };
+        const image =
+          typeof it?.image === "string"
+            ? it.image
+            : typeof it?.image_url === "string"
+            ? it.image_url
+            : typeof it?.imageUri === "string"
+            ? it.imageUri
+            : undefined;
+        const image_prompt = typeof it?.image_prompt === "string" ? it.image_prompt : undefined;
+        return { id, date, text, place, generated_at, image, image_prompt };
       })
       .filter(Boolean) as FeedItem[];
 
@@ -196,7 +196,6 @@ function normalizeFeed(parsed: unknown): Feed | null {
 
   return null;
 }
-
 
 type ShareSdItem = {
   date?: string;
@@ -228,7 +227,6 @@ function buildSharePrompt(text: string, place?: string): string {
     : `cinematic illustration, based on this short story: ${t}`;
 }
 
-
 const FeedBubbleImage: React.FC<{ uri?: string }> = ({ uri }) => {
   const [hidden, setHidden] = useState(false);
 
@@ -258,7 +256,6 @@ const FeedBubbleImage: React.FC<{ uri?: string }> = ({ uri }) => {
   );
 };
 
-
 function normalizeShareSdIndex(parsed: unknown): ShareSdIndex | null {
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
   const obj = parsed as any;
@@ -284,7 +281,6 @@ function normalizeShareSdIndex(parsed: unknown): ShareSdIndex | null {
   };
 }
 
-
 function getFeedPointer(parsed: unknown): string | null {
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
   const obj = parsed as any;
@@ -293,10 +289,10 @@ function getFeedPointer(parsed: unknown): string | null {
     typeof obj.feed_url === "string"
       ? obj.feed_url
       : typeof obj.feed_file === "string"
-        ? obj.feed_file
-        : typeof obj.feed_path === "string"
-          ? obj.feed_path
-          : null;
+      ? obj.feed_file
+      : typeof obj.feed_path === "string"
+      ? obj.feed_path
+      : null;
 
   if (!cand) return null;
   const s = String(cand).trim();
@@ -311,12 +307,12 @@ function getNextPointer(parsed: unknown): string | null {
     typeof obj.next_url === "string"
       ? obj.next_url
       : typeof obj.next === "string"
-        ? obj.next
-        : typeof obj.nextPage === "string"
-          ? obj.nextPage
-          : typeof obj.next_page === "string"
-            ? obj.next_page
-            : null;
+      ? obj.next
+      : typeof obj.nextPage === "string"
+      ? obj.nextPage
+      : typeof obj.next_page === "string"
+      ? obj.next_page
+      : null;
 
   if (!cand) return null;
   const s = String(cand).trim();
@@ -420,8 +416,7 @@ function Slot() {
         padding: 12,
       }}
     >
-      <Text style={{ color: TEXT_DIM, marginTop: 6, lineHeight: 18 }}>
-      </Text>
+      <Text style={{ color: TEXT_DIM, marginTop: 6, lineHeight: 18 }}></Text>
     </View>
   );
 }
@@ -460,7 +455,7 @@ export default function HomeScreen() {
     const parsed = safeJsonParse(raw);
     return { raw, parsed };
   }, []);
-  
+
   const sortedItems = useMemo(() => {
     const items = feed?.items ?? [];
     return [...items].sort((a, b) => {
@@ -472,75 +467,73 @@ export default function HomeScreen() {
 
   const [effectiveUrl, setEffectiveUrl] = useState<string>(RESOLVED_FEED_URL);
 
+  useEffect(() => {
+    if (!SHARE_SD_INDEX_URL) return;
 
-useEffect(() => {
-  if (!SHARE_SD_INDEX_URL) return;
+    let cancelled = false;
 
-  let cancelled = false;
+    (async () => {
+      try {
+        const base =
+          Platform.OS === "web" && typeof window !== "undefined" ? window.location.href : RESOLVED_FEED_URL;
 
-  (async () => {
-    try {
-      const base =
-        Platform.OS === "web" && typeof window !== "undefined" ? window.location.href : RESOLVED_FEED_URL;
+        const resolved = resolveUrl(normalizeWebAssetPath(SHARE_SD_INDEX_URL), base);
+        const target = await fetchJson(resolved);
+        const normalized = normalizeShareSdIndex(target.parsed);
 
-      const resolved = resolveUrl(normalizeWebAssetPath(SHARE_SD_INDEX_URL), base);
-      const target = await fetchJson(resolved);
-      const normalized = normalizeShareSdIndex(target.parsed);
-
-      if (!cancelled) {
-        setShareSdIndex(normalized);
+        if (!cancelled) {
+          setShareSdIndex(normalized);
+        }
+      } catch {
+        // ignore (images are optional)
       }
-    } catch {
-      // ignore (images are optional)
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [SHARE_SD_INDEX_URL, RESOLVED_FEED_URL, fetchJson]);
+
+  const sharePromptToImage = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const it of shareSdIndex?.items ?? []) {
+      if (it.prompt && it.image) {
+        m.set(it.prompt, it.image);
+        continue;
+      }
+      if (it.date && it.place && it.image) {
+        m.set(`${it.date}|${it.place}`, it.image);
+      }
     }
-  })();
+    return m;
+  }, [shareSdIndex]);
 
-  return () => {
-    cancelled = true;
-  };
-}, [SHARE_SD_INDEX_URL, RESOLVED_FEED_URL, fetchJson]);
+  const assetBase = useMemo(() => {
+    if (Platform.OS === "web" && typeof window !== "undefined") return window.location.href;
+    return effectiveUrl || RESOLVED_FEED_URL;
+  }, [effectiveUrl, RESOLVED_FEED_URL]);
 
-const sharePromptToImage = useMemo(() => {
-  const m = new Map<string, string>();
-  for (const it of shareSdIndex?.items ?? []) {
-    if (it.prompt && it.image) {
-      m.set(it.prompt, it.image);
-      continue;
-    }
-    if (it.date && it.place && it.image) {
-      m.set(`${it.date}|${it.place}`, it.image);
-    }
-  }
-  return m;
-}, [shareSdIndex]);
+  const getImageUriForItem = useCallback(
+    (item: FeedItem): string => {
+      const direct = (item.image ?? "").trim();
+      if (direct) return resolveUrl(normalizeWebAssetPath(direct), assetBase);
 
-const assetBase = useMemo(() => {
-  if (Platform.OS === "web" && typeof window !== "undefined") return window.location.href;
-  return effectiveUrl || RESOLVED_FEED_URL;
-}, [effectiveUrl, RESOLVED_FEED_URL]);
+      // Fallback: try matching the Share SD index by prompt (deterministic) or by date+place.
+      const place = item.place || feed?.place;
+      const prompt = item.image_prompt || buildSharePrompt(item.text, place);
 
-const getImageUriForItem = useCallback(
-  (item: FeedItem): string => {
-    const direct = (item.image ?? "").trim();
-    if (direct) return resolveUrl(normalizeWebAssetPath(direct), assetBase);
+      const fromPrompt = sharePromptToImage.get(prompt);
+      if (fromPrompt) return resolveUrl(normalizeWebAssetPath(fromPrompt), assetBase);
 
-    // Fallback: try matching the Share SD index by prompt (deterministic) or by date+place.
-    const place = item.place || feed?.place;
-    const prompt = item.image_prompt || buildSharePrompt(item.text, place);
+      if (item.date && place) {
+        const byKey = sharePromptToImage.get(`${item.date}|${place}`);
+        if (byKey) return resolveUrl(normalizeWebAssetPath(byKey), assetBase);
+      }
 
-    const fromPrompt = sharePromptToImage.get(prompt);
-    if (fromPrompt) return resolveUrl(normalizeWebAssetPath(fromPrompt), assetBase);
-
-    if (item.date && place) {
-      const byKey = sharePromptToImage.get(`${item.date}|${place}`);
-      if (byKey) return resolveUrl(normalizeWebAssetPath(byKey), assetBase);
-    }
-
-    return "";
-  },
-  [assetBase, feed?.place, sharePromptToImage],
-);
-
+      return "";
+    },
+    [assetBase, feed?.place, sharePromptToImage],
+  );
 
   useEffect(() => {
     setEffectiveUrl(RESOLVED_FEED_URL);
@@ -556,7 +549,6 @@ const getImageUriForItem = useCallback(
     try {
       setError(null);
       setNextUrl(null);
-
 
       setEffectiveUrl(RESOLVED_FEED_URL);
       const first = await fetchJson(RESOLVED_FEED_URL);
@@ -598,47 +590,47 @@ const getImageUriForItem = useCallback(
     setRefreshing(false);
   }, [load]);
 
-    const loadMore = useCallback(async () => {
-      if (!nextUrl || loadingMore) return;
-  
-      const pageUrl = nextUrl;
-      setLoadingMore(true);
-  
-      try {
-        const target = await fetchJson(pageUrl);
-        const normalized = normalizeFeed(target.parsed);
-        if (!normalized) {
-          const preview = target.raw.slice(0, 180).replace(/\s+/g, " ").trim();
-          throw new Error(`Invalid feed JSON shape\nURL: ${pageUrl}\nRAW: ${preview}`);
-        }
-  
-        const nextPointer = getNextPointer(target.parsed);
-        setNextUrl(nextPointer ? resolveUrl(nextPointer, pageUrl) : null);
-  
-        setFeed((prev) => {
-          const prevItems = prev?.items ?? [];
-          const merged: FeedItem[] = [...prevItems];
-          const seen = new Set(prevItems.map((it) => it.id));
-  
-          for (const it of normalized.items) {
-            if (!seen.has(it.id)) {
-              merged.push(it);
-              seen.add(it.id);
-            }
-          }
-  
-          return {
-            updated_at: prev?.updated_at ?? normalized.updated_at,
-            place: prev?.place ?? normalized.place,
-            items: merged,
-          };
-        });
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to load more");
-      } finally {
-        setLoadingMore(false);
+  const loadMore = useCallback(async () => {
+    if (!nextUrl || loadingMore) return;
+
+    const pageUrl = nextUrl;
+    setLoadingMore(true);
+
+    try {
+      const target = await fetchJson(pageUrl);
+      const normalized = normalizeFeed(target.parsed);
+      if (!normalized) {
+        const preview = target.raw.slice(0, 180).replace(/\s+/g, " ").trim();
+        throw new Error(`Invalid feed JSON shape\nURL: ${pageUrl}\nRAW: ${preview}`);
       }
-    }, [fetchJson, loadingMore, nextUrl]);
+
+      const nextPointer = getNextPointer(target.parsed);
+      setNextUrl(nextPointer ? resolveUrl(nextPointer, pageUrl) : null);
+
+      setFeed((prev) => {
+        const prevItems = prev?.items ?? [];
+        const merged: FeedItem[] = [...prevItems];
+        const seen = new Set(prevItems.map((it) => it.id));
+
+        for (const it of normalized.items) {
+          if (!seen.has(it.id)) {
+            merged.push(it);
+            seen.add(it.id);
+          }
+        }
+
+        return {
+          updated_at: prev?.updated_at ?? normalized.updated_at,
+          place: prev?.place ?? normalized.place,
+          items: merged,
+        };
+      });
+    } catch (e: any) {
+      setError(e?.message ?? "Failed to load more");
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [fetchJson, loadingMore, nextUrl]);
 
   const openFeed = useCallback(() => {
     if (!effectiveUrl) return;
@@ -688,86 +680,85 @@ const getImageUriForItem = useCallback(
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       onEndReached={loadMore}
       onEndReachedThreshold={0.5}
-            ListFooterComponent={
-              loadingMore ? (
-                <View style={{ padding: 16, alignItems: "center" }}>
-                  <ActivityIndicator />
-                  <Text style={{ marginTop: 8, color: TEXT_DIM }}>Loading older posts…</Text>
-                </View>
-              ) : nextUrl ? (
-                <View style={{ padding: 16, alignItems: "center" }}>
-                  <Text style={{ color: TEXT_DIM }}>Scroll to load older posts…</Text>
-                </View>
-              ) : (feed?.items?.length ?? 0) > 0 ? (
-                <View style={{ padding: 16, alignItems: "center" }}>
-                  <Text style={{ color: TEXT_DIM }}>No more posts.</Text>
-                </View>
-              ) : null
-            }
+      ListFooterComponent={
+        loadingMore ? (
+          <View style={{ padding: 16, alignItems: "center" }}>
+            <ActivityIndicator />
+            <Text style={{ marginTop: 8, color: TEXT_DIM }}>Loading older posts…</Text>
+          </View>
+        ) : nextUrl ? (
+          <View style={{ padding: 16, alignItems: "center" }}>
+            <Text style={{ color: TEXT_DIM }}>Scroll to load older posts…</Text>
+          </View>
+        ) : (feed?.items?.length ?? 0) > 0 ? (
+          <View style={{ padding: 16, alignItems: "center" }}>
+            <Text style={{ color: TEXT_DIM }}>No more posts.</Text>
+          </View>
+        ) : null
+      }
       renderItem={({ item }) => {
         const imageUri = getImageUriForItem(item);
         return (
-        <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
-          <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
-            <View style={{ width: MASCOT_COL_W, alignItems: "center" }}>
-              <View style={{ marginTop: 2 }}>
-                <Mascot />
+          <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
+            <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
+              <View style={{ width: MASCOT_COL_W, alignItems: "center" }}>
+                <View style={{ marginTop: 2 }}>
+                  <Mascot />
+                </View>
               </View>
-            </View>
 
-            <View style={{ flex: 1 }}>
-              {/* Speech-bubble wrapper */}
-              <View style={{ position: "relative", marginTop: 2 }}>
-                {/* ✅ 1) Bubble body FIRST */}
-                <View
-                  style={{
-                    backgroundColor: CARD_BG,
-                    padding: 12,
-                    borderRadius: BUBBLE_RADIUS,
-                    borderWidth: BUBBLE_BORDER_W,
-                    borderColor: BORDER,
-                    minHeight: MASCOT_SIZE,
-                    shadowColor: "#000000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.12,
-                    shadowRadius: 6,
-                    elevation: 2,
-                    zIndex: 1,
-                  }}
-                >
-                  <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
-                    {item.generated_at ? <Text style={{ color: TEXT_DIM }}>{formatJst(item.generated_at)}</Text> : null}
-                    {item.place ? <Text style={{ color: TEXT_DIM }}>• {item.place}</Text> : null}
+              <View style={{ flex: 1 }}>
+                {/* Speech-bubble wrapper */}
+                <View style={{ position: "relative", marginTop: 2 }}>
+                  {/* ✅ 1) Bubble body FIRST */}
+                  <View
+                    style={{
+                      backgroundColor: CARD_BG,
+                      padding: 12,
+                      borderRadius: BUBBLE_RADIUS,
+                      borderWidth: BUBBLE_BORDER_W,
+                      borderColor: BORDER,
+                      minHeight: MASCOT_SIZE,
+                      shadowColor: "#000000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.12,
+                      shadowRadius: 6,
+                      elevation: 2,
+                      zIndex: 1,
+                    }}
+                  >
+                    <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+                      {item.generated_at ? <Text style={{ color: TEXT_DIM }}>{formatJst(item.generated_at)}</Text> : null}
+                      {item.place ? <Text style={{ color: TEXT_DIM }}>• {item.place}</Text> : null}
+                    </View>
+
+                    <FeedBubbleImage uri={imageUri} />
+
+                    <Text style={{ color: "#000000", marginTop: 8, fontSize: 16, lineHeight: 22 }}>{item.text}</Text>
                   </View>
 
-                  
-<FeedBubbleImage uri={imageUri} />
-
-<Text style={{ color: "#000000", marginTop: 8, fontSize: 16, lineHeight: 22 }}>{item.text}</Text>
+                  {/* ✅ 2) Tail AFTER (on top) to cover the bubble border line */}
+                  <View
+                    pointerEvents="none"
+                    style={{
+                      position: "absolute",
+                      left: -7,
+                      top: 22,
+                      width: 14,
+                      height: 14,
+                      backgroundColor: CARD_BG,
+                      transform: [{ rotate: "45deg" }],
+                      borderLeftWidth: BUBBLE_BORDER_W,
+                      borderBottomWidth: BUBBLE_BORDER_W,
+                      borderColor: BORDER,
+                      zIndex: 10,
+                      elevation: 3,
+                    }}
+                  />
                 </View>
-
-                {/* ✅ 2) Tail AFTER (on top) to cover the bubble border line */}
-                <View
-                  pointerEvents="none"
-                  style={{
-                    position: "absolute",
-                    left: -7,
-                    top: 22,
-                    width: 14,
-                    height: 14,
-                    backgroundColor: CARD_BG,
-                    transform: [{ rotate: "45deg" }],
-                    borderLeftWidth: BUBBLE_BORDER_W,
-                    borderBottomWidth: BUBBLE_BORDER_W,
-                    borderColor: BORDER,
-                    zIndex: 10,
-                    elevation: 3,
-                  }}
-                />
               </View>
             </View>
           </View>
-        </View>
         );
       }}
       ListEmptyComponent={
