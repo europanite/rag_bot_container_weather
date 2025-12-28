@@ -895,11 +895,12 @@ const getImageUrisForItem = useCallback(
           };
 
           return (
-            <View style={{ 
-              paddingHorizontal: 16, 
-              paddingBottom: 12 
+            <View 
               onPress={open}
-              }}>
+              style={{ 
+                paddingHorizontal: 16, 
+                paddingBottom: 12 
+                }}>
               <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
                 <View style={{ flex: 1 }}>
                   {/* Speech-bubble wrapper */}
