@@ -337,6 +337,7 @@ jobs:
           page = img.convert("RGB")
           page.save(out_path, format="PNG", optimize=True)
 
+          now_iso = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
           latest["image_url"] = rel_url
           latest["image_prompt"] = prompt
           latest["image_model"] = MODEL_ID
