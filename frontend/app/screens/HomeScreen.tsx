@@ -1302,7 +1302,7 @@ const getImageUrisForItem = useCallback(
         flex: 1, 
         width: SIDEBAR_W, 
         paddingTop: 16, 
-        paddingLeft: 12, 
+        padding: 6, 
         minHeight: 0 }}
       >
         <Slot side="left" />
@@ -1311,8 +1311,7 @@ const getImageUrisForItem = useCallback(
       <View style={{ 
         flex: 1, 
         maxWidth: CONTENT_MAX_W,
-        paddingTop: 16, 
-        paddingLeft: 12, 
+        padding: 6, 
         minHeight: 0 }}
       >
         {list}
@@ -1322,7 +1321,7 @@ const getImageUrisForItem = useCallback(
         flex: 1, 
         width: SIDEBAR_W, 
         paddingTop: 16, 
-        paddingLeft: 12, 
+        padding: 6, 
         minHeight: 0 }}
       >
         <Slot side="right" />
