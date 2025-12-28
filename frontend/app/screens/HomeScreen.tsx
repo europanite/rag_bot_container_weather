@@ -1328,15 +1328,32 @@ const getImageUrisForItem = useCallback(
   }
 
   return (
-    <View style={{ flex: 1, flexDirection: "row", justifyContent: "center", backgroundColor: APP_BG }}>
+    <View style={{ 
+      flex: 1, 
+      flexDirection: "row", 
+      justifyContent: "center", 
+      backgroundColor: APP_BG }}>
 
-      <View style={{ width: SIDEBAR_W, paddingTop: 16, paddingLeft: 12, minHeight: 0 }}>
+      <View style={{ 
+        width: SIDEBAR_W, 
+        padding: 6, 
+        minHeight: 0 }}>
         <Slot side="left" />
       </View>
 
-      <View style={{ flex: 1, maxWidth: CONTENT_MAX_W }}>{list}</View>
+      <View style={{ 
+        flex: 1, 
+        maxWidth: CONTENT_MAX_W,
+        borderRadius: BUBBLE_RADIUS,
+        borderWidth: BUBBLE_BORDER_W,
+      }}>
+        {list}
+      </View>
 
-      <View style={{ width: SIDEBAR_W, paddingTop: 16, paddingLeft: 12, minHeight: 0 }}>
+      <View style={{ 
+        width: SIDEBAR_W, 
+        padding: 6, 
+        minHeight: 0 }}>
         <Slot side="right" />
       </View>
 
