@@ -702,7 +702,6 @@ function Slot({ side }: { side: "left" | "right" }) {
         borderColor: BORDER,
         borderRadius: 12,
         padding: 12,
-
         // On desktop web, keep the slot visible while scrolling.
         ...(Platform.OS === "web" ? ({ position: "sticky", top: 16 } as any) : null),
       }}
@@ -723,6 +722,7 @@ function Slot({ side }: { side: "left" | "right" }) {
             borderColor: BORDER,
             borderRadius: 12,
             overflow: "hidden",
+            minHeight: 0,
           }}
         >
           {/* Image area */}
