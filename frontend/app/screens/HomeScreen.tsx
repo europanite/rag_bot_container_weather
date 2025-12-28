@@ -897,12 +897,6 @@ const getImageUrisForItem = useCallback(
           return (
             <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
               <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
-                <View style={{ width: MASCOT_COL_W, alignItems: "center" }}>
-                  <View style={{ marginTop: 2 }}>
-                    <Mascot />
-                  </View>
-                </View>
-
                 <View style={{ flex: 1 }}>
                   {/* Speech-bubble wrapper */}
                   <View style={{ position: "relative", marginTop: 2 }}>
