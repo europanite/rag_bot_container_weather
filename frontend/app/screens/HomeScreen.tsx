@@ -9,6 +9,7 @@ import {
   Text,
   useWindowDimensions,
   View,
+  Pressable,
 } from "react-native";
 
 type FeedItem = {
