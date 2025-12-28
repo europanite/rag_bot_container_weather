@@ -796,8 +796,6 @@ function SlotCard({
               style={{
                 marginTop: 6,
                 alignSelf: "flex-start",
-                borderWidth: 2,
-                borderColor: BORDER,
                 borderRadius: 999,
                 paddingHorizontal: 12,
                 paddingVertical: 6,
@@ -850,7 +848,10 @@ function Slot({ side }: { side: "left" | "right" }) {
     return base % banners.length;
   }, [banners.length, side]);
 
-  return <SlotCard banners={banners} startIndex={startIndex} sticky variant="sidebar" />;
+  return <SlotCard 
+    banners={banners} 
+    startIndex={startIndex} 
+    sticky variant="sidebar" />;
 }
 export default function HomeScreen() {
   const FEED_URL = (process.env.EXPO_PUBLIC_FEED_URL || "./latest.json").trim();
@@ -1344,7 +1345,6 @@ const getImageUrisForItem = useCallback(
         maxWidth: CONTENT_MAX_W,
         borderRadius: MASCOT_RADIUS,
         borderWidth: MASCOT_BORDER_W,
-        borderColor: BORDER,
       }}>
         {list}
       </View>
