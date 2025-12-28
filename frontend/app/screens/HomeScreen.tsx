@@ -706,7 +706,6 @@ function SlotCard({
     ...(variant === "sidebar" ? ({ flex: 1 } as const) : ({ width: "100%" } as const)),
     backgroundColor: APP_BG,
     borderRadius: 12,
-    padding: 12,
     ...(sticky && Platform.OS === "web" ? ({ position: "sticky", top: 16 } as any) : null),
   };
 
@@ -1343,8 +1342,6 @@ const getImageUrisForItem = useCallback(
       <View style={{ 
         flex: 1, 
         maxWidth: CONTENT_MAX_W,
-        borderRadius: MASCOT_RADIUS,
-        borderWidth: MASCOT_BORDER_W,
       }}>
         {list}
       </View>
