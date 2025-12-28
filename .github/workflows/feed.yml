@@ -198,7 +198,7 @@ jobs:
           STEPS: "2"
           BASE_SIZE: "512"
           PAGE_W: "1200"
-          PAGE_H: "675"
+          PAGE_H: "900"
           BRAND: "GOODDAY YOKOSUKA"
           PLACE_FALLBACK: "Yokosuka"
         run: |
@@ -221,7 +221,7 @@ jobs:
           STEPS = int(os.environ.get("STEPS", "2"))
           BASE_SIZE = int(os.environ.get("BASE_SIZE", "512"))
           PAGE_W = int(os.environ.get("PAGE_W", "1200"))
-          PAGE_H = int(os.environ.get("PAGE_H", "675"))
+          PAGE_H = int(os.environ.get("PAGE_H", "900"))
           BRAND = os.environ.get("BRAND", "GOODDAY YOKOSUKA")
           PLACE_FALLBACK = os.environ.get("PLACE_FALLBACK", "")
 
@@ -329,8 +329,8 @@ jobs:
             negative_prompt=negative,
             guidance_scale=guidance_scale,
             num_inference_steps=max(1, min(4, STEPS)),
-            width=BASE_SIZE,
-            height=BASE_SIZE,
+            width=GEN_W,
+            height=GEN_H,
             generator=g,
           ).images[0].convert("RGB")
 
@@ -353,14 +353,21 @@ jobs:
           page = bg.convert("RGBA")
 
           margin = 64
-          fg_size = min(PAGE_H - 2 * margin, 560)
-          fg = img.resize((fg_size, fg_size), Image.LANCZOS).convert("RGBA")
+          iw, ih = img.size
+          avail_w = max(64, PAGE_W - 2 * margin)
+          avail_h = max(64, PAGE_H - 2 * margin)
+          # avoid extreme upscaling (keeps it crisp on CPU gen)
+          max_upscale = 1.25
+          fg_scale = min(avail_w / iw, avail_h / ih, max_upscale)
+          fg_w = max(64, int(iw * fg_scale))
+          fg_h = max(64, int(ih * fg_scale))
+          fg = img.resize((fg_w, fg_h), Image.LANCZOS).convert("RGBA")
 
-          fx = (PAGE_W - fg_size) // 2
-          fy = (PAGE_H - fg_size) // 2
+          fx = (PAGE_W - fg_w) // 2
+          fy = (PAGE_H - fg_h) // 2
 
           frame_pad = 18
-          frame = Image.new("RGBA", (fg_size + frame_pad * 2, fg_size + frame_pad * 2), (0, 0, 0, 0))
+          frame = Image.new("RGBA", (fg_w + frame_pad * 2, fg_h + frame_pad * 2), (0, 0, 0, 0))
           fd = ImageDraw.Draw(frame)
           fd.rounded_rectangle(
             [0, 0, frame.size[0] - 1, frame.size[1] - 1],
