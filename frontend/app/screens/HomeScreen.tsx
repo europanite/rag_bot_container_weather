@@ -1345,7 +1345,6 @@ const getImageUrisForItem = useCallback(
         flex: 1, 
         maxWidth: CONTENT_MAX_W,
         borderRadius: BUBBLE_RADIUS,
-        borderWidth: BUBBLE_BORDER_W,
       }}>
         {list}
       </View>
