@@ -1,7 +1,7 @@
 {
   "items": [
     {
-      "id": "2025-12-28T07:40:30Z",
+      "id": "feed_20251228_163550_JST",
       "date": "2025-12-28",
       "text": "Good evening from Yokosuka! Today's weather is mild with a high of 9.4°C and clear skies. Don't miss Hatsumode at Kumura Otaki Shrine on New Year's Eve, starting around 23:30! #Yokosuka #Miura #Yokohama",
       "place": "Yokosuka",
@@ -55,7 +55,12 @@
           "area_code": null,
           "temp_city_code": null
         }
-      }
+      },
+      "image": "/image/feed_20251228_163550_JST.png",
+      "image_url": "/image/feed_20251228_163550_JST.png",
+      "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good evening from Yokosuka! Today's weather is mild with a high of 9.4°C and clear skies. Don't miss Hatsumode at Kumura Otaki Shrine on New Year's Eve, starting around 23:30!",
+      "image_model": "stabilityai/sd-turbo",
+      "image_generated_at": "2025-12-28T07:44:20.694031Z"
     }
   ],
   "updated_at": "2025-12-28T07:40:30Z",
