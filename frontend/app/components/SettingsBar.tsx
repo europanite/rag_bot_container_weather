@@ -48,7 +48,11 @@ export default function SettingsBar({ title = "GOODDAY YOKOSUKA" }: Props) {
     >
       {isNarrow ? (
         // NARROW: stack (avoid overlap)
-        <View style={{ gap: 8, alignItems: "center" }}>
+        <View style={{ 
+          gap: 8, 
+          padding: 6,
+          alignItems: "center"
+        }}>
           <Text style={{ 
             fontSize: 32, 
             fontWeight: "512", 
@@ -56,7 +60,13 @@ export default function SettingsBar({ title = "GOODDAY YOKOSUKA" }: Props) {
             }}>
               {title}
           </Text>
-          <Text style={{ fontWeight: "12" }}>provides news with local and visitors.</Text>
+          <Text style={{ 
+            fontWeight: "12" 
+            color: "#fff"
+            }}
+          >
+            provides news with local and visitors.
+          </Text>
 
           <View
             style={{
@@ -111,6 +121,7 @@ export default function SettingsBar({ title = "GOODDAY YOKOSUKA" }: Props) {
               right: 0,
               top: 0,
               bottom: 0,
+              padding: 6,
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -121,7 +132,13 @@ export default function SettingsBar({ title = "GOODDAY YOKOSUKA" }: Props) {
               color: 
               "#fff" 
             }}>{title}</Text>
-            <Text style={{ fontWeight: "12" }}>provides news with local and visitors.</Text>
+            <Text style={{ 
+              fontWeight: "12" 
+              color: "#fff"
+              }}
+            >
+              provides news with local and visitors.
+            </Text>
           </View>
         </View>
       )}
