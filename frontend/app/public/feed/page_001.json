@@ -1,0 +1,1150 @@
+{
+  "updated_at": "2025-12-27T11:15:39Z",
+  "place": "Yokosuka",
+  "page": 1,
+  "page_size": 20,
+  "total_items": 263,
+  "next_url": "page_002.json",
+  "items": [
+    {
+      "id": "2025-12-27T11:15:39Z",
+      "date": "2025-12-27",
+      "text": "Good evening! It's 4.4°C with 64% humidity in Yokosuka today. Tomorrow's forecast is sunny! Don't miss Hatsumode at Kumura Otaki Shrine on New Year's Eve, starting around 23:30, with toshikoshi soba planned! #Yokosuka #NewYear",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T11:15:39Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T11:11:13.653632+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T20:00:00+09:00",
+          "temp_c": 4.4,
+          "apparent_temp_c": null,
+          "humidity_pct": 64.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 2.16,
+          "wind_dir_deg": 90.0,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜遅く　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 10
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T17:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T10:27:32Z",
+      "date": "2025-12-27",
+      "text": "Good evening from Yokosuka! Partly cloudy with a chill at 4.7°C. Perfect excuse to grab a warm drink and head to Kumura Otaki Shrine for Hatsumode and toshikoshi soba on New Year's Eve! 🍜🎄 #Yokosuka #NewYear",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T10:27:32Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T10:22:57.303118+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T19:10:00+09:00",
+          "temp_c": 4.7,
+          "apparent_temp_c": null,
+          "humidity_pct": 62.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 3.9600000000000004,
+          "wind_dir_deg": 22.5,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜遅く　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 10
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T17:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T10:18:24Z",
+      "date": "2025-12-27",
+      "text": "Happy New Year's Eve! 🎊 In Yokosuka, it's a chilly evening with cloudy skies 🌫️ and a temperature of 4.9°C. Perfect excuse to grab a warm drink and head to Kumura Otaki Shrine for Hatsumode celebrations, don't forget to book parking in advance! 📅 #Yokosuka #NewYear",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T10:18:24Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T10:13:47.514845+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T19:00:00+09:00",
+          "temp_c": 4.9,
+          "apparent_temp_c": null,
+          "humidity_pct": 62.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 2.16,
+          "wind_dir_deg": 112.5,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜遅く　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 10
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T17:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T09:28:48Z",
+      "date": "2025-12-27",
+      "text": "Good evening from Yokosuka! It's a chilly winter evening with a temperature of 5.6°C and cloudy skies. Looking forward to a warm cup of something at the Kumura Otaki Shrine's Hatsumode event tonight! 🌫️☕️ #Yokosuka #Miura",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T09:28:48Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T09:24:33.165890+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T18:10:00+09:00",
+          "temp_c": 5.6,
+          "apparent_temp_c": null,
+          "humidity_pct": 55.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 7.2,
+          "wind_dir_deg": 157.5,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜遅く　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 10
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T17:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T09:17:53Z",
+      "date": "2025-12-27",
+      "text": "Good evening Yokosuka! 😊 The weather is partly cloudy with a low of 5.1°C and a gentle breeze. Warm up with a hot drink at Kurihama's New Year's Eve celebration at Kumura Otaki Shrine, starting at 23:30! 🎉 #Yokosuka #Miura",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T09:17:53Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T09:14:02.982521+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T18:00:00+09:00",
+          "temp_c": 5.1,
+          "apparent_temp_c": null,
+          "humidity_pct": 59.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 5.04,
+          "wind_dir_deg": 157.5,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜遅く　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 10
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T17:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T08:52:39Z",
+      "date": "2025-12-27",
+      "text": "Good evening Yokosuka! 🌃 It's 5.4°C and cloudy tonight. Looking forward to serving warm drinks and food at Kumura Otaki Shrine's New Year's Eve celebration 🎉🍜! #Yokosuka #NewYear",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T08:52:39Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T08:48:33.953712+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T17:40:00+09:00",
+          "temp_c": 5.4,
+          "apparent_temp_c": null,
+          "humidity_pct": 56.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 2.52,
+          "wind_dir_deg": 135.0,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜遅く　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 10
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T17:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T08:33:13Z",
+      "date": "2025-12-27",
+      "text": "Happy New Year's Eve! 🎉🕰️ As the sun sets in Yokosuka, the weather is quite chilly, with a temp of 5°C and cloudy skies. 🌫️ Head to Kumura Otaki Shrine for a Hatsumode celebration and warm up with some toshikoshi soba! 🍜 #Yokosuka #NewYear #Hatsumode",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T08:33:13Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T08:29:26.366227+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T17:20:00+09:00",
+          "temp_c": 5.0,
+          "apparent_temp_c": null,
+          "humidity_pct": 57.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 1.4400000000000002,
+          "wind_dir_deg": 135.0,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜遅く　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 10
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T17:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T08:23:11Z",
+      "date": "2025-12-27",
+      "text": "Good evening! In Yokosuka, it's a chilly evening with 5.4°C and 51% humidity. Don't miss Hatsumode at Kumura Otaki Shrine tonight! 🌃🍜🎉 #Yokosuka #NewYear",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T08:23:11Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T08:18:38.100605+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T17:10:00+09:00",
+          "temp_c": 5.4,
+          "apparent_temp_c": null,
+          "humidity_pct": 51.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 2.8800000000000003,
+          "wind_dir_deg": 45.0,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜遅く　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 10
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T17:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T07:18:30Z",
+      "date": "2025-12-27",
+      "text": "Good evening from Yokosuka! ☁️🌃 According to the JMA forecast, it's a chilly 5.8°C with cloudy skies and a gentle 5.76 km/h wind. Fun fact: don't miss the Dondo-yaki / Otakiage event at Kurihama Beach on January 11th! 🎉 #Yokosuka #MiuraPeninsula",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T07:18:30Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T07:13:53.892700+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T16:00:00+09:00",
+          "temp_c": 5.8,
+          "apparent_temp_c": null,
+          "humidity_pct": 46.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 5.760000000000001,
+          "wind_dir_deg": 45.0,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 0
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T11:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T06:24:17Z",
+      "date": "2025-12-27",
+      "text": "Good afternoon from Yokosuka! 😊 According to the latest forecast, it's a chilly 5.9°C with cloudy skies and a gentle 11.16km/h breeze. Perfect excuse to warm up with a bowl of hot curry ramen at the cafe before heading to Kurihama Beach for the Dondo-yaki / Otakiage event on Jan 11! 🍜🌲 #Yokosuka",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T06:24:17Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T06:19:44.033379+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T15:10:00+09:00",
+          "temp_c": 5.9,
+          "apparent_temp_c": null,
+          "humidity_pct": 43.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 11.16,
+          "wind_dir_deg": 67.5,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 0
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T11:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T05:19:59Z",
+      "date": "2025-12-27",
+      "text": "Happy New Year's Eve! 🎉🕰️ It's a chilly winter afternoon in Yokosuka, with a temp of 5.8°C and cloudy skies ☁️. Enjoy the light rain and festivities at Iwato 4-chome Park's Dondo-yaki / Otakiage event! 🎊",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T05:19:59Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T05:15:25.128979+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T14:00:00+09:00",
+          "temp_c": 5.8,
+          "apparent_temp_c": null,
+          "humidity_pct": 42.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 12.24,
+          "wind_dir_deg": 45.0,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 0
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T11:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T04:30:04Z",
+      "date": "2025-12-27",
+      "text": "\"Good afternoon from Yokosuka! 🌞️️️️️️️️️️️️️️️️️️️️️️️️️️️️️️️",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T04:30:04Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T04:26:00.943111+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T13:10:00+09:00",
+          "temp_c": 5.8,
+          "apparent_temp_c": null,
+          "humidity_pct": 43.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 12.6,
+          "wind_dir_deg": 45.0,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 0
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T11:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T03:57:25Z",
+      "date": "2025-12-27",
+      "text": "Good afternoon! Currently, it's a chilly 5.7°C with 44% humidity in Yokosuka. Don't forget to warm up with a cup of hot curry or ramen at the Kurihama Beach Dondo-yaki / Otakiage event on January 11! #Yokosuka",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T03:57:25Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T03:52:53.571915+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T12:40:00+09:00",
+          "temp_c": 5.7,
+          "apparent_temp_c": null,
+          "humidity_pct": 44.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 13.32,
+          "wind_dir_deg": 45.0,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 0
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T11:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T02:51:47Z",
+      "date": "2025-12-27",
+      "text": "Good afternoon! ☀️🌞 It's a chilly 5.3°C with 42% humidity and 0mm precipitation in Yokosuka. Join the Dondo-yaki / Otakiage at Kurihama Beach on Jan 11, rain or shine! 🎄 #Yokosuka",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T02:51:47Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T02:47:40.274188+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T11:40:00+09:00",
+          "temp_c": 5.3,
+          "apparent_temp_c": null,
+          "humidity_pct": 42.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 12.96,
+          "wind_dir_deg": 45.0,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 0
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T11:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T01:00:33Z",
+      "date": "2025-12-27",
+      "text": "Good morning Yokosuka! 🌅 Today's forecast: partly cloudy with a high of 4.2°C and a gentle 9.4km/h breeze. Later, join the Dondo-yaki/Otakiage event at Kurihama Beach on January 11th! 🎉 #Yokosuka #MiuraPeninsula",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T01:00:33Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T00:55:55.930074+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T09:40:00+09:00",
+          "temp_c": 4.2,
+          "apparent_temp_c": null,
+          "humidity_pct": 42.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 9.360000000000001,
+          "wind_dir_deg": 45.0,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夕方　から　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": 11.0,
+          "temp_min_c": 3.0,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 0
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T05:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-27T00:25:51Z",
+      "date": "2025-12-27",
+      "text": "Good morning! Today's forecast for Yokosuka: partly cloudy with a high of 3.9°C. Tomorrow looks sunny with a high of 11°C! Don't miss the Dondo-yaki / Otakiage at Kurihama Beach on January 11th! 🌞🌊 #Yokosuka",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T00:25:51Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T00:21:57.075523+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T09:10:00+09:00",
+          "temp_c": 3.9,
+          "apparent_temp_c": null,
+          "humidity_pct": 42.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 14.76,
+          "wind_dir_deg": 22.5,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夕方　から　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": 11.0,
+          "temp_min_c": 3.0,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 0
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T05:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-26T23:17:57Z",
+      "date": "2025-12-26",
+      "text": "Good morning! It's a chilly winter morning in Yokosuka! Today's forecast says mostly cloudy with a high of 3.4°C and a gentle 11.88km/h breeze. Looking forward to a lovely day! 🌫️🌞",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-26T23:17:57Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-26T23:13:30.347243+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T08:00:00+09:00",
+          "temp_c": 3.4,
+          "apparent_temp_c": null,
+          "humidity_pct": 41.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 11.879999999999999,
+          "wind_dir_deg": 22.5,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夕方　から　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": 11.0,
+          "temp_min_c": 3.0,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 0
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T05:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-26T22:18:11Z",
+      "date": "2025-12-26",
+      "text": "Happy New Year's Eve! 🎊 It's going to be a cold winter morning in Yokosuka, with a low of 3.1°C and partly cloudy skies. Enjoy the New Year's Eve soba at Kumura Otaki Shrine starting around 23:30! 🍜 #Yokosuka #NewYear #Kurihama",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-26T22:18:11Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-26T22:13:35.213299+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T07:00:00+09:00",
+          "temp_c": 3.1,
+          "apparent_temp_c": null,
+          "humidity_pct": 42.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 12.24,
+          "wind_dir_deg": 22.5,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夕方　から　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": 11.0,
+          "temp_min_c": 3.0,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 0
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T05:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-26T21:17:09Z",
+      "date": "2025-12-26",
+      "text": "Good morning! Today's forecast: 3°C, partly cloudy, and a gentle 14.4 km/h breeze in Yokosuka! 🌞🌫️ Get ready to stroll around Iwato 4-chome Park for the traditional otakiage ceremony! 🎉 #Yokosuka #NewYear",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-26T21:17:09Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-26T21:12:35.890513+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T06:00:00+09:00",
+          "temp_c": 3.1,
+          "apparent_temp_c": null,
+          "humidity_pct": 43.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 14.4,
+          "wind_dir_deg": 22.5,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夕方　から　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": 11.0,
+          "temp_min_c": 3.0,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 0
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T05:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
+    {
+      "id": "2025-12-26T20:18:51Z",
+      "date": "2025-12-26",
+      "text": "Happy New Year's Eve! 🎉🕰️ Good morning in Yokosuka! ☀️ 2.6°C, mostly cloudy with a gentle 7km/h breeze. 🌫️ Perfect day for a Hatsumode at Kumura Otaki Shrine, starting around 23:30. #Yokosuka #NewYear #KumuraOtakiShrine",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-26T20:18:51Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-26T20:14:06.744597+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T05:00:00+09:00",
+          "temp_c": 2.6,
+          "apparent_temp_c": null,
+          "humidity_pct": 49.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 6.84,
+          "wind_dir_deg": 22.5,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夕方　から　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": 11.0,
+          "temp_min_c": 3.0,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 0
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T05:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    }
+  ]
+}
