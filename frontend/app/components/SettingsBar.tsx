@@ -2,10 +2,6 @@ import React from "react";
 import { View, Text, TouchableOpacity, useWindowDimensions, Linking, Alert } from "react-native";
 
 const REPO_URL = "https://github.com/europanite/rag_chat_bot";
-
-// Public feedback URL (Google Form etc.)
-// - Build-time env (GitHub Pages / Expo export): EXPO_PUBLIC_FEEDBACK_FORM_URL
-// - Fallback: GitHub Issues (works even when env isn't set)
 const RAW_CONTACT_URL = (process.env.EXPO_PUBLIC_FEEDBACK_FORM_URL ?? "").trim();
 const CONTACT_URL =
   RAW_CONTACT_URL.startsWith("http://") || RAW_CONTACT_URL.startsWith("https://")
