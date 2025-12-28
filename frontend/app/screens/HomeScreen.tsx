@@ -711,12 +711,14 @@ function Slot({ side }: { side: "left" | "right" }) {
         accessibilityLabel={`Sponsored: ${activeBanner.title}`}
         onPress={onPress}
         style={({ pressed }) => ({
+          flex: 1,
           opacity: pressed ? 0.92 : 1,
           ...(Platform.OS === "web" ? ({ cursor: "pointer" } as any) : null),
         })}
       >
         <View
           style={{
+            flex: 1,
             backgroundColor: CARD_BG,
             borderWidth: 2,
             borderColor: BORDER,
@@ -726,7 +728,11 @@ function Slot({ side }: { side: "left" | "right" }) {
           }}
         >
           {/* Image area */}
-          <View style={{ width: "100%", aspectRatio: 4 / 3, backgroundColor: "#e5e7eb" }}>
+          <View style={{ 
+            flex: 1,
+            minHeight: 0,
+            backgroundColor: "#e5e7eb" 
+            }}>
             <Animated.Image
               source={{ uri: activeBanner.imageUri }}
               resizeMode="cover"
@@ -754,7 +760,7 @@ function Slot({ side }: { side: "left" | "right" }) {
               />
             ) : null}
 
-            {/* AD badge */}
+            {/* badge */}
             <View
               style={{
                 position: "absolute",
