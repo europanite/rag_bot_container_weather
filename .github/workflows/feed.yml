@@ -329,8 +329,8 @@ jobs:
             negative_prompt=negative,
             guidance_scale=guidance_scale,
             num_inference_steps=max(1, min(4, STEPS)),
-            width=GEN_W,
-            height=GEN_H,
+            width=PAGE_W,
+            height=PAGE_H,
             generator=g,
           ).images[0].convert("RGB")
 
