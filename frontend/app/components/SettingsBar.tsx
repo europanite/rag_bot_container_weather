@@ -56,6 +56,7 @@ export default function SettingsBar({ title = "GOODDAY YOKOSUKA" }: Props) {
             }}>
               {title}
           </Text>
+          <Text style={{ fontWeight: "12" }}>provides news with local and visitors.</Text>
 
           <View
             style={{
@@ -120,6 +121,7 @@ export default function SettingsBar({ title = "GOODDAY YOKOSUKA" }: Props) {
               color: 
               "#fff" 
             }}>{title}</Text>
+            <Text style={{ fontWeight: "12" }}>provides news with local and visitors.</Text>
           </View>
         </View>
       )}
