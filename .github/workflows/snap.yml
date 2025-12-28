@@ -16,15 +16,13 @@ jobs:
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          pip install yt-dlp
+          pip install requests
           sudo apt-get update
           sudo apt-get install -y ffmpeg
 
       - name: Capture 1 frame
         run: |
-          python scripts/snapshot.py \
-            --url "https://www.youtube.com/watch?v=_s_M1EPmWuI" \
-            --out "snapshot.jpg"
+          python scripts/snapshot.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
