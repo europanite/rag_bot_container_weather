@@ -1,11 +1,68 @@
 {
-  "updated_at": "2025-12-27T11:27:10Z",
+  "updated_at": "2025-12-27T12:18:21Z",
   "place": "Yokosuka",
   "page": 1,
   "page_size": 20,
-  "total_items": 264,
+  "total_items": 265,
   "next_url": "page_002.json",
   "items": [
+    {
+      "id": "2025-12-27T12:18:21Z",
+      "date": "2025-12-27",
+      "text": "Good evening! 🌃️☁️ Cold and cloudy tonight in Yokosuka, Kanagawa, with a temperature of 6°C. 🌫️ Don't miss Dondo-yaki / Otakiage at Kurihama Beach on January 11th! 🎄 #Yokosuka",
+      "place": "Yokosuka",
+      "generated_at": "2025-12-27T12:18:21Z",
+      "weather": {
+        "source": "jma",
+        "generated_at": "2025-12-27T12:13:49.615264+00:00",
+        "place": "Yokosuka",
+        "latitude": 35.281,
+        "longitude": 139.6722,
+        "timezone": "Asia/Tokyo",
+        "current": {
+          "time": "2025-12-27T21:00:00+09:00",
+          "temp_c": 6.0,
+          "apparent_temp_c": null,
+          "humidity_pct": 65.0,
+          "precip_mm": 0.0,
+          "weather_code": 2,
+          "cloud_cover_pct": null,
+          "wind_kmh": 5.760000000000001,
+          "wind_dir_deg": 157.5,
+          "amedas_station": "46211",
+          "jma_weather_obs_code": null
+        },
+        "today": {
+          "date": "2025-12-27",
+          "weather_code": 2,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "くもり　夜遅く　晴れ",
+          "jma_weather_code": "211",
+          "precip_prob_pct": 10
+        },
+        "tomorrow": {
+          "date": "2025-12-28",
+          "weather_code": 0,
+          "precip_sum_mm": null,
+          "wind_max_kmh": null,
+          "temp_max_c": null,
+          "temp_min_c": null,
+          "weather_text_ja": "晴れ",
+          "jma_weather_code": "100",
+          "precip_prob_pct": 10
+        },
+        "jma_meta": {
+          "publishing_office": "横浜地方気象台",
+          "report_datetime": "2025-12-27T17:00:00+09:00",
+          "office_code": "140000",
+          "area_code": null,
+          "temp_city_code": null
+        }
+      }
+    },
     {
       "id": "2025-12-27T11:27:10Z",
       "date": "2025-12-27",
@@ -1054,63 +1111,6 @@
           "weather_code": 2,
           "cloud_cover_pct": null,
           "wind_kmh": 12.24,
-          "wind_dir_deg": 22.5,
-          "amedas_station": "46211",
-          "jma_weather_obs_code": null
-        },
-        "today": {
-          "date": "2025-12-27",
-          "weather_code": 2,
-          "precip_sum_mm": null,
-          "wind_max_kmh": null,
-          "temp_max_c": null,
-          "temp_min_c": null,
-          "weather_text_ja": "くもり　夕方　から　晴れ",
-          "jma_weather_code": "211",
-          "precip_prob_pct": 10
-        },
-        "tomorrow": {
-          "date": "2025-12-28",
-          "weather_code": 0,
-          "precip_sum_mm": null,
-          "wind_max_kmh": null,
-          "temp_max_c": 11.0,
-          "temp_min_c": 3.0,
-          "weather_text_ja": "晴れ",
-          "jma_weather_code": "100",
-          "precip_prob_pct": 0
-        },
-        "jma_meta": {
-          "publishing_office": "横浜地方気象台",
-          "report_datetime": "2025-12-27T05:00:00+09:00",
-          "office_code": "140000",
-          "area_code": null,
-          "temp_city_code": null
-        }
-      }
-    },
-    {
-      "id": "2025-12-26T21:17:09Z",
-      "date": "2025-12-26",
-      "text": "Good morning! Today's forecast: 3°C, partly cloudy, and a gentle 14.4 km/h breeze in Yokosuka! 🌞🌫️ Get ready to stroll around Iwato 4-chome Park for the traditional otakiage ceremony! 🎉 #Yokosuka #NewYear",
-      "place": "Yokosuka",
-      "generated_at": "2025-12-26T21:17:09Z",
-      "weather": {
-        "source": "jma",
-        "generated_at": "2025-12-26T21:12:35.890513+00:00",
-        "place": "Yokosuka",
-        "latitude": 35.281,
-        "longitude": 139.6722,
-        "timezone": "Asia/Tokyo",
-        "current": {
-          "time": "2025-12-27T06:00:00+09:00",
-          "temp_c": 3.1,
-          "apparent_temp_c": null,
-          "humidity_pct": 43.0,
-          "precip_mm": 0.0,
-          "weather_code": 2,
-          "cloud_cover_pct": null,
-          "wind_kmh": 14.4,
           "wind_dir_deg": 22.5,
           "amedas_station": "46211",
           "jma_weather_obs_code": null
