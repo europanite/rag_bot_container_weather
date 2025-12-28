@@ -86,7 +86,7 @@ jobs:
           MAX_WORDS: 128
           REACT_NATIVE_PACKAGER_HOSTNAME: 127.0.0.1
         run: |
-          python scripts/generate_diary.py
+          python scripts/generate_talk.py
 
       - name: Stop stack
         env:

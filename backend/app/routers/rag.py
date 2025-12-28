@@ -5,7 +5,9 @@ import os
 import re
 from http import HTTPStatus
 from typing import Literal
-
+import json
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 import rag_store
 import requests
 import hashlib
@@ -18,9 +20,67 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/rag", tags=["rag"])
 
+_WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
 # Use a module-level session so tests can monkeypatch it.
 _session = requests.Session()
 
+
+
+def _safe_zoneinfo(tz_name: str) -> ZoneInfo:
+    try:
+        return ZoneInfo(tz_name)
+    except Exception:
+        return ZoneInfo("Asia/Tokyo")
+
+def _extract_now_from_live_weather(live_weather: str | None) -> tuple[datetime | None, str | None]:
+    """
+    Try to parse Open-Meteo snapshot JSON:
+      { "timezone": "Asia/Tokyo", "current": { "time": "2025-12-28T21:00", ... } }
+    """
+    if not live_weather or not live_weather.strip():
+        return None, None
+    try:
+        obj = json.loads(live_weather)
+        if not isinstance(obj, dict):
+            return None, None
+        tz_name = obj.get("timezone") or obj.get("timezone_abbreviation") or "Asia/Tokyo"
+        cur = obj.get("current") or {}
+        t = cur.get("time")
+        if not isinstance(t, str) or not t:
+            return None, tz_name
+        dt = datetime.fromisoformat(t.replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=_safe_zoneinfo(tz_name))
+        else:
+            dt = dt.astimezone(_safe_zoneinfo(tz_name))
+        return dt, tz_name
+    except Exception:
+        return None, None
+
+def _format_now_block(live_weather: str | None) -> str:
+    dt, tz_name = _extract_now_from_live_weather(live_weather)
+    if dt is None:
+        tz_name = tz_name or (os.getenv("TZ_NAME") or "Asia/Tokyo")
+        dt = datetime.now(_safe_zoneinfo(tz_name))
+
+    today = dt.date()
+    tomorrow = today + timedelta(days=1)
+
+    # to fix "this weekend"
+    # weekday(): Mon=0 ... Sun=6
+    days_until_sat = (5 - dt.weekday()) % 7
+    sat = today + timedelta(days=days_until_sat)
+    sun = sat + timedelta(days=1)
+
+    wd = _WEEKDAYS[dt.weekday()]
+    return (
+        f"- local_datetime: {dt.strftime('%Y-%m-%d %H:%M')} {dt.tzname() or ''} ({wd})\n"
+        f"- timezone: {tz_name}\n"
+        f"- today: {today.isoformat()}\n"
+        f"- tomorrow: {tomorrow.isoformat()}\n"
+        f"- this_weekend: {sat.isoformat()}–{sun.isoformat()} (Sat–Sun)\n"
+    )
 
 def _truthy(value: str | None) -> bool:
     if value is None:
@@ -379,11 +439,17 @@ def _build_chat_prompts(
     hashtags = _get_bot_hashtags()
     place = place_hint or os.getenv("PLACE") or "your area"
 
+    now_block = _format_now_block(live_weather)
+
     system = (
         f"You are {bot_name}, a friendly English local story bot for {place} (locals, familes and tourists). "
         f"Write tweet in English about {max_words} words. "
         "No markdown, no lists, no extra commentary, no quotes.\n"
         "Show only real existing URLs.\n"
+        "TIME AWARENESS:\n"
+        "- Treat NOW (in user prompt) as the current local datetime.\n"
+        "- Do NOT recommend events that are already in the past relative to NOW.\n"
+        "- If you use words like 'today', 'tomorrow', or 'this weekend', they must match NOW.\n"
         "STYLE:\n"
         "- Warm, upbeat, practical.\n"
         "- Use emojis.\n"
@@ -404,6 +470,8 @@ def _build_chat_prompts(
     live_block = live_weather.strip() if isinstance(live_weather, str) and live_weather.strip() else "(not available)"
 
     user = (
+        "NOW (for time reasoning):\n"
+        f"{now_block}\n"
         "LIVE WEATHER:\n"
         f"{live_block}\n\n"
         "RAG CONTEXT:\n"
@@ -412,6 +480,7 @@ def _build_chat_prompts(
         f"{question}\n\n"
         "Remember: output ONLY the tweet text."
     )
+
     return system, user
 
 

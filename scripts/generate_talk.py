@@ -407,7 +407,8 @@ def build_question(max_words: str, topic_family: str, topic_mode: str, now_local
     topic_keywords = keyword_map.get((topic_family, topic_mode), "local tip short story")
 
     return (
-        "Write ONE short tweet in English.\n"
+        "Write a tweet in English.\n"
+        f"NOW (local, reference): {now_local.strftime('%Y-%m-%d %H:%M')} {now_local.tzname() or ''} ({now_local:%a}).\n"
         "TIME & GREETING (IMPORTANT):\n"
         "- Determine the local datetime from LIVE WEATHER JSON.\n"
         "- Prefer LIVE WEATHER.current.time and LIVE WEATHER.timezone.\n"
