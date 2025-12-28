@@ -134,7 +134,7 @@ const SLOT_BANNERS: SlotBanner[] = [
   {
     id: "slot-0",
     title: "Ocean view, zero effort",
-    body: "A postcard-style feed that rotates through beautiful photos.",
+    body: "",
     cta: "Open demo",
     url: "https://example.com/slot/ocean",
     imageUri: "https://picsum.photos/seed/goodday_ocean/900/650",
@@ -144,7 +144,7 @@ const SLOT_BANNERS: SlotBanner[] = [
   {
     id: "slot-1",
     title: "Coffee & quiet time",
-    body: "One click to a calm corner. (Yes, this is just a dummy.)",
+    body: "",
     cta: "See more",
     url: "https://example.com/slot/coffee",
     imageUri: "https://picsum.photos/seed/goodday_coffee/900/650",
@@ -154,7 +154,7 @@ const SLOT_BANNERS: SlotBanner[] = [
   {
     id: "slot-2",
     title: "Weekend micro trip",
-    body: "Short trips, big reset. Rotate → click → pretend you’re traveling.",
+    body: "",
     cta: "View route",
     url: "https://example.com/slot/trip",
     imageUri: "https://picsum.photos/seed/goodday_trip/900/650",
@@ -164,7 +164,7 @@ const SLOT_BANNERS: SlotBanner[] = [
   {
     id: "slot-3",
     title: "Sunset soundtrack",
-    body: "Fade-in photos like a real banner ad, but harmless.",
+    body: "",
     cta: "Play",
     url: "https://example.com/slot/sunset",
     imageUri: "https://picsum.photos/seed/goodday_sunset/900/650",
@@ -174,7 +174,7 @@ const SLOT_BANNERS: SlotBanner[] = [
   {
     id: "slot-4",
     title: "Mountain air",
-    body: "Another pretty photo. Another click. Another fake CTA.",
+    body: "",
     cta: "Learn more",
     url: "https://example.com/slot/mountain",
     imageUri: "https://picsum.photos/seed/goodday_mountain/900/650",
@@ -184,7 +184,7 @@ const SLOT_BANNERS: SlotBanner[] = [
   {
     id: "slot-5",
     title: "City lights",
-    body: "This exists only to make the sidebar look like a real service.",
+    body: "",
     cta: "Open",
     url: "https://example.com/slot/city",
     imageUri: "https://picsum.photos/seed/goodday_city/900/650",
