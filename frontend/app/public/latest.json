@@ -1,11 +1,9 @@
 {
-  "id": "2025-12-28T02:37:51Z",
+  "id": "2025-12-28T02:42:59Z",
   "date": "2025-12-28",
-  "generated_at": "2025-12-28T02:37:51Z",
+  "generated_at": "2025-12-28T02:42:59Z",
   "text": "Today is 2025-12-28.",
   "weather": {},
   "prompt": "Today is 2025-12-28.\nWrite a short feed item for social posting. Output plain text only.",
-  "tz_name": "Asia/Tokyo",
-  "feed_url": "./feed/page_000.json",
-  "feed_file": "page_000.json"
+  "tz_name": "Asia/Tokyo"
 }
