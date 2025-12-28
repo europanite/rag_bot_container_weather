@@ -60,7 +60,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Build paged feed (for infinite scroll)
+      - name: Build paged feed
         env:
           FEED_PATH: frontend/app/public
           LATEST_PATH: frontend/app/public/latest.json
@@ -68,7 +68,7 @@ jobs:
         run: |
           python scripts/build_feed_pages.py
 
-      - name: Build (expo export -p web)
+      - name: Build
         working-directory: frontend/app
         env:
           EXPO_PUBLIC_FEED_URL: ./latest.json

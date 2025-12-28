@@ -197,10 +197,10 @@ jobs:
           MODEL_ID: stabilityai/sd-turbo
           STEPS: "2"
           BASE_SIZE: "512"
-          PAGE_W: "800"
-          PAGE_H: "600"
+          PAGE_W: "640" # VGA
+          PAGE_H: "480" # VGA
           BRAND: "GOODDAY YOKOSUKA"
-          PLACE_FALLBACK: "Yokosuka"
+          PLACE: "Yokosuka"
         run: |
           set -euo pipefail
           test -f "$LATEST_PATH"
@@ -223,7 +223,7 @@ jobs:
           PAGE_W = int(os.environ.get("PAGE_W"))
           PAGE_H = int(os.environ.get("PAGE_H"))
           BRAND = os.environ.get("BRAND", "GOODDAY YOKOSUKA")
-          PLACE_FALLBACK = os.environ.get("PLACE_FALLBACK", "")
+          PLACE = os.environ.get("PLACE", "")
 
           def load_json(p: Path):
             return json.loads(p.read_text(encoding="utf-8"))
@@ -268,7 +268,7 @@ jobs:
 
           date = str(latest.get("date", "")).strip()
           text = str(latest.get("text", "")).strip()
-          place = str(latest.get("place", "") or PLACE_FALLBACK).strip()
+          place = str(latest.get("place", "") or PLACE).strip()
           generated_at = str(latest.get("generated_at", "")).strip()
 
           # Deterministic 8-hex seed derived from the feed content.
