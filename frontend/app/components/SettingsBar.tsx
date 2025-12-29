@@ -40,8 +40,7 @@ export default function SettingsBar({ title = "GOODDAY YOKOSUKA" }: Props) {
   return (
     <View
       style={{
-        paddingHorizontal: 12,
-        paddingVertical: 10,
+        padding: 12,
         borderBottomWidth: 1,
         backgroundColor: "#333366",
       }}
@@ -92,7 +91,11 @@ export default function SettingsBar({ title = "GOODDAY YOKOSUKA" }: Props) {
         </View>
       ) : (
         // WIDE: title pinned to center (independent of button width)
-        <View style={{ position: "relative", justifyContent: "center", minHeight: 28 }}>
+        <View style={{ 
+          position: "relative", 
+          justifyContent: "center", 
+          padding: 6,
+          minHeight: 28 }}>
           {/* Row content (left small label + right buttons) */}
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
             {/* Powered by: unobtrusive (left) */}
@@ -121,7 +124,6 @@ export default function SettingsBar({ title = "GOODDAY YOKOSUKA" }: Props) {
               right: 0,
               top: 0,
               bottom: 0,
-              padding: 6,
               alignItems: "center",
               justifyContent: "center",
             }}
