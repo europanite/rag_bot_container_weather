@@ -1,25 +1,25 @@
 {
-  "date": "2025-12-29",
-  "generated_at": "2025-12-29T23:28:47Z",
-  "text": "Good morning Yokosuka! 🌞 It's a mild winter day with clear skies 🌞 and 13.1°C temp ⚖️. Perfect for a stroll along the promenade or shopping street. Don't miss Yokosuka Countdown 2026 on Dec 31st from 18:00 to Jan 1st 01:00!",
+  "date": "2025-12-30",
+  "generated_at": "2025-12-30T01:58:23Z",
+  "text": "Happy New Year's Eve! 🎉🕰️ As we count down to midnight, enjoy Yokosuka's winter evening view with gentle illumination lights. Mild weather is expected. See you at Yokosuka Countdown 2026! 🎊",
   "place": "Yokosuka",
   "weather": {
     "source": "jma",
-    "generated_at": "2025-12-29T23:23:41.097554+00:00",
+    "generated_at": "2025-12-30T01:53:35.524852+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-30T08:10:00+09:00",
-      "temp_c": 13.1,
+      "time": "2025-12-30T10:40:00+09:00",
+      "temp_c": 15.2,
       "apparent_temp_c": null,
-      "humidity_pct": 56.0,
+      "humidity_pct": 48.0,
       "precip_mm": 0.0,
       "weather_code": 0,
       "cloud_cover_pct": null,
-      "wind_kmh": 8.28,
-      "wind_dir_deg": 270.0,
+      "wind_kmh": 18.36,
+      "wind_dir_deg": 225.0,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
     },
@@ -39,22 +39,18 @@
       "weather_code": 2,
       "precip_sum_mm": null,
       "wind_max_kmh": null,
-      "temp_max_c": 13.0,
-      "temp_min_c": 5.0,
+      "temp_max_c": null,
+      "temp_min_c": null,
       "weather_text_ja": "晴れ　夜　くもり",
       "jma_weather_code": "100",
       "precip_prob_pct": 10
     },
     "jma_meta": {
       "publishing_office": "横浜地方気象台",
-      "report_datetime": "2025-12-30T05:00:00+09:00",
+      "report_datetime": "2025-12-30T11:00:00+09:00",
       "office_code": "140000",
       "area_code": null,
       "temp_city_code": null
     }
-  },
-  "image_url": "/image/feed_20251230_082337_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good morning Yokosuka! 🌞 It's a mild winter day with clear skies 🌞 and 13.1°C temp ⚖️. Perfect for a stroll along the promenade or shopping street. Don't miss Yokosuka Countdown 2026 on Dec 31st from 18:00 to Jan 1st 01:",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2025-12-29T23:31:23.399005Z"
+  }
 }
