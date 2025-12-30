@@ -691,14 +691,13 @@ def main() -> int:
     # 3) Query backend for today's tweet
     now_dt_local = datetime.now(ZoneInfo(tz_name))
     now_iso = now_dt_local.replace(microsecond=0).isoformat()
-
+    topic_family, topic_mode = pick_topic(now_local=now_dt_local, snap_obj=snap_obj)
     question = build_question(
-        now_local=now_dt_local,
         max_words=max_words,
         topic_family=topic_family,
         topic_mode=topic_mode,
-        topic_keywords=topic_keywords,
-        hint=weather_hint,
+        now_local=now_dt_local,
+        snap_obj=snap_obj,
     )
 
     payload = build_payload(
