@@ -169,6 +169,15 @@ def http_json(method: str, url: str, payload: Optional[Dict[str, Any]], cfg: Htt
     raise RuntimeError(f"backend response is not usable JSON: {body[:200]}") from last_exc
 
 
+def get_json(url: str, cfg: HttpConfig) -> Dict[str, Any]:
+    return http_json("GET", url, None, cfg)
+
+
+def post_json(url: str, payload: Dict[str, Any], cfg: HttpConfig) -> Dict[str, Any]:
+    return http_json("POST", url, payload, cfg)
+
+
+
 def wait_for_backend(api_base: str, cfg: HttpConfig, tries: int = 60, sleep_s: int = 2) -> None:
     url = f"{api_base}/rag/status"
     for i in range(1, tries + 1):
@@ -200,7 +209,9 @@ def fetch_weather_snapshot(lat: str, lon: str, tz_name: str, place: str) -> Tupl
         tz_name,
         "--place",
         place,
-    ]
+            "--provider",
+        "jma",
+]
     # Use subprocess without importing subprocess? It's stdlib; fine.
     import subprocess
 
@@ -410,7 +421,8 @@ def build_question(max_words: str, topic_family: str, topic_mode: str, now_local
         "Write a tweet in English.\n"
         f"NOW (local, reference): {now_local.strftime('%Y-%m-%d %H:%M')} {now_local.tzname() or ''} ({now_local:%a}).\n"
         "TIME & GREETING (IMPORTANT):\n"
-        "- Determine the local datetime from LIVE WEATHER JSON.\n"
+        "- Get the local datetime in LIVE WEATHER JSON.\n"
+        "- Decide the greeting using the local time.\n"        
         "- Prefer LIVE WEATHER.current.time and LIVE WEATHER.timezone.\n"
         "- HOLIDAY OVERRIDE (date-based, day-limited):\n"
         "  * 12-24 => 'Merry Christmas Eve'\n"
@@ -425,7 +437,7 @@ def build_question(max_words: str, topic_family: str, topic_mode: str, now_local
         "  * 00:00-04:59 => 'Good night'\n"
         "\n"
         "Decide the greeting using the local time in LIVE WEATHER JSON (current.time + timezone; assume Asia/Tokyo if missing).\n"
-        "Summarize the weather using ONLY LIVE WEATHER facts.\n"
+        "Provide the simple weather(sunny, cloudy, rainy, windy...) info and temp using LIVE WEATHER facts.\n"
         f"TOPIC FAMILY: {topic_family} (event/place/chat).\n"
         f"SUBTOPIC: {topic_mode} (keywords: {topic_keywords}).\n"
         f"HINTS: time_of_day={tod}, season={season}, weather_hint={hint}.\n"
@@ -435,13 +447,46 @@ def build_question(max_words: str, topic_family: str, topic_mode: str, now_local
     )
 
 
-def build_payload(question: str, top_k: int, snap_json_raw: str) -> Dict[str, Any]:
-    # Keep current bash behavior: send snapshot as extra_context string; use_live_weather=False
+def build_payload(
+    *,
+    question: str,
+    top_k: int,
+    max_words: int,
+    snap_json_raw: str,
+    now_iso: str,
+    tz_name: str,
+    output_style: str = "tweet_bot",
+    include_debug: bool = False,
+) -> Dict[str, Any]:
+    # Parse snapshot (JMA)
+    try:
+        live_weather = json.loads(snap_json_raw) if snap_json_raw.strip() else {}
+    except Exception:
+        live_weather = {}
+
+    if not isinstance(live_weather, dict):
+        live_weather = {"_raw": snap_json_raw}
+
+    # Inject timezone + current.time for PROMPT
+    live_weather["timezone"] = tz_name or live_weather.get("timezone") or "Asia/Tokyo"
+
+    cur = live_weather.get("current")
+    if not isinstance(cur, dict):
+        cur = {}
+        live_weather["current"] = cur
+    # JST ISO
+    cur["time"] = now_iso
+
+    # Provider hint
+    live_weather["source"] = live_weather.get("source") or "jma"
+
     return {
         "question": question,
         "top_k": int(top_k),
-        "extra_context": snap_json_raw,
-        "use_live_weather": False,
+        "max_words": int(max_words),
+        "output_style": output_style,
+        "extra_context": json.dumps(live_weather, ensure_ascii=False),
+        "include_debug": bool(include_debug),
     }
 
 
@@ -587,11 +632,11 @@ def main() -> int:
     max_words = env("MAX_WORDS", "128") or "128"
     hashtags = env("HASHTAGS", "")
 
-    now_local = local_stamp(tz_name)
+    now_stamp = local_stamp(tz_name)
     # Output paths (match bash behavior)
     feed_path_dir = env("FEED_PATH", "")
     latest_path_default = env("LATEST_PATH", "frontend/app/public/latest.json") or "frontend/app/public/latest.json"
-    computed_feed_path = str(Path(feed_path_dir) / "feed" / f"feed_{now_local}.json") if feed_path_dir else ""
+    computed_feed_path = str(Path(feed_path_dir) / "feed" / f"feed_{now_stamp}.json") if feed_path_dir else ""
 
     feed_paths_raw = env("FEED_PATHS", "")
     if is_blank(feed_paths_raw):
@@ -611,7 +656,7 @@ def main() -> int:
     print(f"LATEST_PATHS={latest_paths_raw}")
 
     # 1) Weather snapshot
-    print("Fetching weather snapshot (Open-Meteo)...")
+    print("Fetching weather snapshot (JMA)...")
     snap_json_raw, snap_obj = fetch_weather_snapshot(lat=lat, lon=lon, tz_name=tz_name, place=place)
     if debug:
         print(f"DEBUG: SNAP_JSON bytes={len(snap_json_raw.encode('utf-8'))}", file=sys.stderr)
@@ -637,7 +682,7 @@ def main() -> int:
         _ = http_json(
             "POST",
             f"{api_base}/rag/query",
-            {"question": "ping", "top_k": 1, "extra_context": "{}", "use_live_weather": False},
+            {"question": "ping", "top_k": 1, "extra_context": "{}"},
             cfg,
         )
     except Exception:
@@ -645,35 +690,34 @@ def main() -> int:
 
     # 3) Query backend for today's tweet
     now_dt_local = datetime.now(ZoneInfo(tz_name))
-    topic_family, topic_mode = pick_topic(now_local=now_dt_local, snap_obj=snap_obj)
-    question = build_question(max_words=max_words, topic_family=topic_family, topic_mode=topic_mode, now_local=now_dt_local, snap_obj=snap_obj)
-    payload = build_payload(question=question, top_k=top_k, snap_json_raw=snap_json_raw)
+    now_iso = now_dt_local.replace(microsecond=0).isoformat()
+
+    question = build_question(
+        now_local=now_dt_local,
+        max_words=max_words,
+        topic_family=topic_family,
+        topic_mode=topic_mode,
+        topic_keywords=topic_keywords,
+        hint=weather_hint,
+    )
+
+    payload = build_payload(
+        question=question,
+        top_k=top_k,
+        max_words=max_words,
+        snap_json_raw=snap_json_raw,  # snapshot raw json
+        now_iso=now_iso,
+        tz_name=tz_name,
+        output_style="tweet_bot",
+    )
+
+    query_url = f"{api_base}/rag/query"
+    resp_obj = post_json(query_url, payload, cfg)
+    tweet = extract_tweet(resp_obj)
+    detail = extract_detail(resp_obj)
 
     if debug:
         print(f"DEBUG: JSON_PAYLOAD={json.dumps(payload, ensure_ascii=False)}", file=sys.stderr)
-
-    tweet = ""
-    resp_obj: Dict[str, Any] = {}
-    detail = ""
-    # bash: retries are CURL_RETRIES+2 here
-    for attempt in range(1, cfg.retries + 2 + 1):
-        try:
-            resp_obj = http_json("POST", f"{api_base}/rag/query", payload, cfg)
-        except Exception as e:
-            print(f"WARN: /rag/query call failed (attempt {attempt}/{cfg.retries+2}). Retrying... err={e!r}", file=sys.stderr)
-            time.sleep(2)
-            continue
-
-        tweet = extract_tweet(resp_obj)
-        if tweet:
-            break
-
-        detail = extract_detail(resp_obj)
-        print(
-            f"WARN: backend did not return an answer (attempt {attempt}/{cfg.retries+2}). detail={detail}",
-            file=sys.stderr,
-        )
-        time.sleep(2)
 
     if not tweet:
         print("ERROR: tweet is empty after parsing (after retries).", file=sys.stderr)
@@ -687,12 +731,13 @@ def main() -> int:
         tweet = f"{tweet} {hashtags}"
 
     # 4) Write outputs
-    today = utc_date()
-    now_iso = utc_now_iso_z()
+    today = now_dt_local.date().isoformat()
+    now_iso = now_dt_local.replace(microsecond=0).isoformat()
+
     entry = build_entry(today=today, now_iso=now_iso, tweet=tweet, place=place, snap_obj=snap_obj)
 
     for feed_p, latest_p in pair_paths(feeds, latests):
-        write_outputs(feed_p, latest_p, entry=entry, snap_json_raw=snap_json_raw, now_local=now_local)
+        write_outputs(feed_p, latest_p, entry=entry, snap_json_raw=snap_json_raw, now_local=now_stamp)
 
     return 0
 

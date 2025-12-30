@@ -4,9 +4,8 @@ Fetch a small "weather snapshot" JSON used by this repo (diary/feed generation).
 
 Providers:
   - jma       : Japan Meteorological Agency (AMeDAS + forecast)  ✅ Japan-first
-  - open-meteo: Open-Meteo (kept as fallback / compatibility)
 
-This script keeps the snapshot shape compatible with the existing Open-Meteo snapshot:
+This script keeps the snapshot shape compatible with the existing snapshot used in this repo:
 - source, generated_at, place, latitude, longitude, timezone
 - current: time, temp_c, apparent_temp_c, humidity_pct, precip_mm, weather_code, cloud_cover_pct, wind_kmh, wind_dir_deg
 - today/tomorrow: date, weather_code, precip_sum_mm, wind_max_kmh, temp_max_c, temp_min_c
@@ -481,7 +480,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     p.add_argument("--format", default="json", choices=["json"], help="(compat) only json is supported")
     p.add_argument("--out", default=None, help="(compat) write JSON to this path; use '-' for stdout")
 
-    p.add_argument("--provider", default=os.getenv("WEATHER_PROVIDER", "jma"), choices=["jma", "open-meteo"])
+    p.add_argument("--provider", default=os.getenv("WEATHER_PROVIDER", "jma"), choices=["jma"])
 
     # JMA knobs (optional but recommended for better forecast labeling)
     p.add_argument("--jma-office-code", default=os.getenv("JMA_OFFICE_CODE", "140000"))
@@ -504,12 +503,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             station=str(args.jma_amedas_station) if args.jma_amedas_station else None,
         )
     except Exception as e:
-        # If Japan-first fails, fallback to Open-Meteo unless provider was explicitly open-meteo.
-        if args.provider == "jma":
-            snap = fetch_open_meteo_snapshot(args.place, args.lat, args.lon, args.tz)
-            snap["jma_fallback_error"] = repr(e)
-        else:
-            raise
+        raise RuntimeError(f"JMA weather fetch failed: {e}") from e
 
     out = json.dumps(snap, ensure_ascii=False, indent=2)
     if args.out and args.out != "-":
