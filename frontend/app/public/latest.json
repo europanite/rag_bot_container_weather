@@ -1,20 +1,20 @@
 {
   "date": "2025-12-30",
-  "generated_at": "2025-12-30T04:47:46Z",
-  "text": "Happy New Year's Eve! 🎉 In Yokosuka, tonight's mild winter weather promises a pleasant countdown to 2026. ☀️ Current conditions: 16.8°C, partly cloudy with gentle winds. Don't miss the Yokosuka Countdown 2026 at 18:00 on December 31st - January 1st!",
+  "generated_at": "2025-12-30T05:33:22Z",
+  "text": "Happy New Year's Eve! 🎉 Mild winter weather awaits us tomorrow. Enjoy a warm drink at Yokosuka's cozy cafes, like Curry Ramen Cafe or Bakery & More. Let's make some unforgettable memories in this lovely town before the countdown to 2026 begins! #Yokosuka #Miura",
   "place": "Yokosuka",
   "weather": {
     "source": "jma",
-    "generated_at": "2025-12-30T04:42:44.984228+00:00",
+    "generated_at": "2025-12-30T05:28:31.093734+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-30T13:30:00+09:00",
-      "temp_c": 16.8,
+      "time": "2025-12-30T14:20:00+09:00",
+      "temp_c": 16.5,
       "apparent_temp_c": null,
-      "humidity_pct": 44.0,
+      "humidity_pct": 45.0,
       "precip_mm": 0.0,
       "weather_code": 0,
       "cloud_cover_pct": null,
@@ -52,9 +52,5 @@
       "area_code": null,
       "temp_city_code": null
     }
-  },
-  "image_url": "/image/feed_20251230_134243_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Happy New Year's Eve! 🎉 In Yokosuka, tonight's mild winter weather promises a pleasant countdown to 2026. ☀️ Current conditions: 16.8°C, partly cloudy with gentle winds. Don't miss the Yokosuka Countdown 2026 at 18:00 on",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2025-12-30T04:50:27.000879Z"
+  }
 }
