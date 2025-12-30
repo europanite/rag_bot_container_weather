@@ -1,7 +1,7 @@
 {
   "items": [
     {
-      "id": "2025-12-30T22:29:00Z",
+      "id": "feed_20251231_072437_JST",
       "date": "2025-12-30",
       "text": "Happy New Year's Eve from Yokosuka! Currently, it's a chilly evening with partly cloudy skies and a gentle breeze. The temperature is a crisp 4.9°C. Take in the beautiful winter sunset at the Viewpoint Hill lookout and enjoy the night-view of the city skyline before midnight 🎉🌃",
       "place": "Yokosuka",
@@ -55,7 +55,12 @@
           "area_code": null,
           "temp_city_code": null
         }
-      }
+      },
+      "image": "/image/feed_20251231_072437_JST.png",
+      "image_url": "/image/feed_20251231_072437_JST.png",
+      "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Happy New Year's Eve from Yokosuka! Currently, it's a chilly evening with partly cloudy skies and a gentle breeze. The temperature is a crisp 4.9°C. Take in the beautiful winter sunset at the Viewpoint Hill lookout and e",
+      "image_model": "stabilityai/sd-turbo",
+      "image_generated_at": "2025-12-30T22:32:12.965187Z"
     }
   ],
   "updated_at": "2025-12-30T22:29:00Z",
