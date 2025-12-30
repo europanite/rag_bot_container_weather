@@ -1,25 +1,25 @@
 {
   "date": "2025-12-30",
-  "generated_at": "2025-12-30T05:33:22Z",
-  "text": "Happy New Year's Eve! 🎉 Mild winter weather awaits us tomorrow. Enjoy a warm drink at Yokosuka's cozy cafes, like Curry Ramen Cafe or Bakery & More. Let's make some unforgettable memories in this lovely town before the countdown to 2026 begins! #Yokosuka #Miura",
+  "generated_at": "2025-12-30T06:43:31Z",
+  "text": "Happy New Year's Eve from Yokosuka! 🎉🕰️ It's a mild winter afternoon with partly cloudy skies and a gentle breeze, perfect for taking in the naval port city's rich history at the Yokosuka Museum of History. ⚓️💫 #Yokosuka #Miura",
   "place": "Yokosuka",
   "weather": {
     "source": "jma",
-    "generated_at": "2025-12-30T05:28:31.093734+00:00",
+    "generated_at": "2025-12-30T06:38:28.756745+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-30T14:20:00+09:00",
-      "temp_c": 16.5,
+      "time": "2025-12-30T15:30:00+09:00",
+      "temp_c": 15.2,
       "apparent_temp_c": null,
-      "humidity_pct": 45.0,
+      "humidity_pct": 47.0,
       "precip_mm": 0.0,
       "weather_code": 0,
       "cloud_cover_pct": null,
-      "wind_kmh": 15.120000000000001,
-      "wind_dir_deg": 202.5,
+      "wind_kmh": 6.84,
+      "wind_dir_deg": 225.0,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
     },
@@ -52,9 +52,5 @@
       "area_code": null,
       "temp_city_code": null
     }
-  },
-  "image_url": "/image/feed_20251230_142828_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Happy New Year's Eve! 🎉 Mild winter weather awaits us tomorrow. Enjoy a warm drink at Yokosuka's cozy cafes, like Curry Ramen Cafe or Bakery & More. Let's make some unforgettable memories in this lovely town before the c",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2025-12-30T05:36:21.579469Z"
+  }
 }
