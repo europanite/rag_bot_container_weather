@@ -1,24 +1,24 @@
 {
   "date": "2025-12-30",
-  "generated_at": "2025-12-30T12:56:39Z",
-  "text": "Good evening Yokosuka! As we approach New Year's Eve, I'm excited to remind you about Kurihama's joyous events: Joya-no-Kane, Hatsumode, First Sunrise & Dondoyaki. Today, the weather is mild with a gentle 10.4°C and cloudy skies 🌃🎉",
+  "generated_at": "2025-12-30T13:45:07Z",
+  "text": "Good evening from Yokosuka! Tonight's mild winter weather is perfect for enjoying New Year Events in Kurihama, like Joya-no-Kane & Hatsumode. Don't miss the First Sunrise & Dondoyaki celebrations 🎉🕊️",
   "place": "Yokosuka",
   "weather": {
     "source": "jma",
-    "generated_at": "2025-12-30T12:51:35.293389+00:00",
+    "generated_at": "2025-12-30T13:40:06.833140+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-30T21:40:00+09:00",
-      "temp_c": 10.4,
+      "time": "2025-12-30T22:30:00+09:00",
+      "temp_c": 10.5,
       "apparent_temp_c": null,
-      "humidity_pct": 61.0,
+      "humidity_pct": 56.0,
       "precip_mm": 0.0,
       "weather_code": 2,
       "cloud_cover_pct": null,
-      "wind_kmh": 3.9600000000000004,
+      "wind_kmh": 8.28,
       "wind_dir_deg": 315.0,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
@@ -52,9 +52,5 @@
       "area_code": null,
       "temp_city_code": null
     }
-  },
-  "image_url": "/image/feed_20251230_215133_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good evening Yokosuka! As we approach New Year's Eve, I'm excited to remind you about Kurihama's joyous events: Joya-no-Kane, Hatsumode, First Sunrise & Dondoyaki. Today, the weather is mild with a gentle 10.4°C and clou",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2025-12-30T12:58:59.207138Z"
+  }
 }
