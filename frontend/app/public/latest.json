@@ -1,25 +1,25 @@
 {
   "date": "2025-12-31",
-  "generated_at": "2025-12-31T08:39:02Z",
-  "text": "Happy New Year's Eve from Yokosuka! 🎉🕰️ The countdown to 2026 begins! Enjoy the mild winter evening and picturesque night-view illumination at our harbor. Tonight, weather will be cloudy with a high of 9.5°C and gentle winds. #Yokosuka #Miura",
+  "generated_at": "2025-12-31T09:33:57Z",
+  "text": "Happy New Year's Eve from Yokosuka! 🎉 Tonight, expect a mild winter evening with mostly cloudy skies and a gentle breeze. Perfect time for a stroll under the city's beautiful illumination lights! 😊 #Yokosuka #MiuraPeninsula",
   "place": "Yokosuka",
   "weather": {
     "source": "jma",
-    "generated_at": "2025-12-31T08:34:44.398318+00:00",
+    "generated_at": "2025-12-31T09:29:44.829258+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-31T17:20:00+09:00",
-      "temp_c": 9.5,
+      "time": "2025-12-31T18:20:00+09:00",
+      "temp_c": 8.9,
       "apparent_temp_c": null,
-      "humidity_pct": 54.0,
+      "humidity_pct": 56.0,
       "precip_mm": 0.0,
       "weather_code": 2,
       "cloud_cover_pct": null,
-      "wind_kmh": 4.680000000000001,
-      "wind_dir_deg": 45.0,
+      "wind_kmh": 6.48,
+      "wind_dir_deg": 67.5,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
     },
@@ -52,9 +52,5 @@
       "area_code": null,
       "temp_city_code": null
     }
-  },
-  "image_url": "/image/feed_20251231_173441_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Happy New Year's Eve from Yokosuka! 🎉🕰️ The countdown to 2026 begins! Enjoy the mild winter evening and picturesque night-view illumination at our harbor. Tonight, weather will be cloudy with a high of 9.5°C and gentle w",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2025-12-31T08:41:34.987168Z"
+  }
 }
