@@ -140,6 +140,29 @@ class QueryRequest(BaseModel):
         description="Maximum characters for the generated post (tweet is 280).",
     )
 
+    audit: bool | None = Field(
+        default=None,
+        description=(
+            "Enable auditing of the generated answer by a second LLM call. "
+            "If None, uses env RAG_AUDIT_DEFAULT."
+        ),
+    )
+
+    audit_rewrite: bool | None = Field(
+        default=None,
+        description=(
+            "If true, and the auditor provides a fixed_answer, replace answer with it. "
+            "If None, uses env RAG_AUDIT_REWRITE_DEFAULT."
+        ),
+    )
+
+    audit_model: str | None = Field(
+        default=None,
+        description=(
+            "Optional override model name for auditing (defaults to RAG_AUDIT_MODEL / OLLAMA_CHAT_MODEL)."
+        ),
+    )
+
 
 class ChunkOut(BaseModel):
     id: str | None = None
@@ -148,11 +171,23 @@ class ChunkOut(BaseModel):
     metadata: dict = Field(default_factory=dict)
 
 
+class AuditResult(BaseModel):
+    model: str | None = None
+    passed: bool = Field(..., description="True if the answer is supported by the provided context.")
+    score: int = Field(..., ge=0, le=100, description="0-100 quality score of support & faithfulness.")
+    confidence: Literal["low", "medium", "high"] | None = None
+    issues: list[str] = Field(default_factory=list)
+    fixed_answer: str | None = None
+    original_answer: str | None = None
+    raw: str | None = None
+
+
 class QueryResponse(BaseModel):
     answer: str
     context: list[str] | None = None
     chunks: list[ChunkOut] | None = None
     removed_urls: list[str] | None = None
+    audit: AuditResult | None = None
 
 
 class StatusResponse(BaseModel):
@@ -220,6 +255,214 @@ def _call_ollama_chat(*, question: str, system_prompt: str, user_prompt: str) ->
         raise RuntimeError(f"Ollama chat failed: {e}") from e
 
     return content
+
+
+def _truthy_env(name: str, default: str = "false") -> bool:
+    raw = os.getenv(name, default).strip().lower()
+    return raw in {"1", "true", "yes", "y", "on"}
+
+
+def _get_audit_default_enabled() -> bool:
+    return _truthy_env("RAG_AUDIT_DEFAULT", "false")
+
+
+def _get_audit_default_rewrite() -> bool:
+    return _truthy_env("RAG_AUDIT_REWRITE_DEFAULT", "false")
+
+
+def _get_ollama_audit_model() -> str:
+    return os.getenv("RAG_AUDIT_MODEL") or _get_ollama_chat_model()
+
+
+def _call_ollama_chat_with_model(*, model: str, system_prompt: str, user_prompt: str) -> str:
+    """Call Ollama's /api/chat endpoint with an explicit model override."""
+    base_url = _get_ollama_base_url()
+
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        "stream": False,
+    }
+
+    try:
+        timeout_s = _get_ollama_chat_timeout()
+        resp = _session.post(f"{base_url}/api/chat", json=payload, timeout=timeout_s)
+        resp.raise_for_status()
+        data = resp.json()
+        message = data.get("message")
+        if not isinstance(message, dict):
+            raise RuntimeError("Ollama chat response missing 'message'")
+        content = message.get("content")
+        if not isinstance(content, str):
+            raise RuntimeError("Ollama chat response missing 'message.content'")
+        return content
+    except Exception as e:
+        logger.exception("Ollama audit chat failed: %s", e)
+        raise RuntimeError(f"Ollama audit chat failed: {e}") from e
+
+
+def _strip_code_fences(text: str) -> str:
+    t = text.strip()
+    if t.startswith("```"):
+        t = re.sub(r"^```[a-zA-Z0-9_-]*\s*", "", t)
+        t = re.sub(r"\s*```\s*$", "", t)
+    return t.strip()
+
+
+def _parse_first_json_object(text: str) -> dict | None:
+    candidate = _strip_code_fences(text)
+    try:
+        obj = json.loads(candidate)
+        if isinstance(obj, dict):
+            return obj
+    except Exception:
+        pass
+
+    # Fallback: find the first {...} block that parses as JSON.
+    for m in re.finditer(r"\{.*?\}", candidate, flags=re.DOTALL):
+        try:
+            obj = json.loads(m.group(0))
+            if isinstance(obj, dict):
+                return obj
+        except Exception:
+            continue
+    return None
+
+
+def _build_audit_prompts(
+    *,
+    question: str,
+    answer: str,
+    rag_context: list[str],
+    live_weather: str | None,
+    allowed_urls: list[str],
+    output_style: str,
+    max_chars: int,
+) -> tuple[str, str]:
+    system_prompt = (
+        "You are a strict auditor for a Retrieval-Augmented Generation (RAG) assistant.\n"
+        "You will be given: QUESTION, ANSWER, and CONTEXT.\n"
+        "Your job: judge whether the ANSWER is fully supported by the CONTEXT.\n"
+        "Rules:\n"
+        "- Use ONLY the provided CONTEXT; do NOT rely on outside knowledge.\n"
+        "- If a claim is not clearly supported, mark it as an issue.\n"
+        "- If the answer contains URLs not listed in ALLOWED_URLS, mark it as an issue.\n"
+        "- Output MUST be a single JSON object and nothing else.\n"
+        "\n"
+        "JSON schema (keys must exist):\n"
+        "{\n"
+        "  \"passed\": boolean,\n"
+        "  \"score\": integer 0-100,\n"
+        "  \"confidence\": \"low\"|\"medium\"|\"high\",\n"
+        "  \"issues\": array of strings,\n"
+        "  \"fixed_answer\": string|null\n"
+        "}\n"
+        "\n"
+        "If passed=false, provide fixed_answer that removes unsupported claims and stays within max_chars. "
+        "Keep the same output_style as the original answer."
+    )
+
+    ctx_parts: list[str] = []
+    for i, c in enumerate(rag_context, start=1):
+        if not isinstance(c, str):
+            continue
+        c = c.strip()
+        if not c:
+            continue
+        # Cap each context block to avoid runaway tokens
+        if len(c) > 1500:
+            c = c[:1500] + "…"
+        ctx_parts.append(f"[{i}] {c}")
+
+    user_prompt = (
+        f"OUTPUT_STYLE: {output_style}\n"
+        f"MAX_CHARS: {max_chars}\n"
+        f"ALLOWED_URLS: {allowed_urls}\n"
+        f"QUESTION:\n{question}\n\n"
+        f"ANSWER:\n{answer}\n\n"
+        f"CONTEXT:\n" + "\n\n".join(ctx_parts) + "\n\n"
+        + (f"LIVE_WEATHER:\n{live_weather}\n\n" if live_weather else "")
+    )
+
+    return system_prompt, user_prompt
+
+
+def _run_answer_audit(
+    *,
+    question: str,
+    answer: str,
+    rag_context: list[str],
+    live_weather: str | None,
+    allowed_urls: list[str],
+    output_style: str,
+    max_chars: int,
+    audit_model: str,
+    include_raw: bool,
+) -> AuditResult:
+    system_prompt, user_prompt = _build_audit_prompts(
+        question=question,
+        answer=answer,
+        rag_context=rag_context,
+        live_weather=live_weather,
+        allowed_urls=allowed_urls,
+        output_style=output_style,
+        max_chars=max_chars,
+    )
+
+    raw = _call_ollama_chat_with_model(
+        model=audit_model,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+    )
+
+    obj = _parse_first_json_object(raw)
+    if not isinstance(obj, dict):
+        return AuditResult(
+            model=audit_model,
+            passed=False,
+            score=0,
+            confidence="low",
+            issues=["Audit model did not return valid JSON."],
+            fixed_answer=None,
+            raw=(raw if include_raw else None),
+        )
+
+    passed = bool(obj.get("passed", False))
+    score = obj.get("score")
+    try:
+        score_i = int(score)
+    except Exception:
+        score_i = 0
+    score_i = max(0, min(100, score_i))
+
+    conf = obj.get("confidence")
+    if conf not in {"low", "medium", "high"}:
+        conf = "low"
+
+    issues = obj.get("issues")
+    if not isinstance(issues, list):
+        issues_list: list[str] = []
+    else:
+        issues_list = [str(x) for x in issues if str(x).strip()]
+
+    fixed_answer = obj.get("fixed_answer")
+    if fixed_answer is not None and not isinstance(fixed_answer, str):
+        fixed_answer = str(fixed_answer)
+
+    return AuditResult(
+        model=audit_model,
+        passed=passed,
+        score=score_i,
+        confidence=conf,
+        issues=issues_list,
+        fixed_answer=fixed_answer,
+        raw=(raw if include_raw else None),
+    )
+
+
 
 
 def _chunk_id_from_metadata(meta: dict) -> str | None:
@@ -673,6 +916,52 @@ def query_rag(payload: QueryRequest, http_request: Request) -> QueryResponse:
     )
     answer = _enforce_max_chars(answer, payload.max_words)
 
+    # Optional: audit the answer with a second LLM call.
+    audit_enabled = payload.audit if payload.audit is not None else _get_audit_default_enabled()
+    audit_rewrite = payload.audit_rewrite if payload.audit_rewrite is not None else _get_audit_default_rewrite()
+    audit_result: AuditResult | None = None
+    if audit_enabled:
+        audit_model = payload.audit_model or _get_ollama_audit_model()
+
+        # Keep audit context bounded: reuse what we already sent to the writer model.
+        audit_context = context_texts[:20]
+
+        try:
+            audit_result = _run_answer_audit(
+                question=payload.question,
+                answer=answer,
+                rag_context=audit_context,
+                live_weather=live_extra,
+                allowed_urls=allowed_urls,
+                output_style=payload.output_style,
+                max_chars=payload.max_words,
+                audit_model=audit_model,
+                include_raw=bool(payload.include_debug),
+            )
+        except Exception as exc:
+            # Don't fail the main request if auditing fails; surface the failure via audit_result.
+            audit_result = AuditResult(
+                model=audit_model,
+                passed=False,
+                score=0,
+                confidence="low",
+                issues=[f"Audit failed: {exc}"],
+                fixed_answer=None,
+                raw=(str(exc) if payload.include_debug else None),
+            )
+
+        if audit_rewrite and audit_result.fixed_answer:
+            audit_result.original_answer = answer
+            answer = _strip_wrapping_quotes(_clean_single_line(audit_result.fixed_answer))
+            answer, removed_urls_2 = _filter_answer_urls(
+                answer,
+                allowed_urls=allowed_urls,
+                allowlist_regexes=_get_allowlist_regexes(),
+            )
+            if removed_urls_2:
+                removed_urls = (removed_urls or []) + removed_urls_2
+            answer = _enforce_max_chars(answer, payload.max_words)
+
     debug_context: list[str] | None = None
     debug_chunks: list[ChunkOut] | None = None
 
@@ -699,4 +988,5 @@ def query_rag(payload: QueryRequest, http_request: Request) -> QueryResponse:
         context=debug_context,
         chunks=debug_chunks,
         removed_urls=(removed_urls if payload.include_debug and removed_urls else None),
+        audit=audit_result,
     )
