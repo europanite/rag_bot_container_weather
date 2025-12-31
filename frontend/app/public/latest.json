@@ -52,5 +52,9 @@
       "area_code": null,
       "temp_city_code": null
     }
-  }
+  },
+  "image_url": "/image/feed_20251231_105410_JST.png",
+  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Happy New Year's Eve! 🎄🕰️ The weather in Yokosuka is looking mild today, with a high of 11.3°C and partly cloudy skies. Enjoy the winter evening and nighttime views around the city! 🌃",
+  "image_model": "stabilityai/sd-turbo",
+  "image_generated_at": "2025-12-31T02:00:57.192090Z"
 }
