@@ -1321,32 +1321,30 @@ const getImageUrisForItem = useCallback(
   }
 
   return (
-    <View style={{ 
-      flex: 1, 
-      padding: 6,
-      flexDirection: "row", 
-      justifyContent: "center", 
-      backgroundColor: APP_BG }}>
-
-      <View style={{ 
-        width: SIDEBAR_W, 
-        minHeight: 0 }}>
+    <View
+      style={{
+        flex: 1,
+        padding: 6,
+        flexDirection: "row",
+        backgroundColor: APP_BG,
+        gap: 12,
+        alignItems: "stretch",
+      }}
+    >
+      {/* Left sidebar: grows to consume extra space */}
+      <View style={{ flex: 1, minWidth: SIDEBAR_W, minHeight: 0 }}>
         <Slot side="left" />
       </View>
 
-      <View style={{ 
-        flex: 1, 
-        maxWidth: CONTENT_MAX_W,
-      }}>
+      {/* Center: keep 760 as the “target” width, but allow shrinking */}
+      <View style={{ width: CONTENT_MAX_W, minWidth: 0, flexShrink: 1 }}>
         {list}
       </View>
 
-      <View style={{ 
-        width: SIDEBAR_W, 
-        minHeight: 0 }}>
+      {/* Right sidebar: grows to consume extra space */}
+      <View style={{ flex: 1, minWidth: SIDEBAR_W, minHeight: 0 }}>
         <Slot side="right" />
       </View>
-
     </View>
   );
 }
