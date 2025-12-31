@@ -1,25 +1,25 @@
 {
   "date": "2025-12-31",
-  "generated_at": "2025-12-31T05:33:16Z",
-  "text": "Good afternoon in Yokosuka! With a mild winter weather, now's a great time to visit the beautiful Shomyo-ji Temple 🏯️🕊️ Enjoy the serene atmosphere and learn about our rich heritage before ringing in the new year #Yokosuka #ShomyojiTemple",
+  "generated_at": "2025-12-31T06:43:06Z",
+  "text": "Happy New Year's Eve from Yokosuka! 🎉 It's a mild winter afternoon with clear skies and 11.6°C temperatures, perfect for a stroll in Zushi Park 🏞️🌳. Enjoy the countdown to 2026! #Yokosuka #Miura #Kanagawa",
   "place": "Yokosuka",
   "weather": {
     "source": "jma",
-    "generated_at": "2025-12-31T05:29:00.319178+00:00",
+    "generated_at": "2025-12-31T06:38:47.909777+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2025-12-31T14:20:00+09:00",
-      "temp_c": 12.7,
+      "time": "2025-12-31T15:30:00+09:00",
+      "temp_c": 11.6,
       "apparent_temp_c": null,
-      "humidity_pct": 47.0,
+      "humidity_pct": 49.0,
       "precip_mm": 0.0,
       "weather_code": 2,
       "cloud_cover_pct": null,
-      "wind_kmh": 9.72,
-      "wind_dir_deg": 45.0,
+      "wind_kmh": 7.2,
+      "wind_dir_deg": 22.5,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
     },
@@ -52,9 +52,5 @@
       "area_code": null,
       "temp_city_code": null
     }
-  },
-  "image_url": "/image/feed_20251231_142858_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good afternoon in Yokosuka! With a mild winter weather, now's a great time to visit the beautiful Shomyo-ji Temple 🏯️🕊️ Enjoy the serene atmosphere and learn about our rich heritage before ringing in the new year",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2025-12-31T05:36:11.963536Z"
+  }
 }
