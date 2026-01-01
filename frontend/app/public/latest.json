@@ -1,25 +1,25 @@
 {
   "date": "2026-01-01",
-  "generated_at": "2026-01-01T09:33:35Z",
-  "text": "Happy New Year! As we welcome the dawn of a new year, Yokosuka's winter evening lights await us. Tonight, enjoy a cold and clear sky with a low of 6.5°C and wind speeds at 5km/h. #Yokosuka #MiuraPeninsula",
+  "generated_at": "2026-01-01T10:31:53Z",
+  "text": "Happy New Year! It's a chilly evening in Yokosuka with 6.5°C and cloudy skies 🌫️. Perfect excuse to grab some warm curry ramen at Cafe Bakery tonight 👌. #Yokosuka #NewYearEve",
   "place": "Yokosuka",
   "weather": {
     "source": "jma",
-    "generated_at": "2026-01-01T09:29:27.933974+00:00",
+    "generated_at": "2026-01-01T10:27:45.961791+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2026-01-01T18:20:00+09:00",
+      "time": "2026-01-01T19:20:00+09:00",
       "temp_c": 6.5,
       "apparent_temp_c": null,
-      "humidity_pct": 50.0,
+      "humidity_pct": 52.0,
       "precip_mm": 0.0,
       "weather_code": 2,
       "cloud_cover_pct": null,
-      "wind_kmh": 5.04,
-      "wind_dir_deg": 45.0,
+      "wind_kmh": 5.760000000000001,
+      "wind_dir_deg": 67.5,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
     },
@@ -52,9 +52,5 @@
       "area_code": null,
       "temp_city_code": null
     }
-  },
-  "image_url": "/image/feed_20260101_182925_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Happy New Year! As we welcome the dawn of a new year, Yokosuka's winter evening lights await us. Tonight, enjoy a cold and clear sky with a low of 6.5°C and wind speeds at 5km/h.",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2026-01-01T09:36:07.584526Z"
+  }
 }
