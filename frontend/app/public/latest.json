@@ -1,25 +1,25 @@
 {
   "date": "2026-01-01",
-  "generated_at": "2026-01-01T18:40:30Z",
-  "text": "Good morning Yokosuka! 🌞 As we welcome Friday, a cloudy sky with a chance of rain and thunder awaits us. The current temperature is 5.7°C with winds blowing at 11.16 km/h. Looking forward to a great day ahead! #Yokosuka #Miura",
+  "generated_at": "2026-01-01T19:25:26Z",
+  "text": "Good morning Yokosuka! As we welcome winter, don't forget to check out 'Yokosuka Countdown 2026' tonight at 18:00 – 01:00 on December 31st and January 1st 🎄🕰️ The forecast says a chance of rain and snow with thunderstorms by evening. Stay cozy! 🌨️",
   "place": "Yokosuka",
   "weather": {
     "source": "jma",
-    "generated_at": "2026-01-01T18:36:17.834809+00:00",
+    "generated_at": "2026-01-01T19:21:08.451189+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2026-01-02T03:30:00+09:00",
-      "temp_c": 5.7,
+      "time": "2026-01-02T04:10:00+09:00",
+      "temp_c": 5.9,
       "apparent_temp_c": null,
-      "humidity_pct": 52.0,
+      "humidity_pct": 50.0,
       "precip_mm": 0.0,
       "weather_code": 95,
       "cloud_cover_pct": null,
-      "wind_kmh": 11.16,
-      "wind_dir_deg": 45.0,
+      "wind_kmh": 8.28,
+      "wind_dir_deg": 67.5,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
     },
@@ -52,9 +52,5 @@
       "area_code": null,
       "temp_city_code": null
     }
-  },
-  "image_url": "/image/feed_20260102_033615_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good morning Yokosuka! 🌞 As we welcome Friday, a cloudy sky with a chance of rain and thunder awaits us. The current temperature is 5.7°C with winds blowing at 11.16 km/h. Looking forward to a great day ahead!",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2026-01-01T18:43:26.245526Z"
+  }
 }
