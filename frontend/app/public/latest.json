@@ -1,40 +1,29 @@
 {
   "date": "2026-01-01",
-  "generated_at": "2026-01-01T14:28:04Z",
-  "text": "Good evening Yokosuka! 🌃 The weather tonight is partly cloudy with a low of 6.4°C and winds at 9.36km/h. Fun fact: Did you know that the Yokosuka Countdown 2026 event is happening from Dec 31st to Jan 1st? 🎉",
+  "generated_at": "2026-01-01T15:30:33Z",
+  "text": "Good night Yokosuka! 👋 As of NOW, it's a chilly 6.1°C with some cloud cover and no rain ☁️. Tomorrow looks sunny with highs of 9°C 🌞. Don't forget to enjoy the winter vibes at our #Yokosuka Countdown event! 🎉",
   "place": "Yokosuka",
   "weather": {
     "source": "jma",
-    "generated_at": "2026-01-01T14:23:56.732437+00:00",
+    "generated_at": "2026-01-01T15:26:24.449484+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2026-01-01T23:10:00+09:00",
-      "temp_c": 6.4,
+      "time": "2026-01-02T00:10:00+09:00",
+      "temp_c": 6.1,
       "apparent_temp_c": null,
-      "humidity_pct": 50.0,
+      "humidity_pct": 41.0,
       "precip_mm": 0.0,
-      "weather_code": 2,
+      "weather_code": 95,
       "cloud_cover_pct": null,
-      "wind_kmh": 9.360000000000001,
+      "wind_kmh": 19.44,
       "wind_dir_deg": 22.5,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
     },
     "today": {
-      "date": "2026-01-01",
-      "weather_code": 2,
-      "precip_sum_mm": null,
-      "wind_max_kmh": null,
-      "temp_max_c": null,
-      "temp_min_c": null,
-      "weather_text_ja": "晴れ　夜　くもり",
-      "jma_weather_code": "111",
-      "precip_prob_pct": 10
-    },
-    "tomorrow": {
       "date": "2026-01-02",
       "weather_code": 95,
       "precip_sum_mm": null,
@@ -45,6 +34,17 @@
       "jma_weather_code": "200",
       "precip_prob_pct": 30
     },
+    "tomorrow": {
+      "date": "2026-01-03",
+      "weather_code": 2,
+      "precip_sum_mm": null,
+      "wind_max_kmh": null,
+      "temp_max_c": 9.0,
+      "temp_min_c": 2.0,
+      "weather_text_ja": "晴れ　時々　くもり",
+      "jma_weather_code": "101",
+      "precip_prob_pct": null
+    },
     "jma_meta": {
       "publishing_office": "横浜地方気象台",
       "report_datetime": "2026-01-01T17:00:00+09:00",
@@ -52,9 +52,5 @@
       "area_code": null,
       "temp_city_code": null
     }
-  },
-  "image_url": "/image/feed_20260101_232354_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good evening Yokosuka! 🌃 The weather tonight is partly cloudy with a low of 6.4°C and winds at 9.36km/h. Fun fact: Did you know that the Yokosuka Countdown 2026 event is happening from Dec 31st to Jan 1st? 🎉",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2026-01-01T14:30:43.992383Z"
+  }
 }
