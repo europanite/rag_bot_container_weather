@@ -1,25 +1,25 @@
 {
   "date": "2026-01-01",
-  "generated_at": "2026-01-01T11:26:34Z",
-  "text": "Happy New Year! 🎉🕰️ It's a chilly winter evening in Yokosuka, with a current temperature of 6.7°C and 54% humidity. Tonight's forecast calls for mostly clear skies with a chance of rain tomorrow. Let's ring in the new year at Yokosuka Countdown 2026! 🎊",
+  "generated_at": "2026-01-01T12:53:46Z",
+  "text": "Good evening from Yokosuka! Tonight's weather is partly cloudy with a low of 7.4°C and 51% humidity. Perfect for a quiet night hike before the New Year celebrations tomorrow 🏞️ #Yokosuka #MiuraPeninsula",
   "place": "Yokosuka",
   "weather": {
     "source": "jma",
-    "generated_at": "2026-01-01T11:22:13.817290+00:00",
+    "generated_at": "2026-01-01T12:49:38.194494+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2026-01-01T20:10:00+09:00",
-      "temp_c": 6.7,
+      "time": "2026-01-01T21:40:00+09:00",
+      "temp_c": 7.4,
       "apparent_temp_c": null,
-      "humidity_pct": 54.0,
+      "humidity_pct": 51.0,
       "precip_mm": 0.0,
       "weather_code": 2,
       "cloud_cover_pct": null,
-      "wind_kmh": 8.28,
-      "wind_dir_deg": 90.0,
+      "wind_kmh": 10.08,
+      "wind_dir_deg": 67.5,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
     },
@@ -52,9 +52,5 @@
       "area_code": null,
       "temp_city_code": null
     }
-  },
-  "image_url": "/image/feed_20260101_202212_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Happy New Year! 🎉🕰️ It's a chilly winter evening in Yokosuka, with a current temperature of 6.7°C and 54% humidity. Tonight's forecast calls for mostly clear skies with a chance of rain tomorrow. Let's ring in the new ye",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2026-01-01T11:29:50.435094Z"
+  }
 }
