@@ -55,5 +55,9 @@
   },
   "links": "",
   "id": "feed_20260102_232535_JST",
-  "permalink": "./?post=feed_20260102_232535_JST"
+  "permalink": "./?post=feed_20260102_232535_JST",
+  "image_url": "/image/feed_20260102_232535_JST.png",
+  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good night, Yokosuka! It's cloudy with a high chance of thunderstorms tonight. Tomorrow looks sunny and clear! Don't miss…",
+  "image_model": "stabilityai/sd-turbo",
+  "image_generated_at": "2026-01-02T14:33:43.439900Z"
 }
