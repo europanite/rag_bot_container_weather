@@ -23,6 +23,8 @@ type FeedItem = {
   generated_at?: string; // ISO string (often Z)
   image?: string; // local path or absolute URL
   image_prompt?: string; // optional (for matching)
+  permalink?: string;
+  links?: string[];
 };
 
 type Feed = {
@@ -65,6 +67,7 @@ const MASCOT_BORDER_W = 2;
 const SIDEBAR_W = 240;
 
 const FEED_SCROLL_ID = "feed-scroll";
+const MAX_DEEP_LINK_ATTEMPTS = 25;
 
 const ITEM_EVERY_N = Math.max(2, Number((process.env.EXPO_PUBLIC_ITEM_EVERY_N || "5").trim()) || 5); // 1 ad per N items
 const ITEM_BG = "#fff7ed";
@@ -328,7 +331,8 @@ function normalizeFeed(parsed: unknown): Feed | null {
               ? it.imageUri
               : undefined;
           const image_prompt = typeof it?.image_prompt === "string" ? it.image_prompt : undefined;
-          return { id, date, text, place, generated_at, image, image_prompt };
+          const permalink = typeof it?.permalink === "string" ? it.permalink : undefined;
+          return { id, date, text, place, generated_at, image, image_prompt, permalink };
         })
         .filter(Boolean) as FeedItem[];
 
@@ -355,7 +359,8 @@ function normalizeFeed(parsed: unknown): Feed | null {
           : undefined;
       const image_prompt = typeof obj?.image_prompt === "string" ? obj.image_prompt : undefined;
       const updated_at = generated_at;
-      return { updated_at, place, items: [{ id, date, text, place, generated_at, image, image_prompt }] };
+      const permalink = typeof obj?.permalink === "string" ? obj.permalink : undefined;
+      return { updated_at, place, items: [{ id, date, text, place, generated_at, image, image_prompt, permalink }] };
     }
   }
 
@@ -377,8 +382,9 @@ function normalizeFeed(parsed: unknown): Feed | null {
               ? it.imageUri
               : undefined;
           const image_prompt = typeof it?.image_prompt === "string" ? it.image_prompt : undefined;
-          return { id, date, text, place, generated_at, image, image_prompt };
-      })
+          const permalink = typeof it?.permalink === "string" ? it.permalink : undefined;
+          return { id, date, text, place, generated_at, image, image_prompt, permalink };
+        })
       .filter(Boolean) as FeedItem[];
 
     const last = parsed.length > 0 ? (parsed[parsed.length - 1] as any) : null;
@@ -391,6 +397,18 @@ function normalizeFeed(parsed: unknown): Feed | null {
   return null;
 }
 
+function buildPermalink(id: string, permalink?: string): string {
+  // If backend provided a relative permalink, make it absolute on web for easy sharing.
+  if (Platform.OS === "web" && typeof window !== "undefined") {
+    const u = new URL(window.location.href);
+    u.searchParams.delete("redirect");
+    u.searchParams.set("post", id);
+    u.hash = "";
+    return u.toString();
+  }
+  // Fallback (native / unknown): keep relative
+  return permalink ?? `./?post=${encodeURIComponent(id)}`;
+}
 
 type ShareSdItem = {
   date?: string;
@@ -660,7 +678,7 @@ function SlotCard({
       Animated.timing(progress, {
         toValue: 1,
         duration: SLOT_FADE_MS,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }).start(({ finished }) => {
         if (!finished || cancelled) return;
         setActive(n);
@@ -853,24 +871,25 @@ function Slot({ side }: { side: "left" | "right" }) {
     sticky variant="sidebar" />;
 }
 export default function HomeScreen() {
+  const listRef = useRef<FlatList<TimelineItem>>(null);
+  const deepLinkAttemptsRef = useRef<number>(0);
+  const [deepLinkPostId, setDeepLinkPostId] = useState<string | null>(null);
   const FEED_URL = (process.env.EXPO_PUBLIC_FEED_URL || "./latest.json").trim();
   const SHARE_SD_INDEX_URL = (process.env.EXPO_PUBLIC_SHARE_SD_INDEX_URL || "").trim();
   const { width } = useWindowDimensions();
   const showSidebars = width >= 980;
 
   const RESOLVED_FEED_URL = useMemo(() => {
-  const normalized = normalizeWebAssetPath(FEED_URL);
 
-  try {
-    if (normalized.startsWith("http://") || normalized.startsWith("https://")) return normalized;
-    if (typeof window !== "undefined") return new URL(normalized, window.location.href).toString();
-  } catch {
-    // ignore
-  }
-
-  return normalized;
-}, [FEED_URL]);
-
+    const normalized = normalizeWebAssetPath(FEED_URL);
+     try {
+       if (normalized.startsWith("http://") || normalized.startsWith("https://")) return normalized;
+       if (typeof window !== "undefined") return new URL(normalized, window.location.href).toString();
+     } catch {
+       // ignore
+     }
+     return normalized;
+   }, [FEED_URL]);
 
   const [feed, setFeed] = useState<Feed | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -904,6 +923,20 @@ export default function HomeScreen() {
 
   const [effectiveUrl, setEffectiveUrl] = useState<string>(RESOLVED_FEED_URL);
 
+  // keep base url in sync when FEED_URL changes
+  useEffect(() => {
+    setEffectiveUrl(RESOLVED_FEED_URL);
+  }, [RESOLVED_FEED_URL]);
+
+  // Read ?post=<id> on web
+  useEffect(() => {
+    if (Platform.OS !== "web" || typeof window === "undefined") return;
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const pid = sp.get("post");
+      if (pid) setDeepLinkPostId(pid);
+    } catch {}
+  }, []);
 
 useEffect(() => {
   if (!SHARE_SD_INDEX_URL) return;
@@ -1118,6 +1151,47 @@ const getImageUrisForItem = useCallback(
       }
     }, [fetchJson, loadingMore, nextUrl]);
 
+
+  // Jump to permalink target (web only). Auto-page older items until found (bounded).
+  useEffect(() => {
+    if (Platform.OS !== "web") return;
+    if (!deepLinkPostId) {
+      deepLinkAttemptsRef.current = 0;
+      return;
+    }
+    // wait for the initial load to finish to avoid early "not found"
+    if (loading) return;
+
+    const idx = timelineItems.findIndex((it) => !isSlotItem(it) && it.id === deepLinkPostId);
+    if (idx >= 0) {
+      requestAnimationFrame(() => {
+        listRef.current?.scrollToIndex({ index: idx, animated: false });
+      });
+      setDeepLinkPostId(null);
+      deepLinkAttemptsRef.current = 0;
+      return;
+    }
+
+    if (nextUrl && !loadingMore) {
+      if (deepLinkAttemptsRef.current >= MAX_DEEP_LINK_ATTEMPTS) {
+        setError(`Permalink not found (gave up paging): ${deepLinkPostId}`);
+        setDeepLinkPostId(null);
+        deepLinkAttemptsRef.current = 0;
+        return;
+      }
+      deepLinkAttemptsRef.current += 1;
+      void loadMore();
+      return;
+    }
+
+    if (!nextUrl && !loadingMore) {
+      setError(`Permalink not found: ${deepLinkPostId}`);
+      setDeepLinkPostId(null);
+      deepLinkAttemptsRef.current = 0;
+    }
+  }, [deepLinkPostId, loading, timelineItems, nextUrl, loadingMore, loadMore]);
+
+
   const openFeed = useCallback(() => {
     if (!effectiveUrl) return;
     if (Platform.OS !== "web") return;
@@ -1152,11 +1226,21 @@ const getImageUrisForItem = useCallback(
 
   const list = (
     <FlatList
+      ref={listRef}
       nativeID={FEED_SCROLL_ID}
       showsVerticalScrollIndicator={false}
       style={{ flex: 1, backgroundColor: APP_BG }}
       contentContainerStyle={{ paddingBottom: 18 }}
       data={timelineItems}
+      onScrollToIndexFailed={(info) => {
+        listRef.current?.scrollToOffset({
+          offset: info.averageItemLength * info.index,
+          animated: false,
+        });
+        setTimeout(() => {
+          listRef.current?.scrollToIndex({ index: info.index, animated: false });
+        }, 50);
+      }}
       keyExtractor={(it) => it.id}
       ListHeaderComponent={Header}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -1246,66 +1330,102 @@ const getImageUrisForItem = useCallback(
         }
 
         const imageUris = getImageUrisForItem(item);
+        const url = buildPermalink(item.id, item.permalink);
         return (
-        <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
-          <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
-            <View style={{ width: MASCOT_COL_W, alignItems: "center" }}>
-              <View style={{ marginTop: 2 }}>
-                <Mascot />
-              </View>
-            </View>
-
-            <View style={{ flex: 1 }}>
-              {/* Speech-bubble wrapper */}
-              <View style={{ position: "relative", marginTop: 2 }}>
-                {/* ✅ 1) Bubble body FIRST */}
-                <View
-                  style={{
-                    backgroundColor: CARD_BG,
-                    padding: 12,
-                    borderRadius: BUBBLE_RADIUS,
-                    borderWidth: BUBBLE_BORDER_W,
-                    borderColor: BORDER,
-                    minHeight: MASCOT_SIZE,
-                    shadowColor: "#000000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.12,
-                    shadowRadius: 6,
-                    elevation: 2,
-                    zIndex: 1,
-                  }}
-                >
-                  <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
-                    {item.generated_at ? <Text style={{ color: TEXT_DIM }}>{formatJst(item.generated_at, true)}</Text> : null}
-                    {item.place ? <Text style={{ color: TEXT_DIM }}>• {item.place}</Text> : null}
-                  </View>
-                  
-                  <FeedBubbleImage uris={imageUris} />
-                  <Text style={{ color: "#000000", marginTop: 8, fontSize: 16, lineHeight: 22 }}>{item.text}</Text>
+          <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
+            <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
+              <View style={{ width: MASCOT_COL_W, alignItems: "center" }}>
+                <View style={{ marginTop: 2 }}>
+                  <Mascot />
                 </View>
+              </View>
 
-                {/* ✅ 2) Tail AFTER (on top) to cover the bubble border line */}
-                <View
-                  pointerEvents="none"
-                  style={{
-                    position: "absolute",
-                    left: -7,
-                    top: 22,
-                    width: 14,
-                    height: 14,
-                    backgroundColor: CARD_BG,
-                    transform: [{ rotate: "45deg" }],
-                    borderLeftWidth: BUBBLE_BORDER_W,
-                    borderBottomWidth: BUBBLE_BORDER_W,
-                    borderColor: BORDER,
-                    zIndex: 10,
-                    elevation: 3,
-                  }}
-                />
+              <View style={{ flex: 1 }}>
+                {/* Speech-bubble wrapper */}
+                <View style={{ position: "relative", marginTop: 2 }}>
+                  {/* ✅ 1) Bubble body FIRST */}
+                  <View
+                    style={{
+                      backgroundColor: CARD_BG,
+                      padding: 12,
+                      borderRadius: BUBBLE_RADIUS,
+                      borderWidth: BUBBLE_BORDER_W,
+                      borderColor: BORDER,
+                      minHeight: MASCOT_SIZE,
+                      shadowColor: "#000000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.12,
+                      shadowRadius: 6,
+                      elevation: 2,
+                      zIndex: 1,
+                    }}
+                  >
+                    <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+                      {item.generated_at ? <Text style={{ color: TEXT_DIM }}>{formatJst(item.generated_at, true)}</Text> : null}
+                      {item.place ? <Text style={{ color: TEXT_DIM }}>• {item.place}</Text> : null}
+                    </View>
+                    
+                    <FeedBubbleImage uris={imageUris} />
+                    <Text style={{ color: "#000000", marginTop: 8, fontSize: 16, lineHeight: 22 }}>{item.text}</Text>
+
+                    {Array.isArray(item.links) && item.links.length > 0 ? (
+                      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
+                        {item.links.slice(0, 5).map((u, idx) => (
+                          <Pressable
+                            key={`${u}-${idx}`}
+                            onPress={() => {
+                              try { void Linking.openURL(u); } catch {}
+                            }}
+                          >
+                            <Text style={{ color: "#0B57D0", textDecorationLine: "underline", fontSize: 12 }}>
+                              🔗 {u}
+                            </Text>
+                          </Pressable>
+                        ))}
+                      </View>
+                    ) : null}
+
+                    <Pressable
+                      onPress={async () => {
+                        // On web: copy permalink (shareable)
+                        if (Platform.OS === "web" && typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+                          try {
+                            await navigator.clipboard.writeText(url);
+                            return;
+                          } catch {}
+                        }
+                        // Fallback: open
+                        try {
+                          await Linking.openURL(url);
+                        } catch {}
+                      }}
+                    >
+                      <Text style={{ opacity: 0.7, fontSize: 12 }}>🔗 Permalink</Text>
+                    </Pressable>
+                  </View>
+
+                  {/* ✅ 2) Tail AFTER (on top) to cover the bubble border line */}
+                  <View
+                    pointerEvents="none"
+                    style={{
+                      position: "absolute",
+                      left: -7,
+                      top: 22,
+                      width: 14,
+                      height: 14,
+                      backgroundColor: CARD_BG,
+                      transform: [{ rotate: "45deg" }],
+                      borderLeftWidth: BUBBLE_BORDER_W,
+                      borderBottomWidth: BUBBLE_BORDER_W,
+                      borderColor: BORDER,
+                      zIndex: 10,
+                      elevation: 3,
+                    }}
+                  />
+                </View>
               </View>
             </View>
           </View>
-        </View>
         );
       }}
       ListEmptyComponent={
@@ -1321,32 +1441,30 @@ const getImageUrisForItem = useCallback(
   }
 
   return (
-    <View style={{ 
-      flex: 1, 
-      padding: 6,
-      flexDirection: "row", 
-      justifyContent: "center", 
-      backgroundColor: APP_BG }}>
-
-      <View style={{ 
-        width: SIDEBAR_W, 
-        minHeight: 0 }}>
+    <View
+      style={{
+        flex: 1,
+        padding: 6,
+        flexDirection: "row",
+        backgroundColor: APP_BG,
+        gap: 12,
+        alignItems: "stretch",
+      }}
+    >
+      {/* Left sidebar: grows to consume extra space */}
+      <View style={{ flex: 1, minWidth: SIDEBAR_W, minHeight: 0 }}>
         <Slot side="left" />
       </View>
 
-      <View style={{ 
-        flex: 1, 
-        maxWidth: CONTENT_MAX_W,
-      }}>
+      {/* Center: keep 760 as the “target” width, but allow shrinking */}
+      <View style={{ width: CONTENT_MAX_W, minWidth: 0, flexShrink: 1 }}>
         {list}
       </View>
 
-      <View style={{ 
-        width: SIDEBAR_W, 
-        minHeight: 0 }}>
+      {/* Right sidebar: grows to consume extra space */}
+      <View style={{ flex: 1, minWidth: SIDEBAR_W, minHeight: 0 }}>
         <Slot side="right" />
       </View>
-
     </View>
   );
 }

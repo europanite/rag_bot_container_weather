@@ -33,6 +33,7 @@ import time
 import hashlib
 import random
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -426,22 +427,23 @@ def build_question(max_words: str, topic_family: str, topic_mode: str, now_local
         "\n"
         "Decide the greeting using the local time in LIVE WEATHER JSON (current.time + timezone; assume Asia/Tokyo if missing).\n"
         "Summarize the weather using ONLY LIVE WEATHER facts.\n"
+        "If you use words like 'tonight', 'this evening', 'later tonight', 'later today', they must match NOW.\n"
+        "If the event date is not today, say “tomorrow” or include an explicit date (e.g., Dec 31).\n"
         f"TOPIC FAMILY: {topic_family} (event/place/chat).\n"
         f"SUBTOPIC: {topic_mode} (keywords: {topic_keywords}).\n"
         f"HINTS: time_of_day={tod}, season={season}, weather_hint={hint}.\n"
-        "Pick up ONE topic from RAG Context that fits the HINTS.\n"
+        "Pick up ONE topic and mention only that one from RAG Context that fits the HINTS.\n"
         "You may include at most one official URL only if it exists in the chosen text.\n"
         f"Keep within {max_words} characters.\n"
     )
 
 
 def build_payload(question: str, top_k: int, snap_json_raw: str) -> Dict[str, Any]:
-    # Keep current bash behavior: send snapshot as extra_context string; use_live_weather=False
+    # Keep current bash behavior: send snapshot as extra_context string;
     return {
         "question": question,
         "top_k": int(top_k),
         "extra_context": snap_json_raw,
-        "use_live_weather": False,
     }
 
 
@@ -449,6 +451,18 @@ def extract_tweet(resp_obj: Dict[str, Any]) -> str:
     ans = (resp_obj.get("answer") or "").strip()
     return normalize_answer(ans)
 
+def extract_links(resp_obj: Any) -> List[str]:
+    if not isinstance(resp_obj, dict):
+        return []
+    links_obj = resp_obj.get("links")
+    links: List[str] = []
+    if isinstance(links_obj, list):
+        links = [x.strip() for x in links_obj if isinstance(x, str) and x.strip()]
+    elif isinstance(links_obj, str):
+        v = links_obj.strip()
+        if v:
+            links = [v]
+    return links[:5]
 
 def extract_detail(resp_obj: Dict[str, Any]) -> str:
     d = resp_obj.get("detail")
@@ -459,16 +473,19 @@ def extract_detail(resp_obj: Dict[str, Any]) -> str:
     return str(d)
 
 
-def build_entry(today: str, now_iso: str, tweet: str, place: str, snap_obj: Dict[str, Any]) -> Dict[str, Any]:
+def build_entry(today: str, now_iso: str, tweet: str, place: str, snap_obj: Dict[str, Any], links: Optional[List[str]] = None) -> Dict[str, Any]:
     if not today or not now_iso or not tweet:
         missing = [k for k, v in [("today", today), ("now_iso", now_iso), ("tweet", tweet)] if not v]
         raise RuntimeError(f"missing values for entry: {', '.join(missing)}")
+    if not links:
+        links = ""
     return {
         "date": today,
         "generated_at": now_iso,
         "text": tweet,
         "place": place or "",
         "weather": snap_obj,
+        "links": links
     }
 
 
@@ -481,6 +498,7 @@ def to_item(entry: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     place = entry.get("place") or ""
     return {
         "id": str(_id),
+        "permalink": entry.get("permalink") or f"./?post={urllib.parse.quote(str(_id), safe='')}",
         "date": date,
         "text": text,
         "place": str(place),
@@ -535,19 +553,23 @@ def write_outputs(feed_path: str, latest_path: str, entry: Dict[str, Any], snap_
     fp.parent.mkdir(parents=True, exist_ok=True)
     lp.parent.mkdir(parents=True, exist_ok=True)
 
-    entry_txt = json.dumps(entry, ensure_ascii=False, indent=2) + "\n"
-    lp.write_text(entry_txt, encoding="utf-8")
+    # Make permalink stable by using feed filename stem as the canonical post id.
+    post_id = fp.stem
+    entry_out = dict(entry)
+    entry_out["id"] = post_id
+    entry_out["permalink"] = f"./?post={urllib.parse.quote(str(post_id), safe='')}"
 
-    update_feed(fp, entry)
+    entry_txt = json.dumps(entry_out, ensure_ascii=False, indent=2) + "\n"
+    lp.write_text(entry_txt, encoding="utf-8")
+    update_feed(fp, entry_out)
 
     # Also write weather snapshot next to latest (for debugging / transparency)
     snap_path = lp.parent / "snapshot" / f"snapshot_{now_local}.json"
     snap_path.parent.mkdir(parents=True, exist_ok=True)
-    snap_path.write_text(snap_json_raw.strip() + "\n", encoding="utf-8")
-
+    snap_path.write_text(json.dumps(entry_out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote: {lp}")
     print(f"Wrote: {snap_path}")
-
+    return fp, lp, snap_path
 
 def pair_paths(feeds: List[str], latests: List[str]) -> List[Tuple[str, str]]:
     if not feeds or not latests:
@@ -637,7 +659,7 @@ def main() -> int:
         _ = http_json(
             "POST",
             f"{api_base}/rag/query",
-            {"question": "ping", "top_k": 1, "extra_context": "{}", "use_live_weather": False},
+            {"question": "ping", "top_k": 1, "extra_context": "{}"},
             cfg,
         )
     except Exception:
@@ -653,6 +675,7 @@ def main() -> int:
         print(f"DEBUG: JSON_PAYLOAD={json.dumps(payload, ensure_ascii=False)}", file=sys.stderr)
 
     tweet = ""
+    links: List[str] = []
     resp_obj: Dict[str, Any] = {}
     detail = ""
     # bash: retries are CURL_RETRIES+2 here
@@ -667,6 +690,8 @@ def main() -> int:
         tweet = extract_tweet(resp_obj)
         if tweet:
             break
+        
+        links = extract_links(resp_obj)
 
         detail = extract_detail(resp_obj)
         print(
@@ -689,7 +714,7 @@ def main() -> int:
     # 4) Write outputs
     today = utc_date()
     now_iso = utc_now_iso_z()
-    entry = build_entry(today=today, now_iso=now_iso, tweet=tweet, place=place, snap_obj=snap_obj)
+    entry = build_entry(today=today, now_iso=now_iso, tweet=tweet, place=place, snap_obj=snap_obj,links=links)
 
     for feed_p, latest_p in pair_paths(feeds, latests):
         write_outputs(feed_p, latest_p, entry=entry, snap_json_raw=snap_json_raw, now_local=now_local)

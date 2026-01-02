@@ -199,3 +199,76 @@ def test_rag_query_filters_unknown_urls(client, monkeypatch):
     data = r.json()
     assert allowed in data["answer"]
     assert "https://example.com/NOT_ALLOWED" not in data["answer"]
+
+
+def test_rag_query_audit_returns_verdict(client, monkeypatch):
+    allowed = "https://example.com/allowed"
+    chunk_text = f"Tourism info. Link: {allowed}"
+
+    def fake_query_similar_chunks(question: str, top_k: int):
+        return [
+            RAGChunk(
+                text=chunk_text,
+                distance=0.1,
+                metadata={"doc_id": "doc", "chunk_index": 0},
+            )
+        ]
+
+    monkeypatch.setattr(rag_store, "query_similar_chunks", fake_query_similar_chunks)
+
+    def fake_call_ollama_chat(*, question: str, system_prompt: str, user_prompt: str) -> str:
+        return f"Use {allowed}."
+
+    def fake_call_ollama_chat_with_model(*, model: str, system_prompt: str, user_prompt: str) -> str:
+        return (
+            '{"passed": true, "score": 95, "confidence": "high", "issues": [], "fixed_answer": null}'
+        )
+
+    monkeypatch.setattr(rag_router, "_call_ollama_chat", fake_call_ollama_chat)
+    monkeypatch.setattr(rag_router, "_call_ollama_chat_with_model", fake_call_ollama_chat_with_model)
+
+    r = client.post("/rag/query", json={"question": "hello", "audit": True})
+    assert r.status_code == 200
+    data = r.json()
+    assert "audit" in data
+    assert data["audit"]["passed"] is True
+    assert data["audit"]["score"] == 95
+
+
+def test_rag_query_audit_can_rewrite_answer(client, monkeypatch):
+    allowed = "https://example.com/allowed"
+    chunk_text = f"Tourism info. Link: {allowed}"
+
+    def fake_query_similar_chunks(question: str, top_k: int):
+        return [
+            RAGChunk(
+                text=chunk_text,
+                distance=0.1,
+                metadata={"doc_id": "doc", "chunk_index": 0},
+            )
+        ]
+
+    monkeypatch.setattr(rag_store, "query_similar_chunks", fake_query_similar_chunks)
+
+    def fake_call_ollama_chat(*, question: str, system_prompt: str, user_prompt: str) -> str:
+        return f"Unsupported claim. Read more: https://example.com/NOT_ALLOWED"
+
+    def fake_call_ollama_chat_with_model(*, model: str, system_prompt: str, user_prompt: str) -> str:
+        return (
+            '{"passed": false, "score": 10, "confidence": "low", "issues": ["unsupported"], '
+            '"fixed_answer": "Use https://example.com/allowed."}'
+        )
+
+    monkeypatch.setattr(rag_router, "_call_ollama_chat", fake_call_ollama_chat)
+    monkeypatch.setattr(rag_router, "_call_ollama_chat_with_model", fake_call_ollama_chat_with_model)
+
+    r = client.post(
+        "/rag/query",
+        json={"question": "hello", "audit": True, "audit_rewrite": True, "include_debug": True},
+    )
+    assert r.status_code == 200
+    data = r.json()
+    assert data["audit"]["passed"] is False
+    assert allowed in data["answer"]
+    assert "NOT_ALLOWED" not in data["answer"]
+    assert "original_answer" in data["audit"]
