@@ -438,12 +438,14 @@ def build_question(max_words: str, topic_family: str, topic_mode: str, now_local
     )
 
 
-def build_payload(question: str, top_k: int, snap_json_raw: str) -> Dict[str, Any]:
+def build_payload(question: str, top_k: int, snap_json_raw: str, *, max_words: int) -> Dict[str, Any]:
     # Keep current bash behavior: send snapshot as extra_context string;
     return {
         "question": question,
         "top_k": int(top_k),
         "extra_context": snap_json_raw,
+        "output_style": "tweet_bot",
+        "max_words": int(max_words),
     }
 
 
@@ -669,7 +671,8 @@ def main() -> int:
     now_dt_local = datetime.now(ZoneInfo(tz_name))
     topic_family, topic_mode = pick_topic(now_local=now_dt_local, snap_obj=snap_obj)
     question = build_question(max_words=max_words, topic_family=topic_family, topic_mode=topic_mode, now_local=now_dt_local, snap_obj=snap_obj)
-    payload = build_payload(question=question, top_k=top_k, snap_json_raw=snap_json_raw)
+    payload = build_payload(question=question, top_k=top_k, snap_json_raw=snap_json_raw, max_words=int(max_words))
+
 
     if debug:
         print(f"DEBUG: JSON_PAYLOAD={json.dumps(payload, ensure_ascii=False)}", file=sys.stderr)

@@ -680,7 +680,7 @@ def _build_chat_prompts(
 
     system = (
         f"You are {bot_name}, a friendly English local story bot for {place} (locals, familes and tourists). "
-        f"Write tweet in English about {max_words} words. "
+        f"Write one tweet in English within {max_words} characters. "
         "No markdown, no lists, no extra commentary, no quotes.\n"
         "Show only real existing URLs.\n"
         "TIME AWARENESS:\n"
