@@ -166,7 +166,7 @@ def http_json(method: str, url: str, payload: Optional[Dict[str, Any]], cfg: Htt
 
     # Match bash behavior: fail if body empty or not JSON
     if not body and last_exc is not None:
-        raise RuntimeError(f"backend response body is empty ({url})") from last_exc
+        raise RuntimeError(f"backend response body is empty ({url}); last_exc={last_exc!r}") from last_exc
     raise RuntimeError(f"backend response is not usable JSON: {body[:200]}") from last_exc
 
 
