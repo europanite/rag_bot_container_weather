@@ -677,7 +677,7 @@ function SlotCard({
       Animated.timing(progress, {
         toValue: 1,
         duration: SLOT_FADE_MS,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }).start(({ finished }) => {
         if (!finished || cancelled) return;
         setActive(n);
