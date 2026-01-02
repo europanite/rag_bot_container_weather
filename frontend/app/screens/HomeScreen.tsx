@@ -381,8 +381,9 @@ function normalizeFeed(parsed: unknown): Feed | null {
               ? it.imageUri
               : undefined;
           const image_prompt = typeof it?.image_prompt === "string" ? it.image_prompt : undefined;
-          return { id, date, text, place, generated_at, image, image_prompt };
-      })
+          const permalink = typeof it?.permalink === "string" ? it.permalink : undefined;
+          return { id, date, text, place, generated_at, image, image_prompt, permalink };
+        })
       .filter(Boolean) as FeedItem[];
 
     const last = parsed.length > 0 ? (parsed[parsed.length - 1] as any) : null;
@@ -1328,7 +1329,7 @@ const getImageUrisForItem = useCallback(
         }
 
         const imageUris = getImageUrisForItem(item);
-        const url = buildPermalink(post.id, post.permalink);
+        const url = buildPermalink(item.id, item.permalink);
         return (
           <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
             <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
