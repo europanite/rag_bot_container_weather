@@ -144,6 +144,7 @@ def patch_feed_file(p: Path, *, date: str, text: str, generated_at: str, feed_st
         same_dt = str(it.get("date", "")) == date and str(it.get("text", "")) == text
         if same_id or same_dt:
             it["id"] = feed_stem
+            it["permalink"] = f"./?post={feed_stem}"
             it["image"] = rel_url
             it["image_url"] = rel_url
             it["image_prompt"] = prompt
@@ -235,7 +236,9 @@ def main() -> int:
 
         if rel_url:
             latest["image_url"] = rel_url
-            latest["image_prompt"] = PROMPT_LOCAL if MODE == "img2img" else f"pillow:{STYLE}"
+            latest["image_prompt"] = prompt
+            latest["id"] = feed_stem
+            latest["permalink"] = f"./?post={feed_stem}"
             latest["image_model"] = MODEL_ID if MODE == "img2img" else "pillow"
             latest["image_generated_at"] = now_iso
             dump_json(LATEST_PATH, latest)

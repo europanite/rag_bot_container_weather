@@ -23,6 +23,7 @@ type FeedItem = {
   generated_at?: string; // ISO string (often Z)
   image?: string; // local path or absolute URL
   image_prompt?: string; // optional (for matching)
+  permalink?: string;
 };
 
 type Feed = {
@@ -328,7 +329,8 @@ function normalizeFeed(parsed: unknown): Feed | null {
               ? it.imageUri
               : undefined;
           const image_prompt = typeof it?.image_prompt === "string" ? it.image_prompt : undefined;
-          return { id, date, text, place, generated_at, image, image_prompt };
+          const permalink = typeof it?.permalink === "string" ? it.permalink : undefined;
+          return { id, date, text, place, generated_at, image, image_prompt, permalink };
         })
         .filter(Boolean) as FeedItem[];
 
@@ -355,7 +357,8 @@ function normalizeFeed(parsed: unknown): Feed | null {
           : undefined;
       const image_prompt = typeof obj?.image_prompt === "string" ? obj.image_prompt : undefined;
       const updated_at = generated_at;
-      return { updated_at, place, items: [{ id, date, text, place, generated_at, image, image_prompt }] };
+      const permalink = typeof obj?.permalink === "string" ? obj.permalink : undefined;
+      return { updated_at, place, items: [{ id, date, text, place, generated_at, image, image_prompt, permalink }] };
     }
   }
 
@@ -391,6 +394,18 @@ function normalizeFeed(parsed: unknown): Feed | null {
   return null;
 }
 
+function buildPermalink(id: string, permalink?: string): string {
+  // If backend provided a relative permalink, make it absolute on web for easy sharing.
+  if (Platform.OS === "web" && typeof window !== "undefined") {
+    const u = new URL(window.location.href);
+    u.searchParams.delete("redirect");
+    u.searchParams.set("post", id);
+    u.hash = "";
+    return u.toString();
+  }
+  // Fallback (native / unknown): keep relative
+  return permalink ?? `./?post=${encodeURIComponent(id)}`;
+}
 
 type ShareSdItem = {
   date?: string;
@@ -853,6 +868,8 @@ function Slot({ side }: { side: "left" | "right" }) {
     sticky variant="sidebar" />;
 }
 export default function HomeScreen() {
+  const listRef = useRef<FlatList<TimelineItem>>(null);
+  const [deepLinkPostId, setDeepLinkPostId] = useState<string | null>(null);
   const FEED_URL = (process.env.EXPO_PUBLIC_FEED_URL || "./latest.json").trim();
   const SHARE_SD_INDEX_URL = (process.env.EXPO_PUBLIC_SHARE_SD_INDEX_URL || "").trim();
   const { width } = useWindowDimensions();
@@ -860,6 +877,37 @@ export default function HomeScreen() {
 
   const RESOLVED_FEED_URL = useMemo(() => {
   const normalized = normalizeWebAssetPath(FEED_URL);
+
+  // Read ?post=<id> on web and jump to the item when loaded.
+  useEffect(() => {
+    if (Platform.OS !== "web" || typeof window === "undefined") return;
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const pid = sp.get("post");
+      if (pid) setDeepLinkPostId(pid);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    if (!deepLinkPostId) return;
+    const idx = timelineItems.findIndex((it) => !isSlotItem(it) && it.id === deepLinkPostId);
+    if (idx >= 0) {
+      requestAnimationFrame(() => {
+        listRef.current?.scrollToIndex({ index: idx, animated: false });
+      });
+      setDeepLinkPostId(null);
+      return;
+    }
+    // Auto-page older items until found (or exhausted)
+    if (nextUrl && !loadingMore) {
+      void loadMore();
+      return;
+    }
+    if (!nextUrl && !loadingMore) {
+      setError(`Permalink not found: ${deepLinkPostId}`);
+      setDeepLinkPostId(null);
+    }
+  }, [deepLinkPostId, timelineItems, nextUrl, loadingMore, loadMore]);
 
   try {
     if (normalized.startsWith("http://") || normalized.startsWith("https://")) return normalized;
@@ -1152,11 +1200,21 @@ const getImageUrisForItem = useCallback(
 
   const list = (
     <FlatList
+      ref={listRef}
       nativeID={FEED_SCROLL_ID}
       showsVerticalScrollIndicator={false}
       style={{ flex: 1, backgroundColor: APP_BG }}
       contentContainerStyle={{ paddingBottom: 18 }}
       data={timelineItems}
+      onScrollToIndexFailed={(info) => {
+        listRef.current?.scrollToOffset({
+          offset: info.averageItemLength * info.index,
+          animated: false,
+        });
+        setTimeout(() => {
+          listRef.current?.scrollToIndex({ index: info.index, animated: false });
+        }, 50);
+      }}
       keyExtractor={(it) => it.id}
       ListHeaderComponent={Header}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -1246,66 +1304,84 @@ const getImageUrisForItem = useCallback(
         }
 
         const imageUris = getImageUrisForItem(item);
+        const url = buildPermalink(post.id, post.permalink);
         return (
-        <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
-          <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
-            <View style={{ width: MASCOT_COL_W, alignItems: "center" }}>
-              <View style={{ marginTop: 2 }}>
-                <Mascot />
-              </View>
-            </View>
-
-            <View style={{ flex: 1 }}>
-              {/* Speech-bubble wrapper */}
-              <View style={{ position: "relative", marginTop: 2 }}>
-                {/* ✅ 1) Bubble body FIRST */}
-                <View
-                  style={{
-                    backgroundColor: CARD_BG,
-                    padding: 12,
-                    borderRadius: BUBBLE_RADIUS,
-                    borderWidth: BUBBLE_BORDER_W,
-                    borderColor: BORDER,
-                    minHeight: MASCOT_SIZE,
-                    shadowColor: "#000000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.12,
-                    shadowRadius: 6,
-                    elevation: 2,
-                    zIndex: 1,
-                  }}
-                >
-                  <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
-                    {item.generated_at ? <Text style={{ color: TEXT_DIM }}>{formatJst(item.generated_at, true)}</Text> : null}
-                    {item.place ? <Text style={{ color: TEXT_DIM }}>• {item.place}</Text> : null}
-                  </View>
-                  
-                  <FeedBubbleImage uris={imageUris} />
-                  <Text style={{ color: "#000000", marginTop: 8, fontSize: 16, lineHeight: 22 }}>{item.text}</Text>
+          <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
+            <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
+              <View style={{ width: MASCOT_COL_W, alignItems: "center" }}>
+                <View style={{ marginTop: 2 }}>
+                  <Mascot />
                 </View>
+              </View>
 
-                {/* ✅ 2) Tail AFTER (on top) to cover the bubble border line */}
-                <View
-                  pointerEvents="none"
-                  style={{
-                    position: "absolute",
-                    left: -7,
-                    top: 22,
-                    width: 14,
-                    height: 14,
-                    backgroundColor: CARD_BG,
-                    transform: [{ rotate: "45deg" }],
-                    borderLeftWidth: BUBBLE_BORDER_W,
-                    borderBottomWidth: BUBBLE_BORDER_W,
-                    borderColor: BORDER,
-                    zIndex: 10,
-                    elevation: 3,
-                  }}
-                />
+              <View style={{ flex: 1 }}>
+                {/* Speech-bubble wrapper */}
+                <View style={{ position: "relative", marginTop: 2 }}>
+                  {/* ✅ 1) Bubble body FIRST */}
+                  <View
+                    style={{
+                      backgroundColor: CARD_BG,
+                      padding: 12,
+                      borderRadius: BUBBLE_RADIUS,
+                      borderWidth: BUBBLE_BORDER_W,
+                      borderColor: BORDER,
+                      minHeight: MASCOT_SIZE,
+                      shadowColor: "#000000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.12,
+                      shadowRadius: 6,
+                      elevation: 2,
+                      zIndex: 1,
+                    }}
+                  >
+                    <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+                      {item.generated_at ? <Text style={{ color: TEXT_DIM }}>{formatJst(item.generated_at, true)}</Text> : null}
+                      {item.place ? <Text style={{ color: TEXT_DIM }}>• {item.place}</Text> : null}
+                    </View>
+                    
+                    <FeedBubbleImage uris={imageUris} />
+                    <Text style={{ color: "#000000", marginTop: 8, fontSize: 16, lineHeight: 22 }}>{item.text}</Text>
+                    <Pressable
+                      onPress={async () => {
+                        // On web: copy permalink (shareable)
+                        if (Platform.OS === "web" && typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+                          try {
+                            await navigator.clipboard.writeText(url);
+                            return;
+                          } catch {}
+                        }
+                        // Fallback: open
+                        try {
+                          await Linking.openURL(url);
+                        } catch {}
+                      }}
+                    >
+                      <Text style={{ opacity: 0.7, fontSize: 12 }}>🔗 Permalink</Text>
+                    </Pressable>
+                  </View>
+
+                  {/* ✅ 2) Tail AFTER (on top) to cover the bubble border line */}
+                  <View
+                    pointerEvents="none"
+                    style={{
+                      position: "absolute",
+                      left: -7,
+                      top: 22,
+                      width: 14,
+                      height: 14,
+                      backgroundColor: CARD_BG,
+                      transform: [{ rotate: "45deg" }],
+                      borderLeftWidth: BUBBLE_BORDER_W,
+                      borderBottomWidth: BUBBLE_BORDER_W,
+                      borderColor: BORDER,
+                      zIndex: 10,
+                      elevation: 3,
+                    }}
+                  />
+                </View>
               </View>
             </View>
           </View>
-        </View>
         );
       }}
       ListEmptyComponent={

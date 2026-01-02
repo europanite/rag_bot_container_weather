@@ -21,6 +21,7 @@ import argparse
 import hashlib
 import json
 import os
+import urllib.parse
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -62,6 +63,15 @@ def _ensure_id(item: Dict[str, Any]) -> None:
     # Keep it stable-ish but readable
     item["id"] = f"auto_{h}"
 
+
+def _ensure_permalink(item: Dict[str, Any]) -> None:
+    if isinstance(item.get("permalink"), str) and item["permalink"].strip():
+        return
+    _ensure_id(item)
+    _id = _safe_str(item.get("id"))
+    if not _id:
+        return
+    item["permalink"] = f"./?post={urllib.parse.quote(_id, safe='')}"
 
 def _extract_items(obj: Any) -> List[Dict[str, Any]]:
     """
@@ -124,6 +134,7 @@ def build_pages(cfg: BuildConfig) -> Tuple[int, int]:
         for it in _extract_items(obj):
             if isinstance(it, dict):
                 _ensure_id(it)
+                _ensure_permalink(it)
                 items.append(it)
 
     # Sort newest first

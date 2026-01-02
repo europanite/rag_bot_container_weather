@@ -872,13 +872,14 @@ def query_rag(payload: QueryRequest, http_request: Request) -> QueryResponse:
                 detail=f"Live weather fetch failed: {exc}",
             ) from exc
 
-    allowed_urls = _collect_allowed_urls(context_texts, live_extra)
 
     place_hint = http_request.query_params.get("place") or os.getenv("PLACE")
 
     # If caller provided non-weather extra context, keep it, but don't poison LIVE WEATHER.
     if user_extra:
         context_texts = context_texts + [f"EXTRA CONTEXT:\n{user_extra}"]
+
+    allowed_urls = _collect_allowed_urls(context_texts, live_extra)
 
     system_prompt, user_prompt = _build_chat_prompts(
         question=payload.question,
