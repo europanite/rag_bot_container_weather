@@ -76,7 +76,7 @@ feed_stem = feeds[0].stem if feeds else f"{slug(date)}_{seed_hex8}"
 fn = f"{feed_stem}.png"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 out_path = OUT_DIR / fn
-rel_url = "/" + str(out_path.relative_to(Path("frontend/app/public"))).replace("\\", "/")
+rel_url = "./" + str(out_path.relative_to(Path("frontend/app/public"))).replace("\\", "/")
 
 if latest.get("image_url") == rel_url and out_path.exists():
   print("Already generated; skip.")

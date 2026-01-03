@@ -229,7 +229,7 @@ def main() -> int:
 
         rel_url = ""
         try:
-            rel_url = "/" + str(out_path.relative_to(Path("frontend/app/public"))).replace("\\", "/")
+            rel_url = "./" + str(out_path.relative_to(Path("frontend/app/public"))).replace("\\", "/")
         except Exception:
             # OUT_DIR
             rel_url = ""
