@@ -136,34 +136,42 @@ latest["image_model"] = MODEL_ID
 latest["image_generated_at"] = now_iso
 dump_json(LATEST_PATH, latest)
 
-def patch_feed_file(p: Path) -> bool:
-  try:
+def patch_feed_file(p: Path, *, date: str, text: str, generated_at: str,
+                    feed_stem: str, rel_url: str, prompt: str, now_iso: str) -> bool:
     obj = load_json(p)
-  except Exception:
-    return False
-  if not isinstance(obj, dict) or not isinstance(obj.get("items"), list):
-    return False
-  changed = False
-  for it in obj["items"]:
-    if not isinstance(it, dict):
-      continue
-    same_id = bool(generated_at) and str(it.get("id", "")) == generated_at
-    same_dt = str(it.get("date", "")) == date and str(it.get("text", "")) == text
-    if same_id or same_dt:
-        it["id"] = feed_stem
-        it["image"] = rel_url
-        it["image_url"] = rel_url
-        it["image_prompt"] = prompt
-        it["image_model"] = MODEL_ID
-        it["image_generated_at"] = now_iso
-        changed = True
-  if changed:
-    dump_json(p, obj)
-  return changed
+    if not isinstance(obj, dict):
+        return False
 
-if FEED_DIR.exists():
-  feeds = sorted(FEED_DIR.glob("feed_*.json"), key=lambda x: x.name, reverse=True)
-  if feeds:
-    patch_feed_file(feeds[0])
+    # 1) 旧形式: {"items":[...]}
+    if isinstance(obj.get("items"), list):
+        changed = False
+        for it in obj["items"]:
+            if not isinstance(it, dict):
+                continue
+            same_id = bool(generated_at) and str(it.get("id","")) == generated_at
+            same_dt = str(it.get("date","")) == date and str(it.get("text","")) == text
+            if same_id or same_dt:
+                it["id"] = feed_stem
+                it["permalink"] = f"./?post={feed_stem}"
+                it["image_url"] = rel_url
+                it["image"] = rel_url
+                it["image_prompt"] = prompt
+                it["image_model"] = MODEL_ID
+                it["image_generated_at"] = now_iso
+                changed = True
+        if changed:
+            dump_json(p, obj)
+        return changed
+
+    # 2) 現行形式: 単一アイテム {id,date,text,...}
+    obj["id"] = feed_stem
+    obj["permalink"] = f"./?post={feed_stem}"
+    obj["image_url"] = rel_url
+    obj["image"] = rel_url
+    obj["image_prompt"] = prompt
+    obj["image_model"] = MODEL_ID
+    obj["image_generated_at"] = now_iso
+    dump_json(p, obj)
+    return True
 
 print("Generated:", out_path, "url:", rel_url)

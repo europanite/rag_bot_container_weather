@@ -196,21 +196,6 @@ def build_pages(cfg: BuildConfig) -> Tuple[int, int]:
 
     return num_pages, total
 
-
-def update_latest(latest_path: Path) -> None:
-    try:
-        obj = _load_json(latest_path)
-        if not isinstance(obj, dict):
-            obj = {}
-    except Exception:
-        obj = {}
-
-    obj["feed_url"] = "./feed/page_000.json"
-    obj["feed_file"] = "page_000.json"
-    # Keep existing keys (place, updated_at, etc.) if present; frontend doesn't require them here.
-    _dump_json(latest_path, obj)
-
-
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--feed-dir", dest="feed_dir", default="", help="Feed dir path (default: FEED_DIR or FEED_PATH/feed)")
@@ -225,7 +210,6 @@ def main() -> None:
 
     # Ensure latest.json exists
     cfg.latest_path.parent.mkdir(parents=True, exist_ok=True)
-    # update_latest(cfg.latest_path)
 
     print(f"Built {num_pages} page(s) from {total} item(s)")
     print(f"Feed dir: {cfg.feed_dir}")
