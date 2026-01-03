@@ -413,11 +413,6 @@ def build_question(max_words: str, topic_family: str, topic_mode: str, now_local
         "TIME & GREETING (IMPORTANT):\n"
         "- Determine the local datetime from LIVE WEATHER JSON.\n"
         "- Prefer LIVE WEATHER.current.time and LIVE WEATHER.timezone.\n"
-        "- HOLIDAY OVERRIDE (date-based, day-limited):\n"
-        "  * 12-24 => 'Merry Christmas Eve'\n"
-        "  * 12-25 => 'Merry Christmas'\n"
-        "  * 12-31 => \"Happy New Year's Eve\"\n"
-        "  * from 01-01  to 01-04 => 'Happy New Year'\n"
         "  If today's local date matches one of these, start with that greeting and do NOT use the hour-based greetings.\n"
         "- Otherwise, start with exactly one greeting based on local hour:\n"
         "  * 05:00-11:59 => 'Good morning'\n"
@@ -438,7 +433,14 @@ def build_question(max_words: str, topic_family: str, topic_mode: str, now_local
     )
 
 
-def build_payload(question: str, top_k: int, snap_json_raw: str, *, max_words: int) -> Dict[str, Any]:
+def build_payload(
+    question: str,
+    top_k: int,
+    snap_json_raw: str,
+    *,
+    max_words: int,
+    include_debug: bool = True,
+) -> Dict[str, Any]:
     # Keep current bash behavior: send snapshot as extra_context string;
     return {
         "question": question,
@@ -446,6 +448,7 @@ def build_payload(question: str, top_k: int, snap_json_raw: str, *, max_words: i
         "extra_context": snap_json_raw,
         "output_style": "tweet_bot",
         "max_words": int(max_words),
+        "include_debug": bool(include_debug),
     }
 
 
@@ -480,7 +483,7 @@ def build_entry(today: str, now_iso: str, tweet: str, place: str, snap_obj: Dict
         missing = [k for k, v in [("today", today), ("now_iso", now_iso), ("tweet", tweet)] if not v]
         raise RuntimeError(f"missing values for entry: {', '.join(missing)}")
     if not links:
-        links = ""
+        links = []
     return {
         "date": today,
         "generated_at": now_iso,
@@ -506,6 +509,7 @@ def to_item(entry: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         "place": str(place),
         "generated_at": entry.get("generated_at"),
         "weather": entry.get("weather"),
+        "links": entry.get("links") or [],
     }
 
 
@@ -656,11 +660,15 @@ def main() -> int:
                 status2 = {"_error": "failed to re-check status"}
             print(f"DEBUG: status(after reindex)={json.dumps(status2, ensure_ascii=False)}", file=sys.stderr)
 
+    # Build query URL with location hints (place is NOT a QueryRequest field)
+    q = {"place": place, "lat": str(lat), "lon": str(lon), "tz": tz_name}
+    query_url = f"{api_base}/rag/query?{urllib.parse.urlencode(q)}"
+
     # Warm up once (ignore failures)
     try:
         _ = http_json(
             "POST",
-            f"{api_base}/rag/query",
+            query_url,
             {"question": "ping", "top_k": 1, "extra_context": "{}"},
             cfg,
         )
@@ -671,8 +679,13 @@ def main() -> int:
     now_dt_local = datetime.now(ZoneInfo(tz_name))
     topic_family, topic_mode = pick_topic(now_local=now_dt_local, snap_obj=snap_obj)
     question = build_question(max_words=max_words, topic_family=topic_family, topic_mode=topic_mode, now_local=now_dt_local, snap_obj=snap_obj)
-    payload = build_payload(question=question, top_k=top_k, snap_json_raw=snap_json_raw, max_words=int(max_words))
-
+    payload = build_payload(
+        question=question, 
+        top_k=top_k, 
+        snap_json_raw=snap_json_raw, 
+        max_words=int(max_words),
+        include_debug=True,
+    )
 
     if debug:
         print(f"DEBUG: JSON_PAYLOAD={json.dumps(payload, ensure_ascii=False)}", file=sys.stderr)
@@ -684,19 +697,19 @@ def main() -> int:
     # bash: retries are CURL_RETRIES+2 here
     for attempt in range(1, cfg.retries + 2 + 1):
         try:
-            resp_obj = http_json("POST", f"{api_base}/rag/query", payload, cfg)
+            resp_obj = http_json("POST", query_url, payload, cfg)
         except Exception as e:
             print(f"WARN: /rag/query call failed (attempt {attempt}/{cfg.retries+2}). Retrying... err={e!r}", file=sys.stderr)
             time.sleep(2)
             continue
-
-        tweet = extract_tweet(resp_obj)
-        if tweet:
-            break
         
         links = extract_links(resp_obj)
 
         detail = extract_detail(resp_obj)
+        tweet = extract_tweet(resp_obj)
+        if tweet:
+            break
+
         print(
             f"WARN: backend did not return an answer (attempt {attempt}/{cfg.retries+2}). detail={detail}",
             file=sys.stderr,
