@@ -503,7 +503,6 @@ def to_item(entry: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     place = entry.get("place") or ""
     return {
         "id": str(_id),
-        "permalink": entry.get("permalink") or f"./?post={urllib.parse.quote(str(_id), safe='')}",
         "date": date,
         "text": text,
         "place": str(place),
@@ -513,45 +512,6 @@ def to_item(entry: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     }
 
 
-def update_feed(feed_path: Path, entry: Dict[str, Any]) -> None:
-    entry_item = to_item(entry)
-    if not entry_item:
-        raise RuntimeError("entry JSON missing required fields (date/text)")
-
-    feed_obj: Dict[str, Any] = {"items": []}
-    if feed_path.exists() and feed_path.stat().st_size > 0:
-        try:
-            loaded = json.loads(feed_path.read_text(encoding="utf-8"))
-            if isinstance(loaded, dict) and isinstance(loaded.get("items"), list):
-                feed_obj = loaded
-            elif isinstance(loaded, list):
-                # legacy format: list of entries
-                items = [to_item(x) for x in loaded]
-                items2 = [i for i in items if i]
-                feed_obj = {
-                    "items": items2,
-                    "updated_at": (loaded[-1].get("generated_at") if loaded else None),
-                    "place": (loaded[-1].get("place") if loaded else ""),
-                }
-            else:
-                feed_obj = {"items": []}
-        except Exception:
-            feed_obj = {"items": []}
-
-    items = feed_obj.get("items") if isinstance(feed_obj.get("items"), list) else []
-    # replace today
-    items = [i for i in items if isinstance(i, dict) and i.get("date") != entry_item.get("date")]
-    items.append(entry_item)
-    items.sort(key=lambda x: x.get("date", ""))
-    feed_obj["items"] = items
-    feed_obj["updated_at"] = entry.get("generated_at")
-    if not feed_obj.get("place"):
-        feed_obj["place"] = entry.get("place", "")
-
-    feed_path.write_text(json.dumps(feed_obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote: {feed_path} ({len(items)} entries)")
-
-
 def write_outputs(feed_path: str, latest_path: str, entry: Dict[str, Any], snap_json_raw: str, now_local: str) -> None:
     fp = Path(feed_path)
     lp = Path(latest_path)
@@ -559,20 +519,10 @@ def write_outputs(feed_path: str, latest_path: str, entry: Dict[str, Any], snap_
     fp.parent.mkdir(parents=True, exist_ok=True)
     lp.parent.mkdir(parents=True, exist_ok=True)
 
-    # Make permalink stable by using feed filename stem as the canonical post id.
-    post_id = fp.stem
-    entry_out = dict(entry)
-    entry_out["id"] = post_id
-    entry_out["permalink"] = f"./?post={urllib.parse.quote(str(post_id), safe='')}"
-
-    entry_txt = json.dumps(entry_out, ensure_ascii=False, indent=2) + "\n"
-    lp.write_text(entry_txt, encoding="utf-8")
-    update_feed(fp, entry_out)
-
     # Also write weather snapshot next to latest (for debugging / transparency)
     snap_path = lp.parent / "snapshot" / f"snapshot_{now_local}.json"
     snap_path.parent.mkdir(parents=True, exist_ok=True)
-    snap_path.write_text(json.dumps(entry_out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    snap_path.write_text(json.dumps(dict(entry), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote: {lp}")
     print(f"Wrote: {snap_path}")
     return fp, lp, snap_path
