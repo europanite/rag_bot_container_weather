@@ -54,5 +54,9 @@
       "temp_city_code": null
     }
   },
-  "links": []
+  "links": [],
+  "image_url": "./image/feed_20260103_232258_JST.png",
+  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good evening! As we count down to Yokosuka Countdown 2026, enjoy a cold winter night with illuminations and live music at Verny Park 🎉💡 Tonight's weather is partly cloudy with a low of 3.7°C and gentle winds 💨. Don't mis",
+  "image_model": "stabilityai/sd-turbo",
+  "image_generated_at": "2026-01-03T14:30:50.660902Z"
 }
