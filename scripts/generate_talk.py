@@ -628,9 +628,12 @@ def main() -> int:
     # 3) Query backend for today's tweet
     now_dt_local = datetime.now(ZoneInfo(tz_name))
     topic_family, topic_mode = pick_topic(now_local=now_dt_local, snap_obj=snap_obj)
-    question = build_question(max_words=max_words, topic_family=topic_family, topic_mode=topic_mode, now_local=now_dt_local, snap_obj=snap_obj)
+    question = build_question(max_words=max_words, topic_family=topic_family, topic_mode=topic_mode, now_local=now_dt_local, snap_obj=snap_obj,links=links)
     payload = build_payload(
         question=question, 
+        datetime=now_local,
+        links=links,
+
         top_k=top_k, 
         snap_json_raw=snap_json_raw, 
         max_words=int(max_words),
