@@ -1,26 +1,26 @@
 {
-  "id": "2026-01-03T11:25:27Z",
+  "id": "2026-01-03T10:56:23Z",
   "date": "2026-01-03",
-  "text": "Good evening! It's a chilly night in Yokosuka with a current temperature of 7.4°C and partly cloudy skies. Perfect time to grab some hot food from the trucks at Verny Park's New Year Countdown event tonight!",
+  "text": "Good evening! It's a chilly winter night in Yokosuka, with a temp of 6.8°C and clear skies 🌃️☁️. Head to Verny Park for a warm cup of curry ramen and enjoy the New Year's Countdown tonight! 🎉🕰️ #Yokosuka",
   "place": "Yokosuka",
-  "generated_at": "2026-01-03T11:25:27Z",
+  "generated_at": "2026-01-03T10:56:23Z",
   "weather": {
     "source": "jma",
-    "generated_at": "2026-01-03T11:20:45.946102+00:00",
+    "generated_at": "2026-01-03T10:51:37.748909+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2026-01-03T20:10:00+09:00",
-      "temp_c": 7.4,
+      "time": "2026-01-03T19:40:00+09:00",
+      "temp_c": 6.8,
       "apparent_temp_c": null,
-      "humidity_pct": 45.0,
+      "humidity_pct": 50.0,
       "precip_mm": 0.0,
       "weather_code": 0,
       "cloud_cover_pct": null,
-      "wind_kmh": 5.04,
-      "wind_dir_deg": 315.0,
+      "wind_kmh": 1.4400000000000002,
+      "wind_dir_deg": 157.5,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
     },
@@ -54,9 +54,5 @@
       "temp_city_code": null
     }
   },
-  "links": [],
-  "image_url": "./image/feed_20260103_202044_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good evening! It's a chilly night in Yokosuka with a current temperature of 7.4°C and partly cloudy skies. Perfect time to grab some hot food from the trucks at Verny Park's New Year Countdown event tonight!",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2026-01-03T11:28:19.698832Z"
+  "links": []
 }
