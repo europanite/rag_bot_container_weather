@@ -534,13 +534,26 @@ def write_outputs(feed_path: str, latest_path: str, entry: Dict[str, Any], snap_
     fp.parent.mkdir(parents=True, exist_ok=True)
     lp.parent.mkdir(parents=True, exist_ok=True)
 
-    # Also write weather snapshot next to latest (for debugging / transparency)
+    # Keep a single-item object shape (date/text at top-level) for latest.json compatibility
+    item = to_item(entry) or dict(entry)
+
+    # 1) feed snapshot (per-run)
+    fp.write_text(json.dumps(item, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"Wrote: {fp}")
+
+    # 2) latest.json
+    lp.write_text(json.dumps(item, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"Wrote: {lp}")
+
+    # 3) raw weather snapshot next to latest (debug/transparency)
     snap_path = lp.parent / "snapshot" / f"snapshot_{now_local}.json"
     snap_path.parent.mkdir(parents=True, exist_ok=True)
-    snap_path.write_text(json.dumps(dict(entry), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote: {lp}")
+    try:
+        snap_obj = json.loads(snap_json_raw)
+        snap_path.write_text(json.dumps(snap_obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    except Exception:
+        snap_path.write_text(str(snap_json_raw).rstrip() + "\n", encoding="utf-8")
     print(f"Wrote: {snap_path}")
-    return fp, lp, snap_path
 
 def pair_paths(feeds: List[str], latests: List[str]) -> List[Tuple[str, str]]:
     if not feeds or not latests:
