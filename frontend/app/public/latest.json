@@ -54,5 +54,9 @@
       "temp_city_code": null
     }
   },
-  "links": []
+  "links": [],
+  "image_url": "/image/feed_20260103_191036_JST.png",
+  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good evening! 🌃 It's a chilly winter evening in Yokosuka with a pleasant 7.7°C temperature and calm winds. Enjoy some warm curry ramen at Verny Park's food trucks tonight! 🍜🔥",
+  "image_model": "stabilityai/sd-turbo",
+  "image_generated_at": "2026-01-03T10:18:27.057441Z"
 }
