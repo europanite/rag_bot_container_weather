@@ -378,7 +378,16 @@ def pick_topic(now_local: datetime, snap_obj: Dict[str, Any]) -> Tuple[str, str]
     return family, mode
 
 
-def build_question(max_words: str, topic_family: str, topic_mode: str, now_local: datetime, snap_obj: Dict[str, Any]) -> str:
+def build_question(
+    max_words: int,
+    topic_family: str,
+    topic_mode: str,
+    now_local: datetime,
+    snap_obj: dict,
+    links: list[str] | None = None,
+    datetime: str | None = None,
+) -> str:
+
     cur = (snap_obj or {}).get("current") or {}
     tod = _time_of_day_bucket(now_local.hour)
     season = _season_bucket(now_local.month)
@@ -437,19 +446,25 @@ def build_payload(
     question: str,
     top_k: int,
     snap_json_raw: str,
-    *,
     max_words: int,
-    include_debug: bool = True,
-) -> Dict[str, Any]:
+    include_debug: bool,
+    datetime: str | None = None,
+    links: list[str] | None = None,
+) -> dict:
     # Keep current bash behavior: send snapshot as extra_context string;
-    return {
+    payload = {
         "question": question,
-        "top_k": int(top_k),
-        "extra_context": snap_json_raw,
+        "top_k": top_k,
+        "max_words": max_words,
+        "include_debug": include_debug,
         "output_style": "tweet_bot",
-        "max_words": int(max_words),
-        "include_debug": bool(include_debug),
+        "extra_context": snap_json_raw,  # live weather snapshot JSON
     }
+    if datetime:
+        payload["datetime"] = datetime
+    if links:
+        payload["links"] = links
+    return payload
 
 
 def extract_tweet(resp_obj: Dict[str, Any]) -> str:
@@ -628,16 +643,26 @@ def main() -> int:
     # 3) Query backend for today's tweet
     now_dt_local = datetime.now(ZoneInfo(tz_name))
     topic_family, topic_mode = pick_topic(now_local=now_dt_local, snap_obj=snap_obj)
-    question = build_question(max_words=max_words, topic_family=topic_family, topic_mode=topic_mode, now_local=now_dt_local, snap_obj=snap_obj,links=links)
+    req_links: list[str] = []
+    req_datetime = now_dt_local.isoformat()
+    question = build_question(
+        max_words=max_words,
+        topic_family=topic_family,
+        topic_mode=topic_mode,
+        now_local=now_dt_local,
+        snap_obj=snap_obj,
+        links=req_links,
+        datetime=req_datetime,
+    )
+    include_debug=1
     payload = build_payload(
-        question=question, 
-        datetime=now_local,
-        links=links,
-
-        top_k=top_k, 
-        snap_json_raw=snap_json_raw, 
-        max_words=int(max_words),
-        include_debug=True,
+        question=question,
+        top_k=top_k,
+        snap_json_raw=snap_json_raw,
+        max_words=max_words,
+        include_debug=include_debug,
+        datetime=req_datetime,
+        links=req_links,
     )
 
     if debug:

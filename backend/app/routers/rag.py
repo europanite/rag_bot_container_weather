@@ -105,6 +105,17 @@ class IngestResponse(BaseModel):
 class QueryRequest(BaseModel):
     question: str = Field(..., min_length=1)
 
+
+    # caller-provided metadata (NOT stored in RAG)
+    datetime: str | None = Field(
+        default=None,
+        description="Optional ISO datetime string provided by the caller (e.g. 2026-01-03T17:43:54+09:00).",
+    )
+    links: list[str] | None = Field(
+        default=None,
+        description="Optional list of URLs provided by the caller (for allowlisting / UI display).",
+    )
+
     top_k: int = Field(
         5,
         ge=1,
@@ -958,7 +969,19 @@ def query_rag(payload: QueryRequest, http_request: Request) -> QueryResponse:
     if user_extra:
         context_texts = context_texts + [f"EXTRA CONTEXT:\n{user_extra}"]
 
-    allowed_urls = _collect_allowed_urls(context_texts, live_extra)
+    # normalize request links
+    req_links: list[str] = []
+    for raw in (payload.links or []):
+        if not isinstance(raw, str):
+            continue
+        u = _normalize_url(raw.strip())
+        if u and (u.startswith("http://") or u.startswith("https://")):
+            req_links.append(u)
+        if len(req_links) >= 50:
+            break
+
+    allowed_urls = _collect_allowed_urls(context_texts, live_extra) | set(req_links)
+
 
     system_prompt, user_prompt = _build_chat_prompts(
         question=payload.question,
@@ -1007,6 +1030,14 @@ def query_rag(payload: QueryRequest, http_request: Request) -> QueryResponse:
         audit_context = context_texts[:20]
 
         try:
+
+            # keep auditor seeing the same request metadata (optional)
+            audit_question = payload.question
+            if payload.datetime:
+                audit_question = f"REQUEST_DATETIME: {payload.datetime}\n" + audit_question
+            if req_links:
+                audit_question = "REQUEST_LINKS:\n" + "\n".join(f"- {u}" for u in req_links[:10])
+
             audit_result = _run_answer_audit(
                 question=payload.question,
                 answer=answer,
@@ -1063,9 +1094,21 @@ def query_rag(payload: QueryRequest, http_request: Request) -> QueryResponse:
             )
         debug_chunks = chunk_out
 
+    # links for UI/debug: request links first, then doc_links
+    links_out: list[str] = []
+    seen = set()
+    for u in req_links:
+        if u not in seen:
+            links_out.append(u)
+            seen.add(u)
+    for u in (sorted(doc_links) if doc_links else []):
+        if u not in seen:
+            links_out.append(u)
+            seen.add(u)
+
     return QueryResponse(
         answer=answer,
-        links=(sorted(doc_links) if doc_links else None),
+        links=(links_out if links_out else None),
         context=debug_context,
         chunks=debug_chunks,
         removed_urls=(removed_urls if payload.include_debug and removed_urls else None),
