@@ -1,25 +1,25 @@
 {
-  "id": "2026-01-03T10:29:03Z",
+  "id": "2026-01-03T10:15:30Z",
   "date": "2026-01-03",
-  "text": "Good evening! 🌃 It's a chilly winter day in Yokosuka with a current temperature of 7.5°C and clear skies ☀️. Perfect time to warm up with some hot curry or ramen at Verny Park's food trucks! 🍜🔥 #Yokosuka",
+  "text": "Good evening! 🌃 It's a chilly winter evening in Yokosuka with a pleasant 7.7°C temperature and calm winds. Enjoy some warm curry ramen at Verny Park's food trucks tonight! 🍜🔥 #Yokosuka #Miura",
   "place": "Yokosuka",
-  "generated_at": "2026-01-03T10:29:03Z",
+  "generated_at": "2026-01-03T10:15:30Z",
   "weather": {
     "source": "jma",
-    "generated_at": "2026-01-03T10:24:55.292812+00:00",
+    "generated_at": "2026-01-03T10:10:37.827178+00:00",
     "place": "Yokosuka",
     "latitude": 35.281,
     "longitude": 139.6722,
     "timezone": "Asia/Tokyo",
     "current": {
-      "time": "2026-01-03T19:10:00+09:00",
-      "temp_c": 7.5,
+      "time": "2026-01-03T19:00:00+09:00",
+      "temp_c": 7.7,
       "apparent_temp_c": null,
-      "humidity_pct": 46.0,
+      "humidity_pct": 39.0,
       "precip_mm": 0.0,
       "weather_code": 0,
       "cloud_cover_pct": null,
-      "wind_kmh": 5.4,
+      "wind_kmh": 5.04,
       "wind_dir_deg": 135.0,
       "amedas_station": "46211",
       "jma_weather_obs_code": null
@@ -54,9 +54,5 @@
       "temp_city_code": null
     }
   },
-  "links": [],
-  "image_url": "/image/feed_20260103_192453_JST.png",
-  "image_prompt": "Japanese picture illustration, illustrated image style, watercolor and colored pencil, soft warm light, cute and simple, hand-drawn, minimal details, friendly atmosphere, scene in Yokosuka. Inspired by this message: Good evening! 🌃 It's a chilly winter day in Yokosuka with a current temperature of 7.5°C and clear skies ☀️. Perfect time to warm up with some hot curry or ramen at Verny Park's food trucks! 🍜🔥",
-  "image_model": "stabilityai/sd-turbo",
-  "image_generated_at": "2026-01-03T10:32:14.851656Z"
+  "links": []
 }
