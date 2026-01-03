@@ -1,5 +1,5 @@
 {
-  "id": "2026-01-03T17:26:40Z",
+  "id": "feed_20260104_022153_JST",
   "date": "2026-01-03",
   "text": "Good morning! 🌅 It's a chilly winter evening in Yokosuka, with clear skies and a temp of 3.4°C. Enjoy the illumination at Verny Park tonight! 🎄 #Yokosuka #Illumination",
   "place": "Yokosuka",
@@ -54,5 +54,11 @@
       "temp_city_code": null
     }
   },
-  "links": []
+  "links": [],
+  "legacy_id": "2026-01-03T17:26:40Z",
+  "permalink": "./?post=feed_20260104_022153_JST",
+  "image_url": "./image/feed_20260104_022153_JST.png",
+  "image_prompt": "cinematic illustration, Yokosuka, based on this short story: Good morning! 🌅 It's a chilly winter evening in Yokosuka, with clear skies and a temp of 3.4°C. Enjoy the illumination at Verny Park tonight! 🎄 #Yokosuka #Illumination",
+  "image_model": "stabilityai/sd-turbo",
+  "image_generated_at": "2026-01-03T17:29:58Z"
 }
